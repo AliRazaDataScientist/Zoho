@@ -1,0 +1,31 @@
+get_rec = zoho.crm.getRecords("Contacts");
+RowData = "";
+for each all_Data in get_rec
+{
+	Email = all_Data.getJSON("Email") ;
+	Name = all_Data.getJSON("Full_Name") ;
+	Phone = all_Data.getJSON("Phone") ;
+	a_name = all_Data.getJSON("Account_Name") ;
+	if(a_name != null){
+		Company_Name = a_name.getJSON("name");
+	}
+	Title = all_Data.getJSON("Department") ;
+	contactContent = "<tr>";
+	contactContent = contactContent + "<td style=\"border-style:solid; border-width:thin; border-color:gray\">" + Name + "</td>";
+	contactContent = contactContent + "<td style=\"border-style:solid; border-width:thin; border-color:gray\">" + Email + "</td>";
+	contactContent = contactContent + "<td style=\"border-style:solid; border-width:thin; border-color:gray\">" + Company_Name + "</td>";
+	contactContent = contactContent + "<td style=\"border-style:solid; border-width:thin; border-color:gray\">" + Title + "</td>";
+	contactContent = contactContent + "<td style=\"border-style:solid; border-width:thin; border-color:gray\">" + Phone + "</td>";
+	contactContent = contactContent + "</tr>";
+	RowData = RowData +contactContent;
+}
+rec = "<table style=\"border-collapse: unset;font-size: 10px !important;margin-bottom: 20px;border-spacing:0px;\"><thead style=\"background: #0EF2F2; color: #fff; text-transform: uppercase;white-space: nowrap;border-color: inherit;text-align:center;\"><tr><th style=\"padding: 4px;border-style:solid; border-width:thin; border-color:gray\">Contact Name</th><th style=\"padding: 4px;border-style:solid; border-width:thin; border-color:gray\">Email</th><th style=\"padding: 4px;border-style:solid; border-width:thin; border-color:gray\">Company Name</th><th style=\"padding: 4px;border-style:solid; border-width:thin; border-color:gray\">Title</th><th style=\"padding: 4px;border-style:solid; border-width:thin; border-color:gray\">Phone</th></tr></thead><tbody>" + RowData + "</tbody></table><br>";
+// info rec ;
+sendmail
+[
+	from: zoho.adminuserid
+	to: "tecnospark6go364@gmail.com"
+	subject: "Test"
+	message: rec
+];
+info "sent" ;
