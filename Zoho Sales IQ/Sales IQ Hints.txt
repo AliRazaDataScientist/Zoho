@@ -1,0 +1,59 @@
+// email = "eakin@aol.com";
+// rec = zoho.crm.searchRecords("Contacts", "(Email:equals:"+email+")");
+// info rec;
+phone = "5406853040";
+rec = zoho.crm.searchRecords("Contacts","(Phone:equals:" + phone + ")");
+info rec;
+
+search record........................................................
+
+
+response.put("input",{"type":"select","options":{"Place an Order","Strain Menu","Pricing","Help with an order","Take to a Representative","No, just browsing"}});
+
+
+option in starting...............................................
+
+
+"+ name +"
+
+get current data...............................................
+
+if(pric.contains("94509") == true )
+
+if it exist the data......
+
+
+crmdata = zoho.crm.searchRecords("Leads","(Email:equals:" + email + ")",0,0,{"converted":"both"},"zoho_crm");
+					info crmdata;
+					if(!crmdata.isEmpty())
+					{
+						_crmdata = crmdata.get(0);
+						info _crmdata;
+						id = _crmdata.get("id");
+						module = "Leads";
+						if(_crmdata.get("$converted") == true)
+						{
+							converted_detail = _crmdata.get("$converted_detail").toMap();
+							id = converted_detail.get("contact");
+							info id;
+							module = "Contacts";
+						}
+						crmdata = zoho.crm.updateRecord(module,id,{"Last_Name":name,"Lead_Source":"Chatbot","Option_Selected":selected,"Question":ques},Map(),"zoho_crm");
+					}
+					else
+					{
+						// create new lead
+						crmdata = zoho.crm.createRecord("Leads",{"Email":email,"Last_Name":name,"Lead_Source":"Chatbot","Option_Selected":selected,"Question":ques},Map(),"zoho_crm");
+					}
+					info crmdata;
+					leadid = crmdata.get("id");
+					info leadid;
+
+
+Serach data in crm and also create and update
+................................................................................................................................................................
+
+question = {"name":"phone","replies":{"What's the best number to reach you?"},"input":{"type":"tel","placeholder":"Enter your phone number","country_code":"+1","value":" ","error":{"Enter a Valid Number"}}};
+
+
+country code with phone
