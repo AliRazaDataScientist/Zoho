@@ -1,0 +1,10 @@
+var rec_id = $Page.record_id;;
+let status = ZDK.Page.getField('Lead_Status').getValue();
+if (status == 'Closed Won') {
+    ZDK.Client.createFlyout('myFlyout', { header: 'Upload Document', animation_type: 4,height:'350px',width:'500px' });
+    ZDK.Client.getFlyout('myFlyout').open({ api_name: 'Upload_Document', type: 'widget' }, { 'EntityId': [rec_id] });
+}
+else if (status == 'Meeting Scheduled') {
+    ZDK.Client.createFlyout('myFlyout', { header: 'Creat Meeting', animation_type: 4,height:'700px',width:'500px' });
+    ZDK.Client.getFlyout('myFlyout').open({ api_name: 'Creat_Meeting', type: 'widget' }, { 'EntityId':[rec_id] });
+}
