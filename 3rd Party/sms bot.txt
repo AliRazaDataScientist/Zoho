@@ -1,0 +1,265 @@
+quantity = 0;
+sku = "";
+stock_in_hand = "";
+// ID = 6197851000000934001;
+rec = zoho.crm.getRecordById("clicksendext__Clicksend_SMS",ID);
+msgText = rec.get("clicksendext__Text");
+new_line = hexToText("0A");
+tocontact = rec.get("clicksendext__From");
+search_Rec = zoho.crm.searchRecords("Contacts","(Phone:equals:" + tocontact + ")");
+info search_Rec.size();
+if(search_Rec.size() > 0)
+{
+	crm_contact_id = search_Rec.getJSON("id");
+	contact_details = zoho.crm.getRecordById("Contacts",crm_contact_id);
+	// 	crm_contact_id = rec.get("clicksendext__Contact").getJSON("id");
+}
+////////////////////////start here
+query_param = Map();
+query_param.put("phone",tocontact);
+response = zoho.inventory.getRecords("contacts","849208790",query_param,"inventory_connection");
+if(response.getJSON("contacts").size() > 0)
+{
+	customer_exit = response.getJSON("contacts").getJSON("cf_customer_exist");
+	info customer_exit;
+	contact_id = response.getJSON("contacts").getJSON("contact_id");
+}
+if(customer_exit != false)
+{
+	if(msgText.containsIgnoreCase("hey") || msgText.containsIgnoreCase("Hello") || msgText.containsIgnoreCase("hi") || msgText.containsIgnoreCase("helo") || msgText.containsIgnoreCase("hi, there") || msgText.containsIgnoreCase("Good morning") || msgText.containsIgnoreCase("Good afternoon") || msgText.containsIgnoreCase("Good evening"))
+	{
+		msg = "Welcome to AWA Group Ltd.! To place an order, simply write the number of slabs you need followed by the stone color's 4-digit code." + new_line + "For example, “3 Slabs 99C5”" + new_line + "We're here to assist you with your stone orders. Let us know how we can help!";
+	}
+	else if(msgText.containsIgnoreCase("99C5") || msgText.containsIgnoreCase("99C6") || msgText.containsIgnoreCase("99C9") || msgText.containsIgnoreCase("09C1") || msgText.containsIgnoreCase("88C7") || msgText.containsIgnoreCase("00C9") || msgText.containsIgnoreCase("00B9") || msgText.containsIgnoreCase("99A8") || msgText.containsIgnoreCase("33A8") || msgText.containsIgnoreCase("99A7") || msgText.containsIgnoreCase("Sheet") || msgText.containsIgnoreCase("Slab") || msgText.containsIgnoreCase("-"))
+	{
+		info "MSG is " + msgText;
+		msgText = msgText.toUpperCase();
+		if(msgText.containsIgnoreCase("99C5"))
+		{
+			sku = "99C5";
+			new_msgText = msgText.remove("99C5");
+		}
+		else if(msgText.containsIgnoreCase("99C6"))
+		{
+			sku = "99C6";
+			new_msgText = msgText.remove("99C6").trim();
+		}
+		else if(msgText.containsIgnoreCase("99C9"))
+		{
+			sku = "99C9";
+			new_msgText = msgText.remove("99C9").trim();
+		}
+		else if(msgText.containsIgnoreCase("09C1"))
+		{
+			sku = "09C1";
+			new_msgText = msgText.remove("09C1").trim();
+		}
+		else if(msgText.containsIgnoreCase("88C7"))
+		{
+			sku = "88C7";
+			new_msgText = msgText.remove("88C7").trim();
+		}
+		else if(msgText.containsIgnoreCase("00C9"))
+		{
+			sku = "00C9";
+			new_msgText = msgText.remove("00C9").trim();
+		}
+		else if(msgText.containsIgnoreCase("00B9"))
+		{
+			sku = "00B9";
+			new_msgText = msgText.remove("00B9").trim();
+		}
+		else if(msgText.containsIgnoreCase("99A8"))
+		{
+			sku = "99A8";
+			new_msgText = msgText.remove("99A8").trim();
+		}
+		else if(msgText.containsIgnoreCase("33A8"))
+		{
+			sku = "33A8";
+			new_msgText = msgText.remove("33A8").trim();
+		}
+		else if(msgText.containsIgnoreCase("99A7"))
+		{
+			sku = "99A7";
+			new_msgText = msgText.remove("99A7").trim();
+		}
+		info "sku is " + sku;
+		quantity = new_msgText.removeAllAlpha().trim();
+		if(quantity.contains("-"))
+		{
+			quantity = quantity.remove("-").trim();
+		}
+		quantity = quantity.toLong();
+		info "quantity is " + quantity;
+		query_param = Map();
+		query_param.put("sku",sku);
+		response = zoho.inventory.getRecords("items","849208790",query_param,"inventory_connection");
+		if(response.getJSON("items").size() > 0)
+		{
+			stock_in_hand = response.getJSON("items").getJSON("stock_on_hand");
+			stock_in_hand = stock_in_hand.toLong();
+			info "stock " + stock_in_hand;
+			if(stock_in_hand.toLong() > quantity.toLong())
+			{
+				info "yes stock is in hand " + stock_in_hand;
+				itemname = response.getJSON("items").getJSON("name");
+				rate = response.getJSON("items").getJSON("rate").toLong();
+				price = rate.toLong() * quantity.toLong();
+				tax = 0.13 * price;
+				price = tax + price;
+				msg = "Thank you for your order of " + quantity + " slabs of " + itemname + "(" + sku + ").The total price for this order is $" + price + "+ Tax. Would you like to confirm the order? If yes, please reply with 'Yes'.";
+				product_details = Map();
+				product_details.put("sku",sku);
+				product_details.put("qty",quantity);
+				update_rec = zoho.crm.updateRecord("Contacts",crm_contact_id,product_details);
+			}
+			else
+			{
+				msg = "Thank you for your order request. Unfortunately, we don't have enough stock to fulfill your entire order at the moment. We're working to replenish our inventory and will notify you when the desired quantity becomes available. We apologize for any inconvenience and appreciate your understanding.";
+			}
+		}
+	}
+	else if(msgText.containsIgnoreCase("Yes") || msgText.containsIgnoreCase("Yeah") || msgText.containsIgnoreCase("Please") || msgText.containsIgnoreCase("y") || msgText.containsIgnoreCase("sure") || msgText.containsIgnoreCase("of course") || msgText.containsIgnoreCase("ofcourse"))
+	{
+		qty = contact_details.getJSON("qty");
+		skuy = contact_details.getJSON("sku");
+		query_param = Map();
+		query_param.put("sku",skuy);
+		response = zoho.inventory.getRecords("items","849208790",query_param,"inventory_connection");
+		if(response.getJSON("items").size() > 0)
+		{
+			itemnamee = response.getJSON("items").getJSON("item_id");
+		}
+		line_items = Map();
+		line_items.put("item_id",itemnamee);
+		line_items.put("quantity",qty);
+		line_items.put("tax_id",5124762000000118256);
+		updateMAP = Map();
+		updateMAP.put("customer_id",contact_id);
+		updateMAP.put("date",zoho.currentdate);
+		updateMAP.put("line_items",{line_items});
+		response = zoho.inventory.createRecord("SalesOrders","849208790",updateMAP,"inventory_connection");
+		rec_detail = response.getJSON("salesorder");
+		add = rec_detail.getJSON("shipping_address");
+		address = add.getJSON("address") + "," + add.getJSON("city") + "," + add.getJSON("state") + "," + add.getJSON("zip") + "," + add.getJSON("country");
+		msg = "Hello " + rec_detail.getJSON("customer_name") + "," + new_line + " Your order number " + rec_detail.getJSON("salesorder_number") + " for " + qty + " slabs of " + skuy + "  " + rec_detail.getJSON("color_code") + " has been confirmed." + new_line + " Delivery Address: " + address + " " + new_line + "Total Price: $" + rec_detail.getJSON("total") + " " + new_line + "We'll prepare your order for delivery promptly. You'll receive an update on the delivery schedule soon." + new_line + " If you have any questions, feel free to reach out." + new_line + "Thank you for choosing AWA Group Ltd.!";
+		msg2 = "Order Confirmation Notification:" + new_line + "Order Details:" + new_line + "Order Number:" + rec_detail.getJSON("salesorder_number") + " " + new_line + "Customer Name: " + rec_detail.getJSON("customer_name") + " " + new_line + "Delivery Address: " + address + " " + new_line + "Stone Ordered: " + qty + " slabs of " + skuy + " " + new_line + "Total Price: $" + rec_detail.getJSON("total");
+		info "Msg 2----->" + msg2;
+	}
+}
+else
+{
+	message1 = "Hello! Thank you for reaching out to AWA Group Ltd." + new_line + "To place an order or inquire about our products, please register on our website : www.awagroup.ca or contact our team :" + new_line + "Ayman : (647)  285-5352 " + new_line + "Jimmy : (647) 548-8848 " + new_line + "Aiman : (647) 395-7772" + new_line + "We're here to assist you with any questions you may have. Thank you for considering AWA Group Ltd. for your stone needs!";
+	//Map function
+	SMS_map = Map();
+	SMS_map.put("Name","Reply to" + tocontact);
+	SMS_map.put("clicksendext__Text",msg);
+	SMS_map.put("from","+18338402363");
+	SMS_map.put("to",tocontact);
+	create_Rec = zoho.crm.createRecord("clicksendext__Clicksend_SMS",SMS_map);
+	// 	info create_Rec ;
+	//this is for access token
+	username = "awagroup2023@gmail.com";
+	password = "F3A99927-E3B5-AE65-0953-10BB2822CC57";
+	code = username + ":" + password;
+	token = zoho.encryption.base64Encode(code);
+	////////
+	msglist = List();
+	mp = Map();
+	mp.put("body",message1);
+	mp.put("from","+18338402363");
+	mp.put("to",tocontact);
+	msglist.add(mp);
+	msg_mp = Map();
+	msg_mp.put("messages",msglist);
+	header_mp = Map();
+	header_mp.put("Authorization","Basic " + token);
+	header_mp.put("Content-Type","application/json");
+	send_sms = invokeurl
+	[
+		url :"https://rest.clicksend.com/v3/sms/send"
+		type :POST
+		parameters:msg_mp.tostring()
+		headers:header_mp
+	];
+	info send_sms;
+}
+info "Msg--------->" + msg;
+if(msg != null)
+{
+	//this is for access token
+	username = "awagroup2023@gmail.com";
+	password = "F3A99927-E3B5-AE65-0953-10BB2822CC57";
+	code = username + ":" + password;
+	token = zoho.encryption.base64Encode(code);
+	////////
+	msglist = List();
+	mp = Map();
+	mp.put("body",msg);
+	mp.put("from","+18338402363");
+	mp.put("to",tocontact);
+	msglist.add(mp);
+	msg_mp = Map();
+	msg_mp.put("messages",msglist);
+	header_mp = Map();
+	header_mp.put("Authorization","Basic " + token);
+	header_mp.put("Content-Type","application/json");
+	send_sms = invokeurl
+	[
+		url :"https://rest.clicksend.com/v3/sms/send"
+		type :POST
+		parameters:msg_mp.tostring()
+		headers:header_mp
+	];
+	info send_sms;
+	//Map function
+	detail_cus = Map();
+	detail_cus.put("id",crm_contact_id);
+	SMS_map = Map();
+	SMS_map.put("Name",contact_details.getJSON("Full_Name"));
+	SMS_map.put("clicksendext__Text",msg);
+	SMS_map.put("from","+18338402363");
+	SMS_map.put("to",tocontact);
+	SMS_map.put("clicksendext__Contact",detail_cus);
+	create_Rec = zoho.crm.createRecord("clicksendext__Clicksend_SMS",SMS_map);
+	info create_Rec;
+}
+/*
+if(msg2 != null)
+{
+	//Map function
+	SMS_map = Map();
+	SMS_map.put("Name","SMS to Wagih’s Partner");
+	SMS_map.put("clicksendext__Text",msg);
+	SMS_map.put("from","+18338402363");
+	SMS_map.put("to","+16472855352");
+	create_Rec = zoho.crm.createRecord("clicksendext__Clicksend_SMS",SMS_map);
+	// 	info create_Rec ;
+	//this is for access token
+	username = "awagroup2023@gmail.com";
+	password = "F3A99927-E3B5-AE65-0953-10BB2822CC57";
+	code = username + ":" + password;
+	token = zoho.encryption.base64Encode(code);
+	////////
+	msglist = List();
+	mp = Map();
+	mp.put("body",msg);
+	mp.put("from","+18338402363");
+	mp.put("to","+16472855352");
+	msglist.add(mp);
+	msg_mp = Map();
+	msg_mp.put("messages",msglist);
+	header_mp = Map();
+	header_mp.put("Authorization","Basic " + token);
+	header_mp.put("Content-Type","application/json");
+	send_sms = invokeurl
+	[
+		url :"https://rest.clicksend.com/v3/sms/send"
+		type :POST
+		parameters:msg_mp.tostring()
+		headers:header_mp
+	];
+	info send_sms;
+}
+*/
