@@ -1,0 +1,51 @@
+									Integrate Zoho Creator with 3rd Party
+Ali you should to read this first and then use this after the understanding of the funcaionality of this code
+
+
+ Both client id and client secret remain same once it generates.
+
+ client_id = "1000.28MDOSOSNNZP7MFO2FRAOPVC6SLULF";
+ client_secret = "9886e2481de395d6613270fd290860367e6e4bbf8b";
+
+ // it will expire in 10 minutes or also expire once it used only the solution is again generated it.
+
+ authorization_code = "1000.6dc03f3ad9d83fa89e116f25d404b227.2cf4be8488839e9bf63c7f5a7fa1403f";
+
+//  Generate Access Token and Refresh Token
+  accessandrefreshtoken="https://accounts.zoho.com/oauth/v2/token?grant_type=authorization_code&client_id="+client_id+"&client_secret="+client_secret+"&code="+authorization_code;
+//  info accessandrefreshtoken ;
+// Now we are getting the refresh token
+  url_to_map = Map();
+  resp = postUrl(accessandrefreshtoken,url_to_map);
+//  info resp ;
+// we got refresh token
+  refresh_token=resp.getJSON("refresh_token");
+//  info refresh_token ;
+//after getting the refresh token now we get access token with the help of refresh token
+ access_token="https://accounts.zoho.com/oauth/v2/token?refresh_token="+refresh_token+"&client_id="+client_id+"&client_secret="+client_secret+"&grant_type=refresh_token";
+ info access_token ;
+ access_map = Map();
+ resp_token = postUrl(access_token,access_map);
+ //info "access_token :" + resp_token ;
+// We got access token
+ final_access_token = resp_token.getJSON("access_token") ;
+ info final_access_token ;
+
+
+Scopes=" ZohoCreator.form.CREATE,ZohoCreator.report.CREATE,ZohoCreator.report.READ,ZohoCreator.report.UPDATE,ZohoCreator.report.DELETE,ZohoCreator.meta.form.READ,ZohoCreator.meta.application.READ,ZohoCreator.dashboard.READ "
+
+//now the use of access token into the deluge script
+
+
+headers = Map();
+//inserts the oauth token you got from the first call into the header
+headers.put("Authorization","Bearer " + final_access_token );
+headers.put("accept","application/json");
+creator_record = invokeurl
+[
+	url :"https://creator.zoho.com/api/v2/itportal406/task//form/Zoho_Invoice"
+	type :POST
+	parameters:data_map.toString()
+	headers:headers
+];
+info creator_record;
