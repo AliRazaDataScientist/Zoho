@@ -1,0 +1,82 @@
+void automation.Fax_Testing()
+{
+// relatedrcords = zoho.crm.getRelatedRecords("Attachments","Leads",80847000000298820);
+// for each  ele in relatedrcords
+// {
+// 	attachementId = ele.get("id");
+// 	info attachementId ;
+// }
+// doc = invokeurl
+// 	[
+// 		url :"https://www.zohoapis.com.au/crm/v7/Leads/80847000000298820/Attachments/" + attachementId
+// 		type :GET
+// 		connection:"crm_con"
+// 	];
+// info doc;
+// doc.setParamName("file");
+// response = invokeurl
+// [
+// 	url :"https://www.zohoapis.com.au/crm/v7/files"
+// 	type :POST
+// 	files: doc
+// 	connection:"crm_con"
+// ];
+// info response;
+fax_contant = invokeurl
+[
+	url :"https://www.zohoapis.com.au/crm/v7/files?id=fe7641ba526021d6caecb2bf87323a378adb3fdca109345bf06ff68b07bfc986eb120d339ca2af947e14ffdb66394ced"
+	type :GET
+	connection:"crm_con"
+];
+encode_contant = zoho.encryption.base64Encode(fax_contant);
+api_key = "";
+headers = Map();
+headers.put("x-api-token",api_key);
+headers.put("Content-Type","application/json");
+notifyre_api_url = "https://api.notifyre.com/fax/send";
+data = Map();
+faxes = Map();
+recipients = list();
+recipient1 = Map();
+recipient1.put("Type","fax_number");
+recipient1.put("Value","+61261039109");
+recipients.add(recipient1);
+faxes.put("Recipients",recipients);
+faxes.put("SendFrom","");
+faxes.put("ClientReference","Notifyre");
+faxes.put("Subject","Zoho Developer Test");
+faxes.put("IsHighQuality",false);
+documents = list();
+document1 = Map();
+document1.put("Filename","zohodeveloper.pdf");
+document1.put("Data",encode_contant);
+// Replace with actual Base64 data of your PDF
+documents.add(document1);
+faxes.put("Documents",documents);
+data.put("Faxes",faxes);
+data.put("TemplateName","ZD");
+response = invokeurl
+[
+	url :notifyre_api_url
+	type :POST
+	parameters:data.tostring()
+	headers:headers
+];
+info response;
+/*
+// api_key = "";
+// headers = Map();
+// headers.put("x-api-token",api_key);
+// headers.put("Content-Type","application/json");
+// notifyre_api_url = "https://api.notifyre.com/fax/send?sort=desc&statusType=successful&fromDate=1731456000&toDate=1731542399&skip=0&limit=20";
+
+// response = invokeurl
+// [
+//     url : notifyre_api_url
+//     type : GET
+//     parameters : ""
+//     headers : headers
+// ];
+// info response;
+*/
+}
