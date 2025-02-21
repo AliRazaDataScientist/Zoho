@@ -1,0 +1,114 @@
+lead_str = Lead_id.toString();
+listID = lead_str.toList("|||");
+for each  lead in listID
+{
+	get_lead = zoho.crm.getRecordById("Leads",lead.toLong());
+	//info get_lead;
+	get_phone = get_lead.get("Phone");
+	subject = "Test Message";
+	getMessage = "Sandbox Ring Central Test";
+	if(get_lead.get("SMS_Templates") != null)
+	{
+		smms = get_lead.getJSON("SMS_Templates");
+		smsID = smms.getJSON("id");
+		sms_temp = zoho.crm.getRecordById("SMS_Template",smsID);
+		// 		info "SMS: " + sms_temp;
+		getMessage = ifNull(sms_temp.getJSON("Message"),"");
+	}
+	get_phone = getAlphaNumeric(get_phone);
+	// info get_phone;
+	if(get_phone != "")
+	{
+		if(get_phone.length() >= 10 || get_phone.length() <= 11)
+		{
+			if(get_phone.length() == 10)
+			{
+				first_letter = get_phone.contains("1");
+				if(first_letter == true)
+				{
+					get_phone = "+" + get_phone;
+				}
+				else
+				{
+					get_phone = "+1" + get_phone;
+				}
+			}
+			if(get_phone.length() == 11)
+			{
+				get_phone = "+" + get_phone;
+			}
+			header = Map();
+			ClientID = "qoCz57I-QZ2HHt_7mpdg2A";
+			ClientSecret = "JdPO2fltTOurxfMvmRI0IwdwXJZfmkRESpP9xComc46A";
+			ClientCredsPlainText = ClientID + ":" + ClientSecret;
+			baseEncoded = zoho.encryption.base64Encode(ClientCredsPlainText);
+			header.put("Accept","application/json");
+			header.put("Content-Type","application/x-www-form-urlencoded");
+			header.put("Authorization","Basic " + baseEncoded);
+			token_URL = "https://platform.ringcentral.com/restapi/oauth/token";
+			para_map = Map();
+			para_map.put("grant_type","password");
+			para_map.put("username","+13057352015");
+			para_map.put("extension","101");
+			para_map.put("password","@legra6439");
+			// 			info para_map;
+			ringCentralAPI = invokeurl
+			[
+				url :token_URL
+				type :POST
+				parameters:para_map
+				headers:header
+			];
+			// 			info ringCentralAPI;
+			access_token = ringCentralAPI.getJSON("access_token");
+			sendSMS_url = "https://platform.ringcentral.com/restapi/v1.0/account/~/extension/~/sms";
+			header_map = Map();
+			header_map.put("Content-Type","application/json");
+			header_map.put("Authorization","Bearer " + access_token);
+			parameter_map = Map();
+			tomap = Map();
+			tomap.put("phoneNumber",get_phone);
+			listto = list();
+			listto.add(tomap);
+			frommap = Map();
+			frommap.put("phoneNumber","+13057352015");
+			parameter_map.put("to",listto);
+			parameter_map.put("from",frommap);
+			parameter_map.put("text",getMessage);
+			info parameter_map;
+			if(getMessage != "")
+			{
+				sms_send_response = invokeurl
+				[
+					url :sendSMS_url
+					type :POST
+					parameters:parameter_map.toString()
+					headers:header_map
+				];
+				info sms_send_response;
+				get_ringcentral_id = ifNull(sms_send_response.getJSON("id"),"");
+				if(get_ringcentral_id != "" && get_ringcentral_id != null)
+				{
+					ringcentralHistroy_map = Map();
+					ringcentralHistroy_map.put("To_Number",sms_send_response.getJSON("to").getJSON("phoneNumber"));
+					ringcentralHistroy_map.put("From_Number",sms_send_response.getJSON("from").get("phoneNumber"));
+					ringcentralHistroy_map.put("Subject",sms_send_response.getJSON("subject"));
+					ringcentralHistroy_map.put("Type",sms_send_response.getJSON("type"));
+					ringcentralHistroy_map.put("Name","Follow Up Day 1");
+					ringcentralHistroy_map.put("Related_Lead",lead.toLong());
+					ringcentralHistroy_response = zoho.crm.createRecord("Ring_Central_SMS_History",ringcentralHistroy_map);
+					// 					info ringcentralHistroy_response;
+				}
+			}
+			else
+			{
+				return "Error! Message is Empty, Please Check the selected template";
+			}
+		}
+		else
+		{
+			return "Invalid Number";
+		}
+	}
+}
+return "SMS Sent Successfully!";
