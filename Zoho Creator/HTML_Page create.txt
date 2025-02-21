@@ -1,0 +1,110 @@
+<%{
+//here test is the parameter in the button
+	if(input.test != null && input.test != "")
+	{
+		recd = quote_items[ID == input.test.tolong()];
+		info recd;
+		%>
+<html>
+<div style="padding:30px;">
+<head>
+<style>
+* {
+  box-sizing: border-box;
+}
+
+.row {
+  display: flex;
+}
+
+/* Create two equal columns that sits next to each other */
+.column {
+  flex: 50%;
+  padding: 10px;
+}
+</style>
+<div class="row">
+  <div class="column" >
+  <p><img src="C:\Users\91966\Downloads\zoho log.jpg" width="80" height="80"></p>
+    <p style="font-size:130%; padding-left:15px; padding-bottom:5px; padding-top:15px;"><b>Brookly Chember of Commerce</b></br>250 34th street Mailbox 12</br>New York City</br>U.S.A</p>
+  </div>
+  <div class="column" >
+    <p style="text-align:right; padding:5px; font-size:200%;"><b>Invoice </b>
+		</p>
+		<p style="text-align:right; padding:5px; font-size:110%;"><%=recd.Invoice_Number%>
+		</p>
+		<p style="text-align:right; padding:5px; font-size:110%;"><b>Due Balance: </b><%=recd.Balance_Due%>
+		</p>
+  </div>
+</div>
+<div class="row">
+ <div class="column" >
+    <p style="font-size:130%; padding-left:15px;"><b>Bill to : </b><%=recd.Bill_To%></p>
+  </div>
+  <div class="column" >
+    <p style="text-align:right; padding:5px; font-size:110%;"><b>Invoic Date: </b><%=recd.Invoic_Date%></p>
+		<p style="text-align:right; padding:5px; font-size:110%;">Last date of due payment</p>
+		<p style="text-align:right; padding:5px; font-size:110%;"><b>Due Date: </b><%=recd.Due_Date%>
+		</p>
+  </div>
+</div>
+<style>
+table, th, td {
+  border: 1px solid white;
+  border-collapse: collapse;
+}
+th, td {
+  padding: 5px;
+  padding-top:10px;
+  padding-left:5px;
+  text-align: left;
+}
+</style>
+</head>
+<table Style="width:100%" >
+		<div >
+		<tr><th Style="font-size:120%;"><%=recd.Name%></th></tr>
+		<tr><th Style="font-size:120%;"><%=recd.Email%></th></tr>
+		<tr><th Style="font-size:120%;"><%=recd.Phone_Number%></th>
+		</tr>
+		</div>
+		<div >
+		<tr><th colspan="4" >Items</th></tr>
+		</div>
+		<div>
+		<tr><th>Item_Name</th><th>Quantity</th><th>Price</th><th>Sub_Total</th></tr>
+<%
+		for each  rec in recd.Items
+		{
+			%>
+<tr>
+		<td><%=rec.Itm_Name%></td>
+		<td><%=rec.quantity%></td>
+		<td><%=rec.Price%></td>	
+		<td><%=rec.Sub_Total%></td>
+		</tr>
+		</div>
+<%
+		}
+		%>
+<div>
+<tr>
+    <th colspan="3" , style="text-align:right; padding-right:150px;">Total</th>
+    <td><%=recd.Total%></td>
+  </tr>
+  <tr>
+    <th colspan="3" , style="text-align:right; padding-right:150px;">Payment Made</th>
+    <td><%=recd.Payment_Made%></td>
+  </tr>
+  <tr>
+    <th colspan="3" , style="text-align:right; padding-right:150px;">Due Balance</th>
+    <td><%=recd.Balance_Due%></td>
+  </tr>
+  </div>
+</table>
+</div>
+</html>
+<%
+	}
+
+}%>

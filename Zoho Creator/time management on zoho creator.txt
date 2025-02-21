@@ -1,0 +1,114 @@
+if(Status == "In Progress" && Spend_Hours == null)
+{
+	input.Start_Time = zoho.currenttime;
+}
+else if(Status == "In Progress" && Spend_Hours != null)
+{
+	input.Start_Time = zoho.currenttime;
+	input.End_Time = null;
+}
+else if(Status == "Pause" && Spend_Hours == null)
+{
+	row1 = Task.SubForm();
+	row1.E_Time=zoho.currenttime;
+	row1.S_Time=input.Start_Time;
+	input.SubForm.insert(row1);
+	input.End_Time = zoho.currenttime;
+	time_diff = input.Start_Time.timeBetween(input.End_Time);
+		hours = time_diff.getPrefix(":");
+		h = hours.toNumber();
+		pre_mints = time_diff.getSuffix(":");
+		mints = pre_mints.getprefix(":");
+		m = mints.toNumber();
+		sec = pre_mints.getSuffix(":");
+		s = sec.toNumber();
+	if( h > 23)
+	{
+		hide Spend_Hours ;
+				input.Time=h+"h:"+m+"m:"+s+"s";
+				show Time ;
+	}
+	else
+	{
+		input.Spend_Hours = input.Start_Time.timeBetween(input.End_Time);
+	hide Time ;
+	}
+}
+else if(Status == "Pause" && Spend_Hours != null)
+{
+	row1 = Task.SubForm();
+	row1.E_Time=zoho.currenttime;
+	row1.S_Time=input.Start_Time;
+	input.SubForm.insert(row1);
+	input.End_Time = zoho.currenttime;
+	hours = input.Spend_Hours.getPrefix(":");
+	h_1 = hours.toNumber();
+	pre_mints = input.Spend_Hours.getSuffix(":");
+	mints = pre_mints.getprefix(":");
+	m_1 = mints.toNumber();
+	sec = pre_mints.getSuffix(":");
+	s_1 = sec.toNumber();
+	pause_diff = input.Start_Time.timeBetween(input.End_Time);
+	hours = pause_diff.getPrefix(":");
+	h_2 = hours.toNumber();
+	pre_mints = pause_diff.getSuffix(":");
+	mints = pre_mints.getprefix(":");
+	m_2 = mints.toNumber();
+	sec = pre_mints.getSuffix(":");
+	s_2 = sec.toNumber();
+	h = h_1 + h_2;
+	m = m_1 + m_2;
+	s = s_1 + s_2;
+	hour = h * 3600 + m * 60 + s;
+	hours1 = hour / 3600;
+	minutes = (hour % 3600) / 60;
+	seconds = hour % 60;
+	answer = hours1.round(0) + ":" + minutes.round(0) + ":" + seconds.round(0);
+	input.Spend_Hours = answer;
+}
+else if(Status == "Complete" && Spend_Hours == null)
+{
+	input.End_Time = zoho.currenttime;
+	row1 = Task.SubForm();
+	row1.E_Time=zoho.currenttime;
+	row1.S_Time=input.Start_Time;
+	input.SubForm.insert(row1);
+	input.Spend_Hours = input.Start_Time.timeBetween(input.End_Time);
+}
+else if(Status == "Complete" && Spend_Hours != null)
+{
+	input.End_Time = zoho.currenttime;
+	row1 = Task.SubForm();
+	row1.E_Time=zoho.currenttime;
+	row1.S_Time=input.Start_Time;
+	input.SubForm.insert(row1);
+	hours = input.Spend_Hours.getPrefix(":");
+	h_1 = hours.toNumber();
+	pre_mints = input.Spend_Hours.getSuffix(":");
+	mints = pre_mints.getprefix(":");
+	m_1 = mints.toNumber();
+	sec = pre_mints.getSuffix(":");
+	s_1 = sec.toNumber();
+	pause_diff = input.Start_Time.timeBetween(input.End_Time);
+	hours = pause_diff.getPrefix(":");
+	h_2 = hours.toNumber();
+	pre_mints = pause_diff.getSuffix(":");
+	mints = pre_mints.getprefix(":");
+	m_2 = mints.toNumber();
+	sec = pre_mints.getSuffix(":");
+	s_2 = sec.toNumber();
+	h = h_1 + h_2;
+	m = m_1 + m_2;
+	s = s_1 + s_2;
+	hour = h * 3600 + m * 60 + s;
+	hours1 = hour / 3600;
+	minutes = (hour % 3600) / 60;
+	seconds = hour % 60;
+	answer = hours1.round(0) + ":" + minutes.round(0) + ":" + seconds.round(0);
+	input.Spend_Hours = answer;
+}
+else 
+{
+	Start_Time=null;
+	End_Time=null;
+}

@@ -1,0 +1,20 @@
+if(input.Is_a_Reporting_Manager == true)
+{
+	thisapp.portal.assignUserInProfile(input.Official_Email,"App User");
+}
+else if(input.Is_a_Reporting_Manager == false)
+{
+	thisapp.portal.assignUserInProfile(input.Official_Email,"App User");
+}
+getCompanyDetails = Add_Organization[ID != 0];
+sendmail
+[
+	from :zoho.adminuserid
+	to :input.Official_Email
+	subject :"Invitation to access Employee Management"
+	message :("<div>Hi " + input.Name) + ",</div><br><div> You have been added as an employee in " + getCompanyDetails.Organization_Name + ".</div> <br> <div> Click <a href=\"https://app.zohocreator.com" + zoho.appuri + "\"> here </a> to access the employee portal.</div> <br><div> Happy Working! </div> <br> <div> Regards,</div><br><div>" + zoho.adminuser + "</div>"
+]
+if(Add_Employee.count() == 0)
+{
+	openUrl(zoho.appuri + "#Page:Employee_Profile","same window");
+}

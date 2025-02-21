@@ -1,0 +1,38 @@
+get values from producet
+
+rec = Producets[ID == row.Products];
+row.Price1=rec.Sale_Price;
+
+calculate amount
+
+rec = Producets[ID == row.Products];
+payment = rec.Sale_Price * row.Quantity;
+row.Amount=payment;
+subtotal = 0;
+for each  new_total in input.Product
+{
+	subtotal = subtotal + new_total.Amount;
+}
+input.Sub_Total = subtotal;
+
+
+
+create discount
+
+result = input.Sub_Total * input.Discount / 100;
+input.Total = input.Sub_Total - result;
+
+again update values in producet
+
+for each  all_product in input.Product
+{
+	qty = all_product.Quantity;
+	rec = Producets[ID == all_product.Products];
+	rec.Quantity=rec.Quantity - qty;
+	Profit = qty * (rec.Sale_Price - rec.Purchase_Price).tolong();
+	if(isNull(rec.Total_Profit))
+	{
+		rec.Total_Profit=0;
+	}
+	rec.Total_Profit=rec.Total_Profit + Profit;
+}

@@ -1,0 +1,85 @@
+void api_connection_crm_with_creator()
+{
+	//get records and record
+	get_rec = invokeUrl
+    [
+    	url: "https://www.zohoapis.com/crm/v2/Leads"
+    	type: GET
+    	connection: "con_crm_creator"
+    ];
+// 	info get_rec ;
+	for each collect in get_rec.get("data")
+    {
+// 		if ( collect.get("Email").isEmpty() ) 
+//         {
+// 		del_ids= collect.get("id") ;
+// 		info del_ids ;
+// 		del_recds = invokeUrl
+//         [
+//         	url: "https://www.zohoapis.com/crm/v2/Leads/" + del_ids + ""
+//         	type: DELETE
+//         	connection: "con_crm_creator"
+//         ];
+// 		info del_recds ;
+//         }
+		if ( collect.get("Country").isEmpty()) 
+        {
+		reco= collect.get("id") ;
+		map_1=Map();
+		map_1.put("Country","US");
+		new_lis=List();
+		new_lis.add(map_1);
+		map_2=Map();
+		map_2.put("data", new_lis);
+		strings=map_2.toString();
+		info strings ;
+		up_rec = invokeUrl
+        [
+        	url: "https://www.zohoapis.com/crm/v2/Leads/" + reco + ""
+        	type: PUT
+        	parameters: strings
+        	connection: "con_crm_creator"
+        ];
+		info up_rec ;
+        }
+    }
+	//create record
+	/*
+	new_map=Map();
+	new_map.put("Company", "Davetech");
+	new_map.put("Last_Name", "Dave");
+	new_map.put("Email", "test111@gmai.com");
+	new_map.put("Phone", "1234567890");
+	lis=List();
+	lis.add(new_map);
+	lead_map=Map();
+	lead_map.put("data", lis);
+	new=lead_map.toString() ;
+	create_rec = invokeUrl
+    [
+    	url: "https://www.zohoapis.com/crm/v2/Leads"
+    	type: POST
+    	parameters: new
+    	connection: "con_crm_creator"
+    ];
+	info create_rec ;
+	*/
+	//update record
+	/*
+	upda_rec = invokeUrl
+    [
+    	url: "https://www.zohoapis.com/crm/v2/Leads/5451947000000978002"
+    	type: PUT
+    	parameters: new
+    	connection: "con_crm_creator"
+    ];
+	info upda_rec ;
+	//delete record
+	del_rec = invokeUrl
+    [
+    	url: "https://www.zohoapis.com/crm/v2/Leads/5451947000000967153"
+    	type: DELETE
+    	parameters: new
+    	connection: "con_crm_creator"
+    ];*/
+}

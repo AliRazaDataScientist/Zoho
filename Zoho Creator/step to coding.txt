@@ -1,0 +1,42 @@
+void steps_to_coding()
+{
+	//steps_to_good_coding
+	/*
+	1. Understand the problem and desired output required by client
+    2. Problem/Bug/Issue --- We get information about input parameters , which is our base record/fields.
+    3. Output - 
+	4. Write down the steps to solve the problem 
+	5. Unit test each part of the solution 
+	
+	*/
+	/*
+	1. Total was not updating dynamically (Problem)
+    2. Input base information : Subform - Qty , Price , Sub Total 
+	3. Total field - Output required
+	
+	Steps to solve the dynamic total problem ( breakdown problem into small testable snippets)
+	
+	(Quantity , Price , Subtotal , Addition and Removal of any subform item )
+	Trigger Events - 
+	
+	1. User input worflow for Qty field -- {business logic and this can change}
+    2. User input workflow for Price field
+	3. User input workflow for Sub total
+    4. On any add or remove of subform rows workflow 
+	
+	on any of the above trigger calculate the total looping all rows. 
+
+	*/
+	/*
+	 Display Quote on Button click 
+
+      1. Create button in report
+      2. Create page with parameter 
+      3. button code -  fetch quote id and pass it as query string in page url
+      4. page code - 
+	      check for paramater - Code and Test - Success
+          Page style - Header display , Line items display - Code and Test - Success
+	      Header - Fetch Quote details and display it - Code and Test - Success
+          Line Items - fetch subform data and loop it - Code and Test - Success
+	*/
+}

@@ -1,0 +1,67 @@
+void upsert_convertlead_serach_deleterecords()
+{
+	add_data = Map();
+	add_data.put("Phone","+923280977654");
+	add_data.put("Last_Name","Mr. Dave");
+	add_data.put("Email","iuytr@zylker.com");
+	add_data.put("Designation","Developer");
+	add_data.put("Mobile","6789054321");
+	add_data.put("Description","This is test purpose");
+	lis = List();
+	lis.add(add_data);
+	updateMAp = Map();
+	updateMAp.put("data",lis);
+	/*
+	upsert_record = invokeUrl
+    [
+    	url: "https://www.zohoapis.com/crm/v2/Leads/upsert"
+    	type: POST
+    	parameters: updateMAp.toString()
+    	connection: "con_crm_creator"
+    ];
+	info upsert_record ;
+	*/
+	// 	Convert Lead into contacts and accounts
+	con_recd = invokeurl
+	[
+		url :"https://www.zohoapis.com/crm/v3/Leads/5451947000000395218/actions/convert"
+		type :POST
+		parameters:updateMAp.toString()
+		connection:"con_crm_creator"
+	];
+	info con_recd;
+	//search record 
+	/*
+	ser_rec = invokeUrl
+    [
+    	url: "https://www.zohoapis.com/crm/v2/Leads/search?criteria=((Email:equals:5@gmail.com))"
+    	type: GET
+    	connection: "con_crm_creator"
+    ];
+// 	info ser_rec.get("data") ;
+	for each coll in ser_rec.get("data")
+    {
+		info coll.get("Company");
+		info coll.get("Country");
+		info coll.get("Created_Time");
+		info coll.get("Full_Name");
+    }
+	*/
+	//list of deleted records
+	/*
+	list_delete_records = invokeurl
+	[
+		url :"https://www.zohoapis.com/crm/v2/Leads/deleted?type=all"
+		type :GET
+		connection:"con_crm_creator"
+	];
+	all_data= list_delete_records.get("data");
+	for each filter_data in all_data
+    {
+// 		info filter_data.get("type");
+		if ( filter_data.get("type") == "recycle" ) 
+        {
+			info filter_data.get("id") ;
+        }
+    }*/
+}

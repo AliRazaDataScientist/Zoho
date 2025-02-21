@@ -1,0 +1,24 @@
+<%{
+	loginuserid = Add_Employee[Official_Email == zoho.loginuserid].ID;
+	role1 = thisapp.portal.profileForUser(zoho.loginuserid);
+	role2 = thisapp.permissions.profileForUser(zoho.loginuserid);
+	if(role1 == null || role1 == "" && loginuserid != null)
+	{
+		%>
+<iframe zc_mobileView='inline' width="96%" style="height:78vh !important;padding: 1% 2%;"  src="https://app.zohocreator.com<%=zoho.appuri%>record-summary/Employee_Profile1/<%=loginuserid%>"></iframe>
+<%
+	}
+	else if(role2 == "" || role2 == null && loginuserid != null)
+	{
+		%>
+<iframe zc_mobileView='inline' width="96%" style="height:78vh !important;padding: 1% 2%;"  src="https://rapidtechsolutionsllc.zohocreatorportal.com<%=zoho.appuri%>record-summary/Employee_Profile1/<%=loginuserid%>"></iframe>
+<%
+	}
+	else
+	{
+		%>
+<div style="text-align:center;font-size:16px;padding:20px;">You are not added as an Employee!</div>
+<%
+	}
+
+}%>
