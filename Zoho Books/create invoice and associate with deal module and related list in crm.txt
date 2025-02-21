@@ -1,0 +1,113 @@
+
+invoiceID = invoice.get("invoice_id");
+invoicedate = invoice.get("date").toDate();
+organizationID = organization.get("organization_id");
+item_id = null;
+rec = zoho.books.getRecordsByID("invoices",organizationID,invoiceID,"books_connection");
+invoice = rec.getJSON("invoice");
+invoice_status = invoice.getJSON("status");
+contact_id = invoice.getJSON("customer_id");
+contactrec = zoho.books.getRecordsByID("Contacts","856626484",contact_id,"books_connection");
+email = contactrec.getJSON("contact").getJSON("email");
+name = contactrec.getJSON("contact").getJSON("contact_name");
+/////update field
+contact = zoho.crm.searchRecords("Contacts","(Email:equals:" + email + ")");
+cont_id = contact.getJSON("id");
+deal_rec = zoho.crm.getRelatedRecords("Deals","Contacts",cont_id);
+deal_id = deal_rec.getJSON("id");
+update_rec = zoho.crm.updateRecord("Deals",deal_id,{"Description":"Yes Field Update"});
+//////remaining part
+custom_field = contactrec.getJSON("contact").getJSON("cf_program_of_desired_choice");
+if(custom_field != null)
+{
+	if(custom_field.containsIgnoreCase("Associate") == true)
+	{
+		item_id = "5327937000000108095";
+	}
+	else if(custom_field.containsIgnoreCase("Bachelor") == true)
+	{
+		item_id = "5327937000000108104";
+	}
+}
+if(item_id != null)
+{
+	line_items = Map();
+	line_items.put("item_id",item_id);
+	line_items.put("quantity",1);
+	invoice_map = Map();
+	invoice_map.put("line_items",{line_items});
+	invoice_map.put("customer_id",contact_id);
+	invoice_map.put("zcrm_potential_id",deal_id);
+	due_date = zoho.currentdate.addMonth(8);
+	invoice_map.put("due_date",due_date);
+	//payment method add
+		payment = Map();
+		payment.put("configured","true");
+		payment.put("can_show_billing_address","false");
+		payment.put("is_bank_account_applicable","false");
+		payment.put("can_pay_using_new_card","true");
+		payment.put("gateway_name","square");
+		payment_gateways = Map();
+		payment_gateways.put("payment_gateways",{payment});
+		invoice_map.put("payment_options",payment_gateways);
+	create_rec = zoho.books.createRecord("invoices",organizationID,invoice_map,"books_connection");
+	invoice = create_rec.getJSON("invoice");
+	invoice_id = invoice.getJSON("invoice_id");
+	invoice_no = invoice.getJSON("invoice_number");
+	c_n = invoice.getJSON("customer_name");
+	total = invoice.getJSON("total");
+	invoice_date = invoice.getJSON("date");
+	due_date = invoice.getJSON("due_date");
+	invoice_url = invoice.getJSON("invoice_url");
+	info "Invoice is created : " + invoice_id;
+	body = "<div style=\"padding: 3%; text-align: center; background: rgb(65, 144, 242)\"> <div style=\"color: rgb(255, 255, 255); font-size: 20px; font-weight: 500\">Invoice #" + invoice_no + "</div></div><div style=\"max-width: 560px; margin: auto; padding: 0 3%\"> <div style=\"padding: 30px 0; color: rgb(85, 85, 85); line-height: 1.7\">Dear " + c_n + ", <br><br>Thank you for your business. Your invoice can be viewed, printed and downloaded as PDF from the link below. You can also choose to pay it online. <br></div><div style=\"padding: 3%; background: rgb(254, 255, 241); border: 1px solid rgb(232, 222, 181); color: rgb(51, 51, 51)\"> <div style=\"padding: 0 3% 3%; border-bottom: 1px solid rgb(232, 222, 181); text-align: center\"> <h4 style=\"margin-bottom: 0\">INVOICE AMOUNT</h4> <h2 style=\"color: rgb(214, 25, 22); margin-top: 10px\">$" + total + "0</h2> </div><div style=\"margin: auto; max-width: 350px; padding: 3%\"> <p><span style=\"width: 40%; padding-left: 10%; float: left\">Invoice No</span><span style=\"width: 40%; padding-left: 10%; display: inline-block\"><b>" + invoice_no + "</b></span></p><p><span style=\"width: 40%; padding-left: 10%; float: left\">Invoice Date</span><span style=\"width: 40%; padding-left: 10%\"><b>" + invoice_date + "</b></span></p><p><span style=\"width: 40%; padding-left: 10%; float: left\">Due Date</span><span style=\"width: 40%; padding-left: 10%\"><b>" + due_date + "</b></span></p></div><div style=\"text-align: center; margin: 25px 0\"> <a style=\"text-decoration: none\" href=\"" + invoice_url + "\" target=\"_blank\"> <span style=\"background-color: rgb(77, 207, 89); border: 1px solid rgb(73, 189, 84); cursor: pointer; text-align: center; min-width: 140px; color: rgb(255, 255, 255); display: inline-block; text-decoration: none; padding: 10px 20px\">PAY NOW</span></a> </div></div><br><div style=\"padding: 3% 0; line-height: 1.6\"> Regards, <div style=\"color: rgb(140, 140, 140); font-weight: 400\"><span style=\"color: rgb(177, 177, 177)\">Hope Seminary</span></div></div></div>";
+	// 		parameters_data = Map();
+	// 		parameters_data.put("to_mail_ids",{email});
+	// 		parameters_data.put("send_from_org_email_id",true);
+	// 		parameters_data.put("subject","Degree Fee");
+	// 		parameters_data.put("body",body);
+	// 		response = invokeurl
+	// 		[
+	// 			url :"https://www.zohoapis.com/books/v3/invoices/" + invoice_id + "/email?organization_id=856626484"
+	// 			type :POST
+	// 			parameters:parameters_data.tostring()
+	// 			connection:"books_connection"
+	// 		];
+	// 		info response;
+	///////////////////////Getting the invoice as pdf
+	response = invokeurl
+	[
+		url :"https://books.zoho.com/api/v3/invoices/" + invoice_id + "?accept=pdf&organization_id=856626484"
+		type :GET
+		connection:"books_connection"
+	];
+	info response;
+	//////////// upload into zoho crm
+	response.setParamName("file");
+	upload_file = invokeurl
+	[
+		url :"https://www.zohoapis.com/crm/v2/files"
+		type :POST
+		files:response
+		connection:"crm_connection"
+	];
+	file_id = upload_file.get("data").get(0).getJSON("details").getJSON("id");
+	info file_id + " CRM API";
+	file_data = {"data":{{"from":{"user_name":"Hope Seminary","email":"info@hopeseminarywr.com"},"to":{{"user_name":name,"email":email}},"subject":"Degree Fee","content":body,"attachments":{{"id":file_id}}}}};
+	send_mail_resp = invokeurl
+	[
+		url :"https://www.zohoapis.com/crm/v6/Deals/" + deal_id + "/actions/send_mail"
+		type :POST
+		parameters:file_data.toString()
+		connection:"crm_connection"
+	];
+	info send_mail_resp;
+	///////// change invoice status as sent
+	response = invokeurl
+	[
+		url :"https://www.zohoapis.com/books/v3/invoices/" + invoice_id + "/status/sent?organization_id=856626484"
+		type :POST
+		connection:"books_connection"
+	];
+	info "yes status changed";
+}
