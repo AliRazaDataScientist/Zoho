@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Form Title</title>
+    <script src="https://live.zwidgets.com/js-sdk/1.2/ZohoEmbededAppSDK.min.js"></script>
+    <!-- Add Bootstrap CSS link -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+        }
+
+        form {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        span.required {
+            color: red;
+            font-weight: bold;
+        }
+
+        select,
+        textarea,
+        .custom-file-input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <form action="#" method="post" enctype="multipart/form-data" onsubmit="event.preventDefault();onSubmitForm();">
+        <div class="form-group">
+            <label for="pvSol">PV-Sol<span class="required"> *</span>:</label>
+            <select class="form-control" name="pvSol" id="pvSol" required>
+                <option value="New">New</option>
+                <option value="Update">Update</option>
+                <option value="Final">Final</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description<span class="required"> *</span>:</label>
+            <textarea class="form-control" name="description" id="description" rows="4" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="attachments">Attachments:</label>
+            <div class="custom-file">
+                <input type="file" class="custom-file-input" id="attachments" name="attachments" multiple>
+                <label class="custom-file-label" for="attachments">Choose file</label>
+            </div>
+        </div>               
+
+        <input type="submit" class="btn btn-primary" value="Submit">
+    </form>
+</div>
+
+<!-- Add Bootstrap JS and Popper.js scripts -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+<script src="onload.js"></script>
+<script src="function.js"></script>
+</html>
