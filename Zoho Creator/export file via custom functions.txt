@@ -1,0 +1,67 @@
+<%{
+	login_email = zoho.loginuserid;
+	login_details = Customer[Email == login_email];
+	sub_details = login_details.Subscription_Stage;
+	if(sub_details == "trial expired" || sub_details == "cancel" || sub_details == "paused")
+	{
+		openUrl("#Page:Error_Page","same window");
+	}
+	rec_data = Digital_Potal[ID == input.recordID];
+	invoice_data = Invoices[Patient_Name == input.recordID && Invoice_Status == "paid"];
+	invoice_no = invoice_data.Invoice_Number;
+	profName = thisapp.portal.profileForUser(login_email);
+	if(profName == "Customer")
+	{
+		download_link = "https://connor2301.zohocreatorportal.com/connor230/user-portal";
+	}
+	else
+	{
+		download_link = "https://creatorapp.zoho.com/connor230/user-portal";
+	}
+	href_download_link = download_link + "/report/Digital_Potal_Report/" + input.recordID + "/Finished_File/download-file?filepath=/" + rec_data.Finished_File;
+	submitted_file_link = download_link + "/#Report:View_Patient_Report?Case_Number=" + rec_data.Case_Number;
+	invoice_link = download_link + "/#Report:All_Invoices?Invoice_Number=" + invoice_no;
+	finished_file_download = download_link + "/#Form:Download_Button_Functionality?Record_ID=" + input.recordID + "&URL=" + href_download_link;
+	%>
+<div style="background: url('https://i.ibb.co/gtN6DS5/Digital-Portal-bg-001.jpg') no-repeat center center fixed; background-size: cover; color: white; font-family: Arial, sans-serif; padding: 20px; margin: 0; height: 100vh; display: flex; flex-direction: column; align-items: center;">
+    <!-- Header Section -->
+    <div style="text-align: center; margin-bottom: 30px; margin-top: 10px;">
+        <h1 style="font-size: 2.5rem; margin-bottom: 10px; font-weight: 400;">Case Overview</h1>
+        <p style="font-size: 1rem; margin-top: 0;">Access Your Past and Active Cases</p>
+    </div>
+
+    <!-- Patient and Case Information -->
+    <div style="width: 80%; max-width: 600px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.5); padding-bottom: 5px;">
+        <p style="font-size: 1.2rem; margin: 0; text-align: left; flex: 1;">
+            Patient: <%=rec_data.Patient_Name%>
+        </p>
+        <p style="font-size: 1.2rem; margin: 0; text-align: right; flex: 1;">
+            Case #<%=rec_data.Case_Number%>
+        </p>
+    </div>
+
+    <!-- Details Section -->
+    <div style="width: 80%; max-width: 600px; padding: 15px; margin-bottom: 30px;">
+        <p style="font-size: 1.2rem; margin-bottom: 10px;">Conversion Type: <span style="font-style: italic;"><%=rec_data.Conversion_Type%></span></p>
+        
+        <!-- Buttons -->
+        <a href = <%=submitted_file_link%>>
+        <button class="button-style" style="display: block; font-size: 1rem; padding: 0.5rem 1.5rem; width: 100%; margin: 10px 0; background: transparent; color: white; text-align: left; border: 2px solid white; border-radius: 9px; cursor: pointer; transition: background 0.3s, color 0.3s; position: relative;">
+            Files Submitted <span style="position: absolute; right: 15px; font-size: 1.2rem;">&gt;</span>
+        </button>
+        </a>
+        <a href = <%=invoice_link%>>
+        <button class="button-style" style="display: block; font-size: 1rem; padding: 0.5rem 1.5rem; width: 100%; margin: 10px 0; background: transparent; color: white; text-align: left; border: 2px solid white; border-radius: 9px; cursor: pointer; transition: background 0.3s, color 0.3s; position: relative;">
+            Invoice <span style="position: absolute; right: 15px; font-size: 1.2rem;">&gt;</span>
+        </button>
+        </a>
+    </div>
+    <!-- Download Button -->
+	
+   <a href= <%=finished_file_download%> style="text-decoration: none; display: inline-block; background-color: #5A3FFF; color: white; padding: 12px 24px; font-size: 1.2rem; border-radius: 50px; cursor: pointer; text-align: center;">
+        Download Finished Files Here
+    </a>
+</div>
+<%
+
+}%>
