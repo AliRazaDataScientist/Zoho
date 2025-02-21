@@ -1,0 +1,810 @@
+response = Map();
+response.put("action","context");
+response.put("context_id",context_id);
+if(context_id.equals("Marketing"))
+{
+	var = "Course Marketing";
+	Marketing = answers.get("Marketing").get("text");
+	if(!answers.containsKey("phone"))
+	{
+		question = {"name":"phone","replies":{"What's the best number to reach you?"},"input":{"type":"tel","placeholder":"Enter your phone number","value":" ","error":{"Enter a Valid Number"}}};
+		response.put("questions",{question});
+	}
+	else
+	{
+		phone = answers.get("phone").get("text");
+		if(!answers.containsKey("email"))
+		{
+			question = {"name":"email","replies":{"Please enter your *email*"},"input":{"type":"email","placeholder":"Enter your email","value":" ","error":{"Enter a Valid email"}},"field_name":"siq_email"};
+			response.put("questions",{question});
+		}
+		else
+		{
+			email = answers.get("email").get("text");
+			if(!answers.containsKey("website"))
+		{
+			question = {"name":"website","replies":{"Enter your *Website Address*"},"input":{"type":"name","placeholder":"Enter your website link","value":" ","error":{"Enter a Valid link"}}};
+			response.put("questions",{question});
+		}
+		else
+		{
+			website = answers.get("website").get("text");
+			//create lead
+		/*crmdata = zoho.crm.searchRecords("Leads","(Email:equals:" + email + ")",0,0,{"converted":"both"},"zoho_crm");
+		info crmdata;
+		if(!crmdata.isEmpty())
+		{
+			_crmdata = crmdata.get(0);
+			info _crmdata;
+			id = _crmdata.get("id");
+			module = "Leads";
+			if(_crmdata.get("$converted") == true)
+			{
+				converted_detail = _crmdata.get("$converted_detail").toMap();
+				id = converted_detail.get("contact");
+				info id;
+				module = "Contacts";
+			}
+			crmdata = zoho.crm.updateRecord(module,id,{"Phone":phone,"Lead_Source":"Chat","Lead_Status":"New","Chat_Inquiry":var,"Last_Name":Marketing,"Website_Address":website},Map(),"zoho_crm");
+		}
+		else
+		{
+			// create new lead
+			crmdata = zoho.crm.createRecord("Leads",{"Email":email,"Phone":phone,"Lead_Source":"Chat","Lead_Status":"New","Chat_Inquiry":var,"Last_Name":Marketing,"Website_Address":website},Map(),"zoho_crm");
+		}
+		info crmdata;
+		leadid = crmdata.get("id");
+		info leadid;*/
+		response.put("action","end");
+		response.put("replies",{"Thank you for your email, we got it.Check your inbox shortly to receive our latest newsletter."});
+			response.put("action","end");
+	response.put("replies",{"Please open the link","[https://jaypurnsley-skillzeal.zohobookings.com/#/customer/4326439000000027010](https://jaypurnsley-skillzeal.zohobookings.com/#/customer/4326439000000027010)"});
+		}
+		}
+	}
+}
+else if(context_id.equals("Automation"))
+{
+	var = "Course Automation";
+	Automation = answers.get("Automation").get("text");
+	if(!answers.containsKey("phone"))
+	{
+		question = {"name":"phone","replies":{"What's the best number to reach you?"},"input":{"type":"tel","placeholder":"Enter your phone number","value":" ","error":{"Enter a Valid Number"}}};
+		response.put("questions",{question});
+	}
+	else
+	{
+		phone = answers.get("phone").get("text");
+		if(!answers.containsKey("email"))
+		{
+			question = {"name":"email","replies":{"Please enter your *email*"},"input":{"type":"email","placeholder":"Enter your email","value":" ","error":{"Enter a Valid email"}},"field_name":"siq_email"};
+			response.put("questions",{question});
+		}
+		else
+		{
+			email = answers.get("email").get("text");
+			if(!answers.containsKey("website"))
+		{
+			question = {"name":"website","replies":{"Enter your *Website Address*"},"input":{"type":"name","placeholder":"Enter your website link","value":" ","error":{"Enter a Valid link"}}};
+			response.put("questions",{question});
+		}
+		else
+		{
+			website = answers.get("website").get("text");
+			//create lead
+		/*crmdata = zoho.crm.searchRecords("Leads","(Email:equals:" + email + ")",0,0,{"converted":"both"},"zoho_crm");
+		info crmdata;
+		if(!crmdata.isEmpty())
+		{
+			_crmdata = crmdata.get(0);
+			info _crmdata;
+			id = _crmdata.get("id");
+			module = "Leads";
+			if(_crmdata.get("$converted") == true)
+			{
+				converted_detail = _crmdata.get("$converted_detail").toMap();
+				id = converted_detail.get("contact");
+				info id;
+				module = "Contacts";
+			}
+			crmdata = zoho.crm.updateRecord(module,id,{"Phone":phone,"Lead_Source":"Chat","Lead_Status":"New","Chat_Inquiry":var,"Last_Name":Automation,"Website_Address":website},Map(),"zoho_crm");
+		}
+		else
+		{
+			// create new lead
+			crmdata = zoho.crm.createRecord("Leads",{"Email":email,"Phone":phone,"Lead_Source":"Chat","Lead_Status":"New","Chat_Inquiry":var,"Last_Name":Automation,"Website_Address":website},Map(),"zoho_crm");
+		}
+		info crmdata;
+		leadid = crmdata.get("id");
+		info leadid;*/
+		response.put("action","end");
+		response.put("replies",{"Thank you for your email, we got it.Check your inbox shortly to receive our latest newsletter."});
+			response.put("action","end");
+	response.put("replies",{"Please open the link","[https://jaypurnsley-skillzeal.zohobookings.com/#/customer/4326439000000027010](https://jaypurnsley-skillzeal.zohobookings.com/#/customer/4326439000000027010)"});
+		}
+		}
+	}
+}
+else if(context_id.equals("Pages"))
+{
+	var = "Landing Pages";
+	Pages = answers.get("Pages").get("text");
+	if(!answers.containsKey("phone"))
+	{
+		question = {"name":"phone","replies":{"What's the best number to reach you?"},"input":{"type":"tel","placeholder":"Enter your phone number","value":" ","error":{"Enter a Valid Number"}}};
+		response.put("questions",{question});
+	}
+	else
+	{
+		phone = answers.get("phone").get("text");
+		if(!answers.containsKey("email"))
+		{
+			question = {"name":"email","replies":{"Please enter your *email*"},"input":{"type":"email","placeholder":"Enter your email","value":" ","error":{"Enter a Valid email"}},"field_name":"siq_email"};
+			response.put("questions",{question});
+		}
+		else
+		{
+			email = answers.get("email").get("text");
+			if(!answers.containsKey("website"))
+		{
+			question = {"name":"website","replies":{"Enter your *Website Address*"},"input":{"type":"name","placeholder":"Enter your website link","value":" ","error":{"Enter a Valid link"}}};
+			response.put("questions",{question});
+		}
+		else
+		{
+			website = answers.get("website").get("text");
+			//create lead
+		/*crmdata = zoho.crm.searchRecords("Leads","(Email:equals:" + email + ")",0,0,{"converted":"both"},"zoho_crm");
+		info crmdata;
+		if(!crmdata.isEmpty())
+		{
+			_crmdata = crmdata.get(0);
+			info _crmdata;
+			id = _crmdata.get("id");
+			module = "Leads";
+			if(_crmdata.get("$converted") == true)
+			{
+				converted_detail = _crmdata.get("$converted_detail").toMap();
+				id = converted_detail.get("contact");
+				info id;
+				module = "Contacts";
+			}
+			crmdata = zoho.crm.updateRecord(module,id,{"Phone":phone,"Lead_Source":"Chat","Lead_Status":"New","Chat_Inquiry":var,"Last_Name":Pages,"Website_Address":website},Map(),"zoho_crm");
+		}
+		else
+		{
+			// create new lead
+			crmdata = zoho.crm.createRecord("Leads",{"Email":email,"Phone":phone,"Lead_Source":"Chat","Lead_Status":"New","Chat_Inquiry":var,"Last_Name":Pages,"Website_Address":website},Map(),"zoho_crm");
+		}
+		info crmdata;
+		leadid = crmdata.get("id");
+		info leadid;*/
+		response.put("action","end");
+		response.put("replies",{"Thank you for your email, we got it.Check your inbox shortly to receive our latest newsletter."});
+			response.put("action","end");
+	response.put("replies",{"Please open the link","[https://jaypurnsley-skillzeal.zohobookings.com/#/customer/4326439000000027010](https://jaypurnsley-skillzeal.zohobookings.com/#/customer/4326439000000027010)"});
+		}
+		}
+	}
+}
+else if(context_id.equals("Click"))
+{
+	var = "Pay Per Click";
+	Click = answers.get("Click").get("text");
+	if(!answers.containsKey("phone"))
+	{
+		question = {"name":"phone","replies":{"What's the best number to reach you?"},"input":{"type":"tel","placeholder":"Enter your phone number","value":" ","error":{"Enter a Valid Number"}}};
+		response.put("questions",{question});
+	}
+	else
+	{
+		phone = answers.get("phone").get("text");
+		if(!answers.containsKey("email"))
+		{
+			question = {"name":"email","replies":{"Please enter your *email*"},"input":{"type":"email","placeholder":"Enter your email","value":" ","error":{"Enter a Valid email"}},"field_name":"siq_email"};
+			response.put("questions",{question});
+		}
+		else
+		{
+			email = answers.get("email").get("text");
+			if(!answers.containsKey("website"))
+		{
+			question = {"name":"website","replies":{"Enter your *Website Address*"},"input":{"type":"name","placeholder":"Enter your website link","value":" ","error":{"Enter a Valid link"}}};
+			response.put("questions",{question});
+		}
+		else
+		{
+			website = answers.get("website").get("text");
+			//create lead
+		/*crmdata = zoho.crm.searchRecords("Leads","(Email:equals:" + email + ")",0,0,{"converted":"both"},"zoho_crm");
+		info crmdata;
+		if(!crmdata.isEmpty())
+		{
+			_crmdata = crmdata.get(0);
+			info _crmdata;
+			id = _crmdata.get("id");
+			module = "Leads";
+			if(_crmdata.get("$converted") == true)
+			{
+				converted_detail = _crmdata.get("$converted_detail").toMap();
+				id = converted_detail.get("contact");
+				info id;
+				module = "Contacts";
+			}
+			crmdata = zoho.crm.updateRecord(module,id,{"Phone":phone,"Lead_Source":"Chat","Lead_Status":"New","Chat_Inquiry":var,"Last_Name":Click,"Website_Address":website},Map(),"zoho_crm");
+		}
+		else
+		{
+			// create new lead
+			crmdata = zoho.crm.createRecord("Leads",{"Email":email,"Phone":phone,"Lead_Source":"Chat","Lead_Status":"New","Chat_Inquiry":var,"Last_Name":Click,"Website_Address":website},Map(),"zoho_crm");
+		}
+		info crmdata;
+		leadid = crmdata.get("id");
+		info leadid;*/
+		response.put("action","end");
+		response.put("replies",{"Thank you for your email, we got it.Check your inbox shortly to receive our latest newsletter."});
+			response.put("action","end");
+	response.put("replies",{"Please open the link","[https://jaypurnsley-skillzeal.zohobookings.com/#/customer/4326439000000027010](https://jaypurnsley-skillzeal.zohobookings.com/#/customer/4326439000000027010)"});
+		}
+		}
+	}
+}
+else if(context_id.equals("Design"))
+{
+	var = "Web Design";
+	Design = answers.get("Design").get("text");
+	if(!answers.containsKey("phone"))
+	{
+		question = {"name":"phone","replies":{"What's the best number to reach you?"},"input":{"type":"tel","placeholder":"Enter your phone number","value":" ","error":{"Enter a Valid Number"}}};
+		response.put("questions",{question});
+	}
+	else
+	{
+		phone = answers.get("phone").get("text");
+		if(!answers.containsKey("email"))
+		{
+			question = {"name":"email","replies":{"Please enter your *email*"},"input":{"type":"email","placeholder":"Enter your email","value":" ","error":{"Enter a Valid email"}},"field_name":"siq_email"};
+			response.put("questions",{question});
+		}
+		else
+		{
+			email = answers.get("email").get("text");
+			if(!answers.containsKey("website"))
+		{
+			question = {"name":"website","replies":{"Enter your *Website Address*"},"input":{"type":"name","placeholder":"Enter your website link","value":" ","error":{"Enter a Valid link"}}};
+			response.put("questions",{question});
+		}
+		else
+		{
+			website = answers.get("website").get("text");
+			//create lead
+		/*crmdata = zoho.crm.searchRecords("Leads","(Email:equals:" + email + ")",0,0,{"converted":"both"},"zoho_crm");
+		info crmdata;
+		if(!crmdata.isEmpty())
+		{
+			_crmdata = crmdata.get(0);
+			info _crmdata;
+			id = _crmdata.get("id");
+			module = "Leads";
+			if(_crmdata.get("$converted") == true)
+			{
+				converted_detail = _crmdata.get("$converted_detail").toMap();
+				id = converted_detail.get("contact");
+				info id;
+				module = "Contacts";
+			}
+			crmdata = zoho.crm.updateRecord(module,id,{"Phone":phone,"Lead_Source":"Chat","Lead_Status":"New","Chat_Inquiry":var,"Last_Name":Design,"Website_Address":website},Map(),"zoho_crm");
+		}
+		else
+		{
+			// create new lead
+			crmdata = zoho.crm.createRecord("Leads",{"Email":email,"Phone":phone,"Lead_Source":"Chat","Lead_Status":"New","Chat_Inquiry":var,"Last_Name":Design,"Website_Address":website},Map(),"zoho_crm");
+		}
+		info crmdata;
+		leadid = crmdata.get("id");
+		info leadid;*/
+		response.put("action","end");
+		response.put("replies",{"Thank you for your email, we got it.Check your inbox shortly to receive our latest newsletter."});
+			response.put("action","end");
+	response.put("replies",{"Please open the link","[https://jaypurnsley-skillzeal.zohobookings.com/#/customer/4326439000000027010](https://jaypurnsley-skillzeal.zohobookings.com/#/customer/4326439000000027010)"});
+		}
+		}
+	}
+}
+else if(context_id.equals("Optimization"))
+{
+	var = "Conversion Rate Optimization";
+	Optimization = answers.get("Optimization").get("text");
+	if(!answers.containsKey("phone"))
+	{
+		question = {"name":"phone","replies":{"What's the best number to reach you?"},"input":{"type":"tel","placeholder":"Enter your phone number","value":" ","error":{"Enter a Valid Number"}}};
+		response.put("questions",{question});
+	}
+	else
+	{
+		phone = answers.get("phone").get("text");
+		if(!answers.containsKey("email"))
+		{
+			question = {"name":"email","replies":{"Please enter your *email*"},"input":{"type":"email","placeholder":"Enter your email","value":" ","error":{"Enter a Valid email"}},"field_name":"siq_email"};
+			response.put("questions",{question});
+		}
+		else
+		{
+			email = answers.get("email").get("text");
+			if(!answers.containsKey("website"))
+		{
+			question = {"name":"website","replies":{"Enter your *Website Address*"},"input":{"type":"name","placeholder":"Enter your website link","value":" ","error":{"Enter a Valid link"}}};
+			response.put("questions",{question});
+		}
+		else
+		{
+			website = answers.get("website").get("text");
+			//create lead
+		/*crmdata = zoho.crm.searchRecords("Leads","(Email:equals:" + email + ")",0,0,{"converted":"both"},"zoho_crm");
+		info crmdata;
+		if(!crmdata.isEmpty())
+		{
+			_crmdata = crmdata.get(0);
+			info _crmdata;
+			id = _crmdata.get("id");
+			module = "Leads";
+			if(_crmdata.get("$converted") == true)
+			{
+				converted_detail = _crmdata.get("$converted_detail").toMap();
+				id = converted_detail.get("contact");
+				info id;
+				module = "Contacts";
+			}
+			crmdata = zoho.crm.updateRecord(module,id,{"Phone":phone,"Lead_Source":"Chat","Lead_Status":"New","Chat_Inquiry":var,"Last_Name":Optimization,"Website_Address":website},Map(),"zoho_crm");
+		}
+		else
+		{
+			// create new lead
+			crmdata = zoho.crm.createRecord("Leads",{"Email":email,"Phone":phone,"Lead_Source":"Chat","Lead_Status":"New","Chat_Inquiry":var,"Last_Name":Optimization,"Website_Address":website},Map(),"zoho_crm");
+		}
+		info crmdata;
+		leadid = crmdata.get("id");
+		info leadid;*/
+		response.put("action","end");
+		response.put("replies",{"Thank you for your email, we got it.Check your inbox shortly to receive our latest newsletter."});
+			response.put("action","end");
+	response.put("replies",{"Please open the link","[https://jaypurnsley-skillzeal.zohobookings.com/#/customer/4326439000000027010](https://jaypurnsley-skillzeal.zohobookings.com/#/customer/4326439000000027010)"});
+		}
+		}
+	}
+}
+else if(context_id.equals("Email"))
+{
+	var = "Email Marketing";
+	Email = answers.get("Email").get("text");
+	if(!answers.containsKey("phone"))
+	{
+		question = {"name":"phone","replies":{"What's the best number to reach you?"},"input":{"type":"tel","placeholder":"Enter your phone number","value":" ","error":{"Enter a Valid Number"}}};
+		response.put("questions",{question});
+	}
+	else
+	{
+		phone = answers.get("phone").get("text");
+		if(!answers.containsKey("email"))
+		{
+			question = {"name":"email","replies":{"Please enter your *email*"},"input":{"type":"email","placeholder":"Enter your email","value":" ","error":{"Enter a Valid email"}},"field_name":"siq_email"};
+			response.put("questions",{question});
+		}
+		else
+		{
+			email = answers.get("email").get("text");
+			if(!answers.containsKey("website"))
+		{
+			question = {"name":"website","replies":{"Enter your *Website Address*"},"input":{"type":"name","placeholder":"Enter your website link","value":" ","error":{"Enter a Valid link"}}};
+			response.put("questions",{question});
+		}
+		else
+		{
+			website = answers.get("website").get("text");
+			//create lead
+		/*crmdata = zoho.crm.searchRecords("Leads","(Email:equals:" + email + ")",0,0,{"converted":"both"},"zoho_crm");
+		info crmdata;
+		if(!crmdata.isEmpty())
+		{
+			_crmdata = crmdata.get(0);
+			info _crmdata;
+			id = _crmdata.get("id");
+			module = "Leads";
+			if(_crmdata.get("$converted") == true)
+			{
+				converted_detail = _crmdata.get("$converted_detail").toMap();
+				id = converted_detail.get("contact");
+				info id;
+				module = "Contacts";
+			}
+			crmdata = zoho.crm.updateRecord(module,id,{"Phone":phone,"Lead_Source":"Chat","Lead_Status":"New","Chat_Inquiry":var,"Last_Name":Email,"Website_Address":website},Map(),"zoho_crm");
+		}
+		else
+		{
+			// create new lead
+			crmdata = zoho.crm.createRecord("Leads",{"Email":email,"Phone":phone,"Lead_Source":"Chat","Lead_Status":"New","Chat_Inquiry":var,"Last_Name":Email,"Website_Address":website},Map(),"zoho_crm");
+		}
+		info crmdata;
+		leadid = crmdata.get("id");
+		info leadid;*/
+		response.put("action","end");
+		response.put("replies",{"Thank you for your email, we got it.Check your inbox shortly to receive our latest newsletter."});
+			response.put("action","end");
+	response.put("replies",{"Please open the link","[https://jaypurnsley-skillzeal.zohobookings.com/#/customer/4326439000000027010](https://jaypurnsley-skillzeal.zohobookings.com/#/customer/4326439000000027010)"});
+		}
+		}
+	}
+}
+else if(context_id.equals("Lead"))
+{
+	var = "Lead Generation";
+	Lead = answers.get("Lead").get("text");
+	if(!answers.containsKey("phone"))
+	{
+		question = {"name":"phone","replies":{"What's the best number to reach you?"},"input":{"type":"tel","placeholder":"Enter your phone number","value":" ","error":{"Enter a Valid Number"}}};
+		response.put("questions",{question});
+	}
+	else
+	{
+		phone = answers.get("phone").get("text");
+		if(!answers.containsKey("email"))
+		{
+			question = {"name":"email","replies":{"Please enter your *email*"},"input":{"type":"email","placeholder":"Enter your email","value":" ","error":{"Enter a Valid email"}},"field_name":"siq_email"};
+			response.put("questions",{question});
+		}
+		else
+		{
+			email = answers.get("email").get("text");
+			if(!answers.containsKey("website"))
+		{
+			question = {"name":"website","replies":{"Enter your *Website Address*"},"input":{"type":"name","placeholder":"Enter your website link","value":" ","error":{"Enter a Valid link"}}};
+			response.put("questions",{question});
+		}
+		else
+		{
+			website = answers.get("website").get("text");
+			//create lead
+		/*crmdata = zoho.crm.searchRecords("Leads","(Email:equals:" + email + ")",0,0,{"converted":"both"},"zoho_crm");
+		info crmdata;
+		if(!crmdata.isEmpty())
+		{
+			_crmdata = crmdata.get(0);
+			info _crmdata;
+			id = _crmdata.get("id");
+			module = "Leads";
+			if(_crmdata.get("$converted") == true)
+			{
+				converted_detail = _crmdata.get("$converted_detail").toMap();
+				id = converted_detail.get("contact");
+				info id;
+				module = "Contacts";
+			}
+			crmdata = zoho.crm.updateRecord(module,id,{"Phone":phone,"Lead_Source":"Chat","Lead_Status":"New","Chat_Inquiry":var,"Last_Name":Lead,"Website_Address":website},Map(),"zoho_crm");
+		}
+		else
+		{
+			// create new lead
+			crmdata = zoho.crm.createRecord("Leads",{"Email":email,"Phone":phone,"Lead_Source":"Chat","Lead_Status":"New","Chat_Inquiry":var,"Last_Name":Lead,"Website_Address":website},Map(),"zoho_crm");
+		}
+		info crmdata;
+		leadid = crmdata.get("id");
+		info leadid;*/
+		response.put("action","end");
+		response.put("replies",{"Thank you for your email, we got it.Check your inbox shortly to receive our latest newsletter."});
+			response.put("action","end");
+	response.put("replies",{"Please open the link","[https://jaypurnsley-skillzeal.zohobookings.com/#/customer/4326439000000027010](https://jaypurnsley-skillzeal.zohobookings.com/#/customer/4326439000000027010)"});
+		}
+		}
+	}
+}
+else if(context_id.equals("Social"))
+{
+	var = "Social Media";
+	Social = answers.get("Social").get("text");
+	if(!answers.containsKey("phone"))
+	{
+		question = {"name":"phone","replies":{"What's the best number to reach you?"},"input":{"type":"tel","placeholder":"Enter your phone number","value":" ","error":{"Enter a Valid Number"}}};
+		response.put("questions",{question});
+	}
+	else
+	{
+		phone = answers.get("phone").get("text");
+		if(!answers.containsKey("email"))
+		{
+			question = {"name":"email","replies":{"Please enter your *email*"},"input":{"type":"email","placeholder":"Enter your email","value":" ","error":{"Enter a Valid email"}},"field_name":"siq_email"};
+			response.put("questions",{question});
+		}
+		else
+		{
+			email = answers.get("email").get("text");
+			if(!answers.containsKey("website"))
+		{
+			question = {"name":"website","replies":{"Enter your *Website Address*"},"input":{"type":"name","placeholder":"Enter your website link","value":" ","error":{"Enter a Valid link"}}};
+			response.put("questions",{question});
+		}
+		else
+		{
+			website = answers.get("website").get("text");
+			//create lead
+		/*crmdata = zoho.crm.searchRecords("Leads","(Email:equals:" + email + ")",0,0,{"converted":"both"},"zoho_crm");
+		info crmdata;
+		if(!crmdata.isEmpty())
+		{
+			_crmdata = crmdata.get(0);
+			info _crmdata;
+			id = _crmdata.get("id");
+			module = "Leads";
+			if(_crmdata.get("$converted") == true)
+			{
+				converted_detail = _crmdata.get("$converted_detail").toMap();
+				id = converted_detail.get("contact");
+				info id;
+				module = "Contacts";
+			}
+			crmdata = zoho.crm.updateRecord(module,id,{"Phone":phone,"Lead_Source":"Chat","Lead_Status":"New","Chat_Inquiry":var,"Last_Name":Social,"Website_Address":website},Map(),"zoho_crm");
+		}
+		else
+		{
+			// create new lead
+			crmdata = zoho.crm.createRecord("Leads",{"Email":email,"Phone":phone,"Lead_Source":"Chat","Lead_Status":"New","Chat_Inquiry":var,"Last_Name":Social,"Website_Address":website},Map(),"zoho_crm");
+		}
+		info crmdata;
+		leadid = crmdata.get("id");
+		info leadid;*/
+		response.put("action","end");
+		response.put("replies",{"Thank you for your email, we got it.Check your inbox shortly to receive our latest newsletter."});
+			response.put("action","end");
+	response.put("replies",{"Please open the link","[https://jaypurnsley-skillzeal.zohobookings.com/#/customer/4326439000000027010](https://jaypurnsley-skillzeal.zohobookings.com/#/customer/4326439000000027010)"});
+		}
+		}
+	}
+}
+else if(context_id.equals("eCommerce"))
+{
+	var = "eCommerce Marketing";
+	eCommerce = answers.get("eCommerce").get("text");
+	if(!answers.containsKey("phone"))
+	{
+		question = {"name":"phone","replies":{"What's the best number to reach you?"},"input":{"type":"tel","placeholder":"Enter your phone number","value":" ","error":{"Enter a Valid Number"}}};
+		response.put("questions",{question});
+	}
+	else
+	{
+		phone = answers.get("phone").get("text");
+		if(!answers.containsKey("email"))
+		{
+			question = {"name":"email","replies":{"Please enter your *email*"},"input":{"type":"email","placeholder":"Enter your email","value":" ","error":{"Enter a Valid email"}},"field_name":"siq_email"};
+			response.put("questions",{question});
+		}
+		else
+		{
+			email = answers.get("email").get("text");
+			if(!answers.containsKey("website"))
+		{
+			question = {"name":"website","replies":{"Enter your *Website Address*"},"input":{"type":"name","placeholder":"Enter your website link","value":" ","error":{"Enter a Valid link"}}};
+			response.put("questions",{question});
+		}
+		else
+		{
+			website = answers.get("website").get("text");
+			//create lead
+		/*crmdata = zoho.crm.searchRecords("Leads","(Email:equals:" + email + ")",0,0,{"converted":"both"},"zoho_crm");
+		info crmdata;
+		if(!crmdata.isEmpty())
+		{
+			_crmdata = crmdata.get(0);
+			info _crmdata;
+			id = _crmdata.get("id");
+			module = "Leads";
+			if(_crmdata.get("$converted") == true)
+			{
+				converted_detail = _crmdata.get("$converted_detail").toMap();
+				id = converted_detail.get("contact");
+				info id;
+				module = "Contacts";
+			}
+			crmdata = zoho.crm.updateRecord(module,id,{"Phone":phone,"Lead_Source":"Chat","Lead_Status":"New","Chat_Inquiry":var,"Last_Name":eCommerce,"Website_Address":website},Map(),"zoho_crm");
+		}
+		else
+		{
+			// create new lead
+			crmdata = zoho.crm.createRecord("Leads",{"Email":email,"Phone":phone,"Lead_Source":"Chat","Lead_Status":"New","Chat_Inquiry":var,"Last_Name":eCommerce,"Website_Address":website},Map(),"zoho_crm");
+		}
+		info crmdata;
+		leadid = crmdata.get("id");
+		info leadid;*/
+		response.put("action","end");
+		response.put("replies",{"Thank you for your email, we got it.Check your inbox shortly to receive our latest newsletter."});
+			response.put("action","end");
+	response.put("replies",{"Please open the link","[https://jaypurnsley-skillzeal.zohobookings.com/#/customer/4326439000000027010](https://jaypurnsley-skillzeal.zohobookings.com/#/customer/4326439000000027010)"});
+		}
+		}
+	}
+}
+else if(context_id.equals("SEO"))
+{
+	var = "Local SEO";
+	SEO = answers.get("SEO").get("text");
+	if(!answers.containsKey("phone"))
+	{
+		question = {"name":"phone","replies":{"What's the best number to reach you?"},"input":{"type":"tel","placeholder":"Enter your phone number","value":" ","error":{"Enter a Valid Number"}}};
+		response.put("questions",{question});
+	}
+	else
+	{
+		phone = answers.get("phone").get("text");
+		if(!answers.containsKey("email"))
+		{
+			question = {"name":"email","replies":{"Please enter your *email*"},"input":{"type":"email","placeholder":"Enter your email","value":" ","error":{"Enter a Valid email"}},"field_name":"siq_email"};
+			response.put("questions",{question});
+		}
+		else
+		{
+			email = answers.get("email").get("text");
+			if(!answers.containsKey("website"))
+		{
+			question = {"name":"website","replies":{"Enter your *Website Address*"},"input":{"type":"name","placeholder":"Enter your website link","value":" ","error":{"Enter a Valid link"}}};
+			response.put("questions",{question});
+		}
+		else
+		{
+			website = answers.get("website").get("text");
+			//create lead
+		/*crmdata = zoho.crm.searchRecords("Leads","(Email:equals:" + email + ")",0,0,{"converted":"both"},"zoho_crm");
+		info crmdata;
+		if(!crmdata.isEmpty())
+		{
+			_crmdata = crmdata.get(0);
+			info _crmdata;
+			id = _crmdata.get("id");
+			module = "Leads";
+			if(_crmdata.get("$converted") == true)
+			{
+				converted_detail = _crmdata.get("$converted_detail").toMap();
+				id = converted_detail.get("contact");
+				info id;
+				module = "Contacts";
+			}
+			crmdata = zoho.crm.updateRecord(module,id,{"Phone":phone,"Lead_Source":"Chat","Lead_Status":"New","Chat_Inquiry":var,"Last_Name":SEO,"Website_Address":website},Map(),"zoho_crm");
+		}
+		else
+		{
+			// create new lead
+			crmdata = zoho.crm.createRecord("Leads",{"Email":email,"Phone":phone,"Lead_Source":"Chat","Lead_Status":"New","Chat_Inquiry":var,"Last_Name":SEO,"Website_Address":website},Map(),"zoho_crm");
+		}
+		info crmdata;
+		leadid = crmdata.get("id");
+		info leadid;*/
+		response.put("action","end");
+		response.put("replies",{"Thank you for your email, we got it.Check your inbox shortly to receive our latest newsletter."});
+			response.put("action","end");
+	response.put("replies",{"Please open the link","[https://jaypurnsley-skillzeal.zohobookings.com/#/customer/4326439000000027010](https://jaypurnsley-skillzeal.zohobookings.com/#/customer/4326439000000027010)"});
+		}
+		}
+	}
+}
+else if(context_id.equals("Video"))
+{
+	var = "Video Marketing";
+	Video = answers.get("Video").get("text");
+	if(!answers.containsKey("phone"))
+	{
+		question = {"name":"phone","replies":{"What's the best number to reach you?"},"input":{"type":"tel","placeholder":"Enter your phone number","value":" ","error":{"Enter a Valid Number"}}};
+		response.put("questions",{question});
+	}
+	else
+	{
+		phone = answers.get("phone").get("text");
+		if(!answers.containsKey("email"))
+		{
+			question = {"name":"email","replies":{"Please enter your *email*"},"input":{"type":"email","placeholder":"Enter your email","value":" ","error":{"Enter a Valid email"}},"field_name":"siq_email"};
+			response.put("questions",{question});
+		}
+		else
+		{
+			email = answers.get("email").get("text");
+			if(!answers.containsKey("website"))
+		{
+			question = {"name":"website","replies":{"Enter your *Website Address*"},"input":{"type":"name","placeholder":"Enter your website link","value":" ","error":{"Enter a Valid link"}}};
+			response.put("questions",{question});
+		}
+		else
+		{
+			website = answers.get("website").get("text");
+			//create lead
+		/*crmdata = zoho.crm.searchRecords("Leads","(Email:equals:" + email + ")",0,0,{"converted":"both"},"zoho_crm");
+		info crmdata;
+		if(!crmdata.isEmpty())
+		{
+			_crmdata = crmdata.get(0);
+			info _crmdata;
+			id = _crmdata.get("id");
+			module = "Leads";
+			if(_crmdata.get("$converted") == true)
+			{
+				converted_detail = _crmdata.get("$converted_detail").toMap();
+				id = converted_detail.get("contact");
+				info id;
+				module = "Contacts";
+			}
+			crmdata = zoho.crm.updateRecord(module,id,{"Phone":phone,"Lead_Source":"Chat","Lead_Status":"New","Chat_Inquiry":var,"Last_Name":Video,"Website_Address":website},Map(),"zoho_crm");
+		}
+		else
+		{
+			// create new lead
+			crmdata = zoho.crm.createRecord("Leads",{"Email":email,"Phone":phone,"Lead_Source":"Chat","Lead_Status":"New","Chat_Inquiry":var,"Last_Name":Video,"Website_Address":website},Map(),"zoho_crm");
+		}
+		info crmdata;
+		leadid = crmdata.get("id");
+		info leadid;*/
+		response.put("action","end");
+		response.put("replies",{"Thank you for your email, we got it.Check your inbox shortly to receive our latest newsletter."});
+			response.put("action","end");
+	response.put("replies",{"Please open the link","[https://jaypurnsley-skillzeal.zohobookings.com/#/customer/4326439000000027010](https://jaypurnsley-skillzeal.zohobookings.com/#/customer/4326439000000027010)"});
+		}
+		}
+	}
+}
+else if(context_id.equals("Copywriting"))
+{
+	var = "Copywriting";
+	Copywriting = answers.get("Copywriting").get("text");
+	if(!answers.containsKey("phone"))
+	{
+		question = {"name":"phone","replies":{"What's the best number to reach you?"},"input":{"type":"tel","placeholder":"Enter your phone number","value":" ","error":{"Enter a Valid Number"}}};
+		response.put("questions",{question});
+	}
+	else
+	{
+		phone = answers.get("phone").get("text");
+		if(!answers.containsKey("email"))
+		{
+			question = {"name":"email","replies":{"Please enter your *email*"},"input":{"type":"email","placeholder":"Enter your email","value":" ","error":{"Enter a Valid email"}},"field_name":"siq_email"};
+			response.put("questions",{question});
+		}
+		else
+		{
+			email = answers.get("email").get("text");
+			if(!answers.containsKey("website"))
+		{
+			question = {"name":"website","replies":{"Enter your *Website Address*"},"input":{"type":"name","placeholder":"Enter your website link","value":" ","error":{"Enter a Valid link"}}};
+			response.put("questions",{question});
+		}
+		else
+		{
+			website = answers.get("website").get("text");
+			//create lead
+		/*crmdata = zoho.crm.searchRecords("Leads","(Email:equals:" + email + ")",0,0,{"converted":"both"},"zoho_crm");
+		info crmdata;
+		if(!crmdata.isEmpty())
+		{
+			_crmdata = crmdata.get(0);
+			info _crmdata;
+			id = _crmdata.get("id");
+			module = "Leads";
+			if(_crmdata.get("$converted") == true)
+			{
+				converted_detail = _crmdata.get("$converted_detail").toMap();
+				id = converted_detail.get("contact");
+				info id;
+				module = "Contacts";
+			}
+			crmdata = zoho.crm.updateRecord(module,id,{"Phone":phone,"Lead_Source":"Chat","Lead_Status":"New","Chat_Inquiry":var,"Last_Name":Copywriting,"Website_Address":website},Map(),"zoho_crm");
+		}
+		else
+		{
+			// create new lead
+			crmdata = zoho.crm.createRecord("Leads",{"Email":email,"Phone":phone,"Lead_Source":"Chat","Lead_Status":"New","Chat_Inquiry":var,"Last_Name":Copywriting,"Website_Address":website},Map(),"zoho_crm");
+		}
+		info crmdata;
+		leadid = crmdata.get("id");
+		info leadid;*/
+		response.put("action","end");
+		response.put("replies",{"Thank you for your email, we got it.Check your inbox shortly to receive our latest newsletter."});
+			response.put("action","end");
+	response.put("replies",{"Please open the link","[https://jaypurnsley-skillzeal.zohobookings.com/#/customer/4326439000000027010](https://jaypurnsley-skillzeal.zohobookings.com/#/customer/4326439000000027010)"});
+		}
+		}
+	}
+}
+return response;

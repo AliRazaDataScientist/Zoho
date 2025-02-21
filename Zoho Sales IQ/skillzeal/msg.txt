@@ -1,0 +1,94 @@
+response = Map();
+msg = message.get("text");
+if(msg.equalsIgnoreCase("Automation"))
+{
+	response.put("action","context");
+	response.put("context_id","Automation");
+ 	question = {"name":"Automation","replies":{"What is your *Business Name*? "},"input":{"type":"name","placeholder":"Enter your Business Name","value":" ","error":{"Enter a Business Name"}}};
+	response.put("questions",{question});
+}
+else if(msg.equalsIgnoreCase("Course Marketing"))
+{
+	response.put("action","context");
+	response.put("context_id","Marketing");
+ 	question = {"name":"Marketing","replies":{"What is your *Business Name*? "},"input":{"type":"name","placeholder":"Enter your Business Name","value":" ","error":{"Enter a Business Name"}}};
+	response.put("questions",{question});
+}
+else if(msg.equalsIgnoreCase("Landing Pages"))
+{
+	response.put("action","context");
+	response.put("context_id","Pages");
+ 	question = {"name":"Pages","replies":{"What is your *Business Name*? "},"input":{"type":"name","placeholder":"Enter your Business Name","value":" ","error":{"Enter a Business Name"}}};
+	response.put("questions",{question});
+}
+else if(msg.equalsIgnoreCase("Pay Per Click"))
+{
+	response.put("action","context");
+	response.put("context_id","Click");
+ 	question = {"name":"Click","replies":{"What is your *Business Name*? "},"input":{"type":"name","placeholder":"Enter your Business Name","value":" ","error":{"Enter a Business Name"}}};
+	response.put("questions",{question});
+}
+else if(msg.equalsIgnoreCase("Web Design"))
+{
+	response.put("action","context");
+	response.put("context_id","Design");
+ 	question = {"name":"Design","replies":{"What is your *Business Name*? "},"input":{"type":"name","placeholder":"Enter your Business Name","value":" ","error":{"Enter a Business Name"}}};
+	response.put("questions",{question});
+}
+else if(msg.equalsIgnoreCase("Conversion Rate Optimization"))
+{
+	response.put("action","context");
+	response.put("context_id","Optimization");
+ 	question = {"name":"Optimization","replies":{"What is your *Business Name*? "},"input":{"type":"name","placeholder":"Enter your Business Name","value":" ","error":{"Enter a Business Name"}}};
+	response.put("questions",{question});
+}
+else if(msg.equalsIgnoreCase("Email Marketing"))
+{
+	response.put("action","context");
+	response.put("context_id","Email");
+ 	question = {"name":"Email","replies":{"What is your *Business Name*? "},"input":{"type":"name","placeholder":"Enter your Business Name","value":" ","error":{"Enter a Business Name"}}};
+	response.put("questions",{question});
+}
+else if(msg.equalsIgnoreCase("Lead Generation"))
+{
+	response.put("action","context");
+	response.put("context_id","Lead");
+ 	question = {"name":"Lead","replies":{"What is your *Business Name*? "},"input":{"type":"name","placeholder":"Enter your Business Name","value":" ","error":{"Enter a Business Name"}}};
+	response.put("questions",{question});
+}
+else if(msg.equalsIgnoreCase("Social Media"))
+{
+	response.put("action","context");
+	response.put("context_id","Social");
+ 	question = {"name":"Social","replies":{"What is your *Business Name*? "},"input":{"type":"name","placeholder":"Enter your Business Name","value":" ","error":{"Enter a Business Name"}}};
+	response.put("questions",{question});
+}
+else if(msg.equalsIgnoreCase("eCommerce Marketing"))
+{
+	response.put("action","context");
+	response.put("context_id","eCommerce");
+ 	question = {"name":"eCommerce","replies":{"What is your *Business Name*? "},"input":{"type":"name","placeholder":"Enter your Business Name","value":" ","error":{"Enter a Business Name"}}};
+	response.put("questions",{question});
+}
+else if(msg.equalsIgnoreCase("Local SEO"))
+{
+	response.put("action","context");
+	response.put("context_id","SEO");
+ 	question = {"name":"SEO","replies":{"What is your *Business Name*? "},"input":{"type":"name","placeholder":"Enter your Business Name","value":" ","error":{"Enter a Business Name"}}};
+	response.put("questions",{question});
+}
+else if(msg.equalsIgnoreCase("Video Marketing"))
+{
+	response.put("action","context");
+	response.put("context_id","Video");
+ 	question = {"name":"Video","replies":{"What is your *Business Name*? "},"input":{"type":"name","placeholder":"Enter your Business Name","value":" ","error":{"Enter a Business Name"}}};
+	response.put("questions",{question});
+}
+else if(msg.equalsIgnoreCase("Copywriting"))
+{
+	response.put("action","context");
+	response.put("context_id","Copywriting");
+ 	question = {"name":"Copywriting","replies":{"What is your *Business Name*? "},"input":{"type":"name","placeholder":"Enter your Business Name","value":" ","error":{"Enter a Business Name"}}};
+	response.put("questions",{question});
+}
+return response;
