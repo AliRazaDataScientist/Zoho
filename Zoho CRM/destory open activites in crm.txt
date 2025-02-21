@@ -1,0 +1,14 @@
+reltask = zoho.crm.getRelatedRecords("Activities","Contacts",id);
+if(reltask.size() > 0)
+{
+	for each  rec in reltask
+	{
+		status = rec.get("Status");
+		info status;
+		if(status != "Completed")
+		{
+			update = zoho.crm.invokeConnector("crm.delete",{"module":"Tasks","id":rec.get("id")});
+			info update;
+		}
+	}
+}
