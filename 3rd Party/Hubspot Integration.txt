@@ -1,0 +1,23 @@
+id =5940017000000460019;
+rec = zoho.crm.getRecordById("Accounts", id);
+pro_map=Map();
+field_link=Map();
+field_link.put("domain", rec.getJSON("Website"));
+field_link.put("name", rec.getJSON("Account_Name"));
+pro_map.put("properties", field_link);
+jsonData = pro_map.toString();
+// info jsonData ;
+// pat-na1-ec244406-3fb3-4ada-a3f4-2ec251f7aaa2
+
+headers = map();
+headers.put("Content-Type", "application/json");
+headers.put("Authorization", "Bearer pat-na1-ec244406-3fb3-4ada-a3f4-2ec251f7aaa2");
+
+recd_create = invokeurl
+[
+	url: "https://api.hubapi.com/crm/v3/objects/companies"
+	type: POST
+	parameters: jsonData
+	headers: headers
+];
+info recd_create ;
