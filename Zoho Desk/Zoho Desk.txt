@@ -1,0 +1,102 @@
+// ticket_id = 695392000021907001;
+ticket_record = zoho.desk.getRecordById(770960256,"Tickets",ticket_id);
+rec_email = ticket_record.getJSON("email");
+Departmentid = ticket_record.getJSON("departmentId");
+search_rec = zoho.crm.searchRecords("Contacts","(Email:equals:" + rec_email + ")");
+owner_email = search_rec.getJSON("Owner").getJSON("email");
+team_id1 = "";
+team_id2 = "";
+allagents = invokeurl
+[
+	url :"https://desk.zoho.com/api/v1/agents"
+	type :GET
+	connection:"desk_conn"
+];
+agents_data = allagents.getJSON("data");
+for each  agent_rec in agents_data
+{
+	agent_email = agent_rec.getJSON("emailId");
+	if(agent_email == owner_email)
+	{
+		Agentid = agent_rec.getJSON("id");
+	}
+}
+teamrec = invokeurl
+[
+	url :"https://desk.zoho.com/api/v1/teams"
+	type :GET
+	connection:"desk_conn"
+];
+records = teamrec.getJSON("teams");
+for each  all_team in records
+{
+	dep_id = all_team.getJSON("departmentId");
+	if(dep_id == Departmentid)
+	{
+		age_ids = all_team.getJSON("derivedAgents");
+		for each  ageid in age_ids
+		{
+			if(ageid == Agentid)
+			{
+				teamid = all_team.getJSON("id");
+				agent_id = ageid;
+				Both_Condition = true;
+			}
+			else
+			{
+				Single_Condition = true;
+				dep_name = all_team.getJSON("name");
+				if(dep_name.contains("HO") == true)
+				{
+					team_id1 = all_team.getJSON("id");
+				}
+				else
+				{
+					team_id2 = all_team.getJSON("id");
+				}
+			}
+		}
+	}
+	else
+	{
+		Nothing = true;
+	}
+}
+if(Both_Condition == true)
+{
+	recordValue = Map();
+	recordValue.put("assigneeId",agent_id);
+	recordValue.put("teamId",teamid);
+	update_rec = zoho.desk.update(770960256,"Tickets",ticket_id,recordValue);
+	info update_rec;
+}
+else if(Single_Condition == true)
+{
+	recordValue = Map();
+	info "Team Found";
+	info "1------>" + team_id1;
+	info "2-------->" + team_id2;
+	if(team_id1 != "")
+	{
+		recordValue.put("teamId",team_id1);
+	}
+	else
+	{
+		recordValue.put("teamId",team_id2);
+	}
+	update_rec = zoho.desk.update(770960256,"Tickets",ticket_id,recordValue);
+	info update_rec;
+	// 	random_number = randomnumber(0,6);
+	// 	info random_number;
+	// 	dep_rec = zoho.desk.getRecordById(770960256,"departments",dep_id);
+	// 	ageid = dep_rec.get("associatedAgentIds").get(random_number);
+}
+else if(Nothing == true)
+{
+	random_number = randomnumber(0,6);
+	ageid = agents_data.get(random_number).getJSON("id");
+	recordValue = Map();
+	recordValue.put("assigneeId",ageid);
+	update_rec = zoho.desk.update(770960256,"Tickets",ticket_id,recordValue);
+	info update_rec;
+}
