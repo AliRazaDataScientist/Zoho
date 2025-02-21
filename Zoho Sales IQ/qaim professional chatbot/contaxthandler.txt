@@ -1,0 +1,292 @@
+response = Map();
+response.put("action","context");
+response.put("context_id",context_id);
+if(context_id.equals("advertise"))
+{
+	var = "Advertise with The Brilliant Culture";
+	advertise = answers.get("advertise").get("text");
+	if(!answers.containsKey("email"))
+	{
+		question = {"name":"email","replies":{"Thank you " + advertise + ".","Please enter your *email* address to receive a media kit outlining partnership opportunities."},"input":{"type":"email","placeholder":"Enter your email","value":" ","error":{"Enter a Valid email"}},"field_name":"siq_email"};
+		response.put("questions",{question});
+	}
+	else
+	{
+		email = answers.get("email").get("text");
+		if(!answers.containsKey("date"))
+		{
+			_date1 = zoho.currentdate.addDay(1);
+			_date2 = zoho.currentdate.addDay(2);
+			_date3 = zoho.currentdate.addDay(3);
+			_date4 = zoho.currentdate.addDay(4);
+			_date5 = zoho.currentdate.addDay(5);
+			_date6 = zoho.currentdate.addDay(6);
+			slots = {"type":"date-timeslots","label":"Schedule","tz":false,"slots":{_date1.getDay() + "/" + _date1.getMonth() + "/" + _date1.getYear():{"1:00","1:30","2:00","2:30","3:00","3:30","4:00","4:30","5:00","5:30","6:00","6:30","7:00","7:30","8:00","8:30","9:00","9:30","10:00","10:30","11:00","11:30","12:00","12:30","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30","18:00","18:30","19:00","19:30","20:00","20:30","21:00","21:30","22:00","22:30","23:00","23:30","24:00","24:30"},_date2.getDay() + "/" + _date2.getMonth() + "/" + _date2.getYear():{"1:00","1:30","2:00","2:30","3:00","3:30","4:00","4:30","5:00","5:30","6:00","6:30","7:00","7:30","8:00","8:30","9:00","9:30","10:00","10:30","11:00","11:30","12:00","12:30","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30","18:00","18:30","19:00","19:30","20:00","20:30","21:00","21:30","22:00","22:30","23:00","23:30","24:00","24:30"},_date3.getDay() + "/" + _date3.getMonth() + "/" + _date3.getYear():{"1:00","1:30","2:00","2:30","3:00","3:30","4:00","4:30","5:00","5:30","6:00","6:30","7:00","7:30","8:00","8:30","9:00","9:30","10:00","10:30","11:00","11:30","12:00","12:30","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30","18:00","18:30","19:00","19:30","20:00","20:30","21:00","21:30","22:00","22:30","23:00","23:30","24:00","24:30"},_date4.getDay() + "/" + _date4.getMonth() + "/" + _date4.getYear():{"1:00","1:30","2:00","2:30","3:00","3:30","4:00","4:30","5:00","5:30","6:00","6:30","7:00","7:30","8:00","8:30","9:00","9:30","10:00","10:30","11:00","11:30","12:00","12:30","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30","18:00","18:30","19:00","19:30","20:00","20:30","21:00","21:30","22:00","22:30","23:00","23:30","24:00","24:30"},_date5.getDay() + "/" + _date5.getMonth() + "/" + _date5.getYear():{"1:00","1:30","2:00","2:30","3:00","3:30","4:00","4:30","5:00","5:30","6:00","6:30","7:00","7:30","8:00","8:30","9:00","9:30","10:00","10:30","11:00","11:30","12:00","12:30","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30","18:00","18:30","19:00","19:30","20:00","20:30","21:00","21:30","22:00","22:30","23:00","23:30","24:00","24:30"},_date6.getDay() + "/" + _date6.getMonth() + "/" + _date6.getYear():{"1:00","1:30","2:00","2:30","3:00","3:30","4:00","4:30","5:00","5:30","6:00","6:30","7:00","7:30","8:00","8:30","9:00","9:30","10:00","10:30","11:00","11:30","12:00","12:30","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30","18:00","18:30","19:00","19:30","20:00","20:30","21:00","21:30","22:00","22:30","23:00","23:30","24:00","24:30"}},"skippable":"false"};
+			question = {"name":"date","replies":{"Thank you! Please choose a prefered date and time to callback"},"skippable":"false","input":slots};
+			response.put("questions",{question});
+		}
+		else
+		{
+			date = answers.get("date");
+			if(!date.get("text").equalsIgnoreCase("-"))
+			{
+				meta = date.get("meta");
+				card_data = meta.get("card_data");
+				slot = card_data.get("value").get("slot");
+				formattedDate = slot.toList("/");
+				slot = formattedDate.get(1) + "-" + formattedDate.get(0) + "-" + formattedDate.get(2);
+				info slot ;
+				values = slot.toString("yyyy-MM-dd") + "T" + slot.toString("HH:mm:ss") + "-04:00";
+				info values ;
+				//create lead
+				crmdata = zoho.crm.searchRecords("Leads","(Email:equals:" + email + ")",0,0,{"converted":"both"},"zohocrm");
+				info crmdata;
+				if(!crmdata.isEmpty())
+				{
+					_crmdata = crmdata.get(0);
+					info _crmdata;
+					id = _crmdata.get("id");
+					module = "Leads";
+					if(_crmdata.get("$converted") == true)
+					{
+						converted_detail = _crmdata.get("$converted_detail").toMap();
+						id = converted_detail.get("contact");
+						info id;
+						module = "Contacts";
+					}
+					crmdata = zoho.crm.updateRecord(module,id,{"Last_Name":advertise,"Lead_Source":"Chat","Lead_Status":"New","Chat_Inquiry":var,"Meeting_Time":values},Map(),"zohocrm");
+				}
+				else
+				{
+					// create new lead
+					crmdata = zoho.crm.createRecord("Leads",{"Email":email,"Last_Name":advertise,"Lead_Source":"Chat","Lead_Status":"New","Chat_Inquiry":var,"Meeting_Time":values},Map(),"zohocrm");
+				}
+				info crmdata;
+				leadid = crmdata.get("id");
+				info leadid;
+				response.put("action","end");
+				response.put("replies",{"Thank you for your email, A representative will contact you within one business day."});
+			}
+		}
+	}
+}
+else if(context_id.equals("Press"))
+{
+	var = "Press Inquiries";
+	Press = answers.get("Press").get("text");
+	if(!answers.containsKey("organization"))
+	{
+		question = {"name":"organization","replies":{"Thank you " + Press + ".","Enter your *Organization Name:*"},"input":{"type":"name","placeholder":"Enter your Full name","value":" ","error":{"Enter a Valid Name"}}};
+		response.put("questions",{question});
+	}
+	else
+	{
+		organization = answers.get("organization").get("text");
+		if(!answers.containsKey("email"))
+		{
+			question = {"name":"email","replies":{"Please enter your *email*"},"input":{"type":"email","placeholder":"Enter your email","value":" ","error":{"Enter a Valid email"}},"field_name":"siq_email"};
+			response.put("questions",{question});
+		}
+		else
+		{
+			email = answers.get("email").get("text");
+			//create lead
+			crmdata = zoho.crm.searchRecords("Leads","(Email:equals:" + email + ")",0,0,{"converted":"both"},"zohocrm");
+			info crmdata;
+			if(!crmdata.isEmpty())
+			{
+				_crmdata = crmdata.get(0);
+				info _crmdata;
+				id = _crmdata.get("id");
+				module = "Leads";
+				if(_crmdata.get("$converted") == true)
+				{
+					converted_detail = _crmdata.get("$converted_detail").toMap();
+					id = converted_detail.get("contact");
+					info id;
+					module = "Contacts";
+				}
+				crmdata = zoho.crm.updateRecord(module,id,{"Last_Name":Press,"Lead_Source":"Chat","Lead_Status":"New","Company":organization,"Chat_Inquiry":var},Map(),"zohocrm");
+			}
+			else
+			{
+				// create new lead
+				crmdata = zoho.crm.createRecord("Leads",{"Email":email,"Last_Name":Press,"Lead_Source":"Chat","Lead_Status":"New","Company":organization,"Chat_Inquiry":var},Map(),"zohocrm");
+			}
+			info crmdata;
+			leadid = crmdata.get("id");
+			info leadid;
+			response.put("action","end");
+			response.put("replies",{"Thank you for your email, we got it. A representative will contact you within one business day."});
+		}
+	}
+}
+else if(context_id.equals("Newsletter"))
+{
+	var = "Newsletter Subscriptions";
+	Newsletter = answers.get("Newsletter").get("text");
+	if(!answers.containsKey("email"))
+	{
+		question = {"name":"email","replies":{"Thank you " + Newsletter + ".","You will receive the very best of The Brilliant Culture sent straight to your inbox with the latest insights and inspiration from experts across the globe.","Subscribe now by entering your *email* address"},"input":{"type":"email","placeholder":"Enter your email","value":" ","error":{"Enter a Valid email"}},"field_name":"siq_email"};
+		response.put("questions",{question});
+	}
+	else
+	{
+		email = answers.get("email").get("text");
+		//create lead
+		crmdata = zoho.crm.searchRecords("Leads","(Email:equals:" + email + ")",0,0,{"converted":"both"},"zohocrm");
+		info crmdata;
+		if(!crmdata.isEmpty())
+		{
+			_crmdata = crmdata.get(0);
+			info _crmdata;
+			id = _crmdata.get("id");
+			module = "Leads";
+			if(_crmdata.get("$converted") == true)
+			{
+				converted_detail = _crmdata.get("$converted_detail").toMap();
+				id = converted_detail.get("contact");
+				info id;
+				module = "Contacts";
+			}
+			crmdata = zoho.crm.updateRecord(module,id,{"Last_Name":Newsletter,"Lead_Source":"Chat","Lead_Status":"New","Chat_Inquiry":var},Map(),"zohocrm");
+		}
+		else
+		{
+			// create new lead
+			crmdata = zoho.crm.createRecord("Leads",{"Email":email,"Last_Name":Newsletter,"Lead_Source":"Chat","Lead_Status":"New","Chat_Inquiry":var},Map(),"zohocrm");
+		}
+		info crmdata;
+		leadid = crmdata.get("id");
+		info leadid;
+		response.put("action","end");
+		response.put("replies",{"Thank you for your email, we got it.Check your inbox shortly to receive our latest newsletter."});
+	}
+}
+else if(context_id.equals("discount"))
+{
+	var = "Monthly Apparel & Discounts";
+	discount = answers.get("discount").get("text");
+	if(!answers.containsKey("email"))
+	{
+		question = {"name":"email","replies":{"Thank you " + discount + " for your interest in our monthly mailing list.","Be the first to know about new arrivals, big sales, & exclusive email offers.","Please enter your *email* address"},"input":{"type":"email","placeholder":"Enter your email","value":" ","error":{"Enter a Valid email"}},"field_name":"siq_email"};
+		response.put("questions",{question});
+	}
+	else
+	{
+		email = answers.get("email").get("text");
+		//create lead
+		crmdata = zoho.crm.searchRecords("Leads","(Email:equals:" + email + ")",0,0,{"converted":"both"},"zohocrm");
+		info crmdata;
+		if(!crmdata.isEmpty())
+		{
+			_crmdata = crmdata.get(0);
+			info _crmdata;
+			id = _crmdata.get("id");
+			module = "Leads";
+			if(_crmdata.get("$converted") == true)
+			{
+				converted_detail = _crmdata.get("$converted_detail").toMap();
+				id = converted_detail.get("contact");
+				info id;
+				module = "Contacts";
+			}
+			crmdata = zoho.crm.updateRecord(module,id,{"Last_Name":discount,"Lead_Source":"Chat","Lead_Status":"New","Chat_Inquiry":var},Map(),"zohocrm");
+		}
+		else
+		{
+			// create new lead
+			crmdata = zoho.crm.createRecord("Leads",{"Email":email,"Last_Name":discount,"Lead_Source":"Chat","Lead_Status":"New","Chat_Inquiry":var},Map(),"zohocrm");
+		}
+		info crmdata;
+		leadid = crmdata.get("id");
+		info leadid;
+		response.put("action","end");
+		response.put("replies",{"Thanks for entering your email, we got it."," You will receive exclusive access to The Brilliant Culture Apparel’s monthly releases and discounts up to 30% off."});
+	}
+}
+else if(context_id.equals("list"))
+{
+	var = "The Brilliant List";
+	list = answers.get("list").get("text");
+	if(!answers.containsKey("email"))
+	{
+		question = {"name":"email","replies":{"Thank you " + list + ".","Are you spectacular and want to inspire people with your story?","Do you know a “unsung hero” who should be honored?.","Subscribe now by entering your *email* address"},"input":{"type":"email","placeholder":"Enter your email","value":" ","error":{"Enter a Valid email"}},"field_name":"siq_email"};
+		response.put("questions",{question});
+	}
+	else
+	{
+		email = answers.get("email").get("text");
+		//create lead
+		crmdata = zoho.crm.searchRecords("Leads","(Email:equals:" + email + ")",0,0,{"converted":"both"},"zohocrm");
+		info crmdata;
+		if(!crmdata.isEmpty())
+		{
+			_crmdata = crmdata.get(0);
+			info _crmdata;
+			id = _crmdata.get("id");
+			module = "Leads";
+			if(_crmdata.get("$converted") == true)
+			{
+				converted_detail = _crmdata.get("$converted_detail").toMap();
+				id = converted_detail.get("contact");
+				info id;
+				module = "Contacts";
+			}
+			crmdata = zoho.crm.updateRecord(module,id,{"Last_Name":list,"Lead_Source":"Chat","Lead_Status":"New","Chat_Inquiry":var},Map(),"zohocrm");
+		}
+		else
+		{
+			// create new lead
+			crmdata = zoho.crm.createRecord("Leads",{"Email":email,"Last_Name":list,"Lead_Source":"Chat","Lead_Status":"New","Chat_Inquiry":var},Map(),"zohocrm");
+		}
+		info crmdata;
+		leadid = crmdata.get("id");
+		info leadid;
+		response.put("action","end");
+		response.put("replies",{"Thanks for entering your email, we got it.","You will be in the loop for our Brilliant List campaigns."});
+	}
+}
+else if(context_id.equals("Innosolvers"))
+{
+	var = "Innosolvers Blueprint";
+	Innosolvers = answers.get("Innosolvers").get("text");
+	if(!answers.containsKey("email"))
+	{
+		question = {"name":"email","replies":{"Thank you " + Innosolvers + ".","Participate in our future campaigns to “answer” the why and most importantly design solutions that work.","Subscribe now by entering your *email* address"},"input":{"type":"email","placeholder":"Enter your email","value":" ","error":{"Enter a Valid email"}},"field_name":"siq_email"};
+		response.put("questions",{question});
+	}
+	else
+	{
+		email = answers.get("email").get("text");
+		//create lead
+		crmdata = zoho.crm.searchRecords("Leads","(Email:equals:" + email + ")",0,0,{"converted":"both"},"zohocrm");
+		info crmdata;
+		if(!crmdata.isEmpty())
+		{
+			_crmdata = crmdata.get(0);
+			info _crmdata;
+			id = _crmdata.get("id");
+			module = "Leads";
+			if(_crmdata.get("$converted") == true)
+			{
+				converted_detail = _crmdata.get("$converted_detail").toMap();
+				id = converted_detail.get("contact");
+				info id;
+				module = "Contacts";
+			}
+			crmdata = zoho.crm.updateRecord(module,id,{"Last_Name":Innosolvers,"Lead_Source":"Chat","Lead_Status":"New","Chat_Inquiry":var},Map(),"zohocrm");
+		}
+		else
+		{
+			// create new lead
+			crmdata = zoho.crm.createRecord("Leads",{"Email":email,"Last_Name":Innosolvers,"Lead_Source":"Chat","Lead_Status":"New","Chat_Inquiry":var},Map(),"zohocrm");
+		}
+		info crmdata;
+		leadid = crmdata.get("id");
+		info leadid;
+		response.put("action","end");
+		response.put("replies",{"Thanks for entering your email, we got it.  You will be in the loop for our Innosolvers Blueprint campaigns."});
+	}
+}
+return response;

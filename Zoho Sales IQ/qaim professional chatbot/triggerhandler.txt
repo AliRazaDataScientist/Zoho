@@ -1,0 +1,5 @@
+response = Map();
+response.put("action","reply");
+response.put("replies",{"Hello, and thank you for using The Brilliant Culture’s live chat service.","My name is Gabby. Is there something in particular we can help you with?"});
+response.put("input",{"type":"select","options":{"Advertise with The Brilliant Culture","Press Inquiries","Newsletter Subscriptions","Monthly Apparel & Discounts","The Brilliant List","Innosolvers Blueprint"}});
+return response;

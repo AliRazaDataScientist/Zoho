@@ -1,0 +1,45 @@
+response = Map();
+msg = message.get("text");
+if(msg.equalsIgnoreCase("Advertise with The Brilliant Culture"))
+{
+	response.put("action","context");
+	response.put("context_id","advertise");
+	question = {"name":"advertise","replies":{"Thank you for your interest in partnering with The Brilliant Culture","Please enter your *Full Name:*"},"input":{"type":"name","placeholder":"Enter your Full name","value":" ","error":{"Enter a Valid Name"}}};
+	response.put("questions",{question});
+}
+else if(msg.equalsIgnoreCase("Press Inquiries"))
+{
+	response.put("action","context");
+	response.put("context_id","Press");
+	question = {"name":"Press","replies":{"Thank you for contacting us regarding a press inquiry","Please enter your *Full Name:*"},"input":{"type":"name","placeholder":"Enter your Full name","value":" ","error":{"Enter a Valid Name"}}};
+	response.put("questions",{question});
+}
+else if(msg.equalsIgnoreCase("Newsletter Subscriptions"))
+{
+	response.put("action","context");
+	response.put("context_id","Newsletter");
+	question = {"name":"Newsletter","replies":{"Thank you for your interest in our newsletter","Please enter your *Full Name:*"},"input":{"type":"name","placeholder":"Enter your Full name","value":" ","error":{"Enter a Valid Name"}}};
+	response.put("questions",{question});
+}
+else if(msg.equalsIgnoreCase("Monthly Apparel & Discounts"))
+{
+	response.put("action","context");
+	response.put("context_id","discount");
+	question = {"name":"discount","replies":{"Thank you for your interest in our monthly mailing list","Please enter your *Full Name:*"},"input":{"type":"name","placeholder":"Enter your Full name","value":" ","error":{"Enter a Valid Name"}}};
+	response.put("questions",{question});
+}
+else if(msg.equalsIgnoreCase("The Brilliant List"))
+{
+	response.put("action","context");
+	response.put("context_id","list");
+	question = {"name":"list","replies":{"Thank you for your interest in partnering with The Brilliant Culture ","Please enter your *Full Name:*"},"input":{"type":"name","placeholder":"Enter your Full name","value":" ","error":{"Enter a Valid Name"}}};
+	response.put("questions",{question});
+}
+else if(msg.equalsIgnoreCase("Innosolvers Blueprint"))
+{
+	response.put("action","context");
+	response.put("context_id","Innosolvers");
+	question = {"name":"Innosolvers","replies":{"Thank you for your interest in partnering with The Brilliant Culture ","Please enter your *Full Name:*"},"input":{"type":"name","placeholder":"Enter your Full name","value":" ","error":{"Enter a Valid Name"}}};
+	response.put("questions",{question});
+}
+return response;
