@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meeting Form</title>
+  <script src="https://live.zwidgets.com/js-sdk/1.2/ZohoEmbededAppSDK.min.js"></script>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body {
+      margin: 20px;
+    }
+    /* Add your custom styles here */
+    .form-container {
+      max-width: 500px;
+      margin: auto;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container form-container">
+    <form id="meetingForm" onsubmit="event.preventDefault();handleFormSubmit()">
+      <!-- Meeting Field -->
+      <div class="form-group">
+        <label for="meeting">Subject</label>
+        <input type="text" class="form-control" id="subject" >
+      </div>
+
+      <!-- Location Field -->
+      <div class="form-group">
+        <label for="location">Location</label>
+        <input type="text" class="form-control" id="location" >
+      </div>
+
+      <!-- From Field -->
+      <div class="form-group">
+        <label for="from">From</label><span style="color: red;"> *</span>
+        <input type="datetime-local" class="form-control" id="from" required>
+      </div>
+
+      <!-- To Field -->
+      <div class="form-group">
+        <label for="to">To</label><span style="color: red;"> *</span>
+        <input type="datetime-local" class="form-control" id="to" required>
+      </div>
+
+      <!-- Meeting Type Field -->
+      <div class="form-group">
+        <label for="meetingType">Meeting Type</label><span style="color: red;"> *</span>
+        <select class="form-control" id="meetingType" required>
+          <option value="None">None</option>
+          <option value="Online Meeting">Online Meeting</option>
+          <option value="Face-to-Face">Face-to-Face</option>
+        </select>
+      </div>
+
+      <!-- Meeting Status Field -->
+      <div class="form-group">
+        <label for="meetingStatus">Meeting Status</label><span style="color: red;"> *</span>
+        <select class="form-control" id="meetingStatus" required>
+          <option value="None">None</option>
+          <option value="Meeting Scheduled">Meeting Scheduled</option>
+          <option value="Meeting Attended">Meeting Attended</option>
+          <option value="Rescheduled">Rescheduled</option>
+          <option value="No Show">No Show</option>
+        </select>
+      </div>
+
+      <!-- Host Field -->
+      <!-- <div class="form-group">
+        <label for="host">Host</label><span style="color: red;"> *</span>
+        <select class="form-control" id="host" required>
+        </select>
+      </div> -->
+
+      <!-- Submit Button -->
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+
+  <!-- Bootstrap JS, Popper.js, and jQuery -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.9/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+<script src="onload.js"></script>
+<script src="function.js"></script>
+</html>
