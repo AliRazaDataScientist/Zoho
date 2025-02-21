@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deal Form</title>
+  <!-- Bootstrap CSS -->
+  <script src="https://live.zwidgets.com/js-sdk/1.2/ZohoEmbededAppSDK.min.js"></script>
+  <script src="onload.js"></script>
+  <script src="function.js"></script>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css"> <!-- Add your custom styles here -->
+  <!-- Bootstrap JS (Optional) -->
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+  <form id="dealForm" onsubmit="event.preventDefault(); checkvalidation()" class="container">
+
+    <div class="deal-name-container row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="amount" class="required-field">Volume (Amount in AED)</label>
+          <input type="number" min="0" class="form-control" value="(AED)" id="amount" name="amount" required>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="dealName" class="required-field">Deal Name</label>
+          <input type="text" class="form-control" id="dealName" name="dealName" required>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="date" class="required-field">Booking / Sale Date</label>
+          <input type="date" class="form-control" id="date" name="date" required>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="stage" class="required-field">Stage</label>
+          <select class="form-control" id="stage" name="stage" required>
+            <option value="Qualification">Qualification</option>
+            <option value="Needs Analysis">Needs Analysis</option>
+            <option value="Value Proposition">Value Proposition</option>
+            <option value="Identify Decision Makers">Identify Decision Makers</option>
+            <option value="Proposal/Price Quote">Proposal/Price Quote</option>
+            <option value="negotiationReview">Negotiation/Review</option>
+            <option value="Closed Won">Closed Won</option>
+            <option value="Closed Lost">Closed Lost</option>
+            <option value="Closed-Lost To Competition">Closed-Lost to Competition</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Continue with the rest of your form -->
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="developerName" class="required-field">Developer Name</label>
+          <input type="text" class="form-control" id="developerName" name="developerName" required>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="projectName" class="required-field">Project Name</label>
+          <input type="text" class="form-control" id="projectName" name="projectName" required>
+        </div>
+      </div>
+
+      <!-- Continue with the rest of your form -->
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="buildingNumber" class="required-field">Building Number</label>
+          <input type="text" class="form-control" id="buildingNumber" name="buildingNumber" required>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="apnumber" class="">Apartment Number</label>
+          <input type="text" class="form-control" id="apnumber" name="apnumber">
+        </div>
+      </div>
+
+      <!-- Continue with the rest of your form -->
+
+      <!-- <div class="col-md-6">
+        <div class="form-group">
+          <label for="leaderName" class="required-field">Team Leader Name</label>
+          <input type="text" class="form-control" id="leaderName" name="leaderName" required>
+        </div>
+      </div> -->
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="source" class="required-field">Lead Source</label>
+          <select class="form-control" id="source" name="source" required>
+            <option value="">None</option>
+            <option value="Advertisement">Advertisement</option>
+            <option value="Bayut">Bayut</option>
+            <option value="Chat">Chat</option>
+            <option value="Client Referral">Client Referral</option>
+            <option value="Cold Call">Cold Call</option>
+            <option value="Dubizzle">Dubizzle</option>
+            <option value="Elbrus">Elbrus</option>
+            <option value="Email Marketing">Email Marketing</option>
+            <option value="Employee Referral">Employee Referral</option>
+            <option value="Eventbrite">Eventbrite</option>
+            <option value="Facebook">Facebook</option>
+            <option value="Google">Google</option>
+            <option value="Google Leads">Google Leads</option>
+            <option value="Instagram">Instagram</option>
+            <option value="Investor Data">Investor Data</option>
+            <option value="Partner">Partner</option>
+            <option value="Personal Lead">Personal Lead</option>
+            <option value="Public Relations">Public Relations</option>
+            <option value="Twitter">Twitter</option>
+            <option value="Website">Website</option>
+            <option value="WhatsApp">WhatsApp</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Continue with the rest of your form -->
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="category" class="required-field">Category</label>
+          <select class="form-control" id="category" name="category" required>
+            <option value="">None</option>
+            <option value="Commercial">Commercial</option>
+            <option value="Off Plan">Off Plan</option>
+            <option value="Ready Property">Ready Property</option>
+            <option value="Rental">Rental</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="subcategory" class="required-field">Sub Category</label>
+          <select class="form-control" id="subcategory" name="subcategory" required>
+            <option value="">None</option>
+            <option value="Commercial">Commercial</option>
+            <option value="Off Plan">Off Plan</option>
+            <option value="Ready Property">Ready Property</option>
+            <option value="Rental">Rental</option>
+            <option value="Villa">Villa</option>
+            <option value="Office">Office</option>
+            <option value="Plot">Plot</option>
+            <option value="Flat">Flat</option>
+          </select>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="initialDeposit" class="required-field">Initial Deposit</label>
+          <input type="number" min="0" class="form-control" id="initialDeposit" name="initialDeposit" required>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="comment" class="required-field">Remarks / Comments</label>
+          <textarea class="form-control" id="comment" name="comment" rows="4" required></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <button type="submit" class="btn btn-primary" id="submitbutton">Convert</button>
+  </form>
+</body>
+</html>
