@@ -1,0 +1,17 @@
+
+expenseID = expense.get("expense_id");
+expenseDate = expense.get("date").toDate();
+organizationID = organization.get("organization_id");
+recd = zoho.books.getRecordsByID("expenses",organizationID,expenseID,"books_connection");
+// info recd ;
+expense_id = recd.getJSON("expense").getJSON("expense_id");
+info expense_id;
+custom_field_update_map = Map();
+custom_field_update_map.put("label","Creator ID");
+custom_field_update_map.put("value",expense_id.toLong());
+custome_field_list = List();
+custome_field_list.add(custom_field_update_map);
+updateMAP = Map();
+updateMAP.put("custom_fields",custome_field_list);
+update_book = zoho.books.updateRecord("expenses",organizationID,expenseID,updateMAP,"books_connection");
+info "update_book" + update_book;
