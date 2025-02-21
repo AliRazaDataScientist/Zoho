@@ -1,0 +1,1 @@
+info Details.replaceAll("<(.|\n)*?>" , "").replaceAll("&nbsp;" , " ").replaceAll("&amp;" , "&");
