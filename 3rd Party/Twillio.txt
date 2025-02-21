@@ -1,0 +1,61 @@
+Get Api Key in Twillio Account
+
+// Set your Twilio Account SID and Auth Token
+//sid = "sid";
+//token = "token";
+//code = sid + ":" + token;
+//code64 = zoho.encryption.base64Encode(code);
+// Create the headers for the request
+headers = map();
+headers.put("Authorization", "Basic " + code64);
+// API URL for creating a new API Key
+url = "https://api.twilio.com/2010-04-01/Accounts/" + sid + "/Keys.json";
+// Create the payload for the request
+payload = map();
+payload.put("FriendlyName", "Zoho Developer");
+// // Send the POST request to create a new API Key
+resp = invokeurl
+[
+	url: url
+	type: POST
+	parameters: payload.tostring()
+	headers: headers
+];
+// Get the new API Key SID
+new_key_sid = resp.get("sid");
+new_key_secret = resp.get("secret");
+
+///////////////////////////// Hit the api via custom function
+
+deal_id = 6071409000001138325;
+rec = zoho.crm.getRecordById("Deals", deal_id);
+contact_id = rec.getJSON("Contact_Name").getJSON("id");
+stage = rec.getJSON("Stage");
+contact_rec = zoho.crm.getRecordById("Contacts", contact_id);
+contact_name = contact_rec.getJSON("Full_Name");
+contact_phone = contact_rec.getJSON("Phone");
+msg = "Congrats, "+ contact_name +"! You're pre-approved for a mortgage. Let's start the search for your dream home! 🏡🎉 - Tamer Abdel";
+// Set your Twilio Account SID and Auth Token
+sid = "ACcd17069cf0122890547be957fed9bab1";
+url = "https://api.twilio.com/2010-04-01/Accounts/" + sid + "/Messages.json";
+new_key_sid = "SK2e1feb1330cfaa858bd776decfebe875";
+new_key_secret = "gVIgIPt0SsK8SdiZYZQM0ENRQ2GkpeRM";
+code = new_key_sid + ":" + new_key_secret;
+code64 = zoho.encryption.base64Encode(code);
+// Create the headers for the request
+headers = Map();
+headers.put("Authorization","Basic " + code64);
+// Create the payload for the request
+payload = Map();
+payload.put("To",contact_phone);
+payload.put("From","+14783752790");
+payload.put("Body", msg);
+// Send the POST request to create a new API Key
+resp = invokeurl
+[
+	url :url
+	type :POST
+	parameters:payload
+	headers:headers
+];
+info resp;
