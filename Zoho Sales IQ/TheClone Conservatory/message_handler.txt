@@ -1,0 +1,60 @@
+response = Map();
+msg = message.get("text");
+if(operation.equals("chat"))
+{
+	if(!msg.equalsIgnoreCase("Place an Order") && !msg.equalsIgnoreCase("Strain Menu") && !msg.equalsIgnoreCase("Pricing") && !msg.equalsIgnoreCase("Help with an order") && !msg.equalsIgnoreCase("Take to a Representative") && !msg.equalsIgnoreCase("No, just browsing"))
+	{
+		response = Map();
+		response.put("action","reply");
+		response.put("replies",{"Hi, welcome to Clone Conservatory","I'm Server your virtual assistance.How can I help you?"});
+		response.put("suggestions",{"Place an Order","Strain Menu","Pricing","Help with an order","Take to a Representative","No, just browsing"});
+		return response;
+	}
+}
+if(msg.equalsIgnoreCase("No, just browsing"))
+{
+	response.put("action","end");
+	response.put("replies",{"No problem. Here's an artical on some of our upcoming exotic strains","[Exotic Strains Types Articles from Sales IQ Articles](https://www.zoho.com/social/webinars/social-media-marketing.html)","Feel free to reach out if you have any questions.You can call or text us at 424.427.4777"});
+}
+else if(msg.equalsIgnoreCase("Take to a Representative"))
+{
+	response.put("action","forward");
+	response.put("replies",{"You got it! Let me see who is available"});
+}
+else if(msg.equalsIgnoreCase("Help with an order"))
+{
+	response.put("action","context");
+	response.put("context_id","time");
+	question = {"name":"time","replies":{"Sure, no problem.Are you trying to place a new order.Or is that an existing order?"},"input":{"type":"select","options":{"I'd like to place a new order","I need help for existing order"}}};
+	response.put("questions",{question});
+}
+else if(msg.equalsIgnoreCase("Pricing"))
+{
+	response.put("action","context");
+	response.put("context_id","pric");
+	question = {"name":"pric","replies":{"Great,i'd be happy to get you update pricing for the nursery closest to you.","Pull user state location"},"input":{"type":"location","lat":"37.686318","lng":"-121.893427","label":"Share Location","select_label":"Send my location"}};
+	response.put("questions",{question});
+}
+else if(msg.equalsIgnoreCase("Strain Menu"))
+{
+	response.put("action","context");
+	response.put("context_id","menu");
+	question = {"name":"menu","replies":{"Sure, one moment. Let me get you an update menu for your area"},"input":{"type":"location","lat":"37.686318","lng":"-121.893427","label":"Share Location","select_label":"Send my location"}};
+	response.put("questions",{question});
+}
+else if(msg.equalsIgnoreCase("Place an Order"))
+{
+	response.put("action","context");
+	response.put("context_id","order");
+	question = {"name":"order","replies":{"I'd be happy to assist you with placing an order."},"input":{"type":"select","options":{"Pick-Up Order","Delivery Order","Shipping Order","Seed Order"}}};
+	response.put("questions",{question});
+}
+else
+{
+	response = Map();
+	response.put("action","reply");
+	response.put("replies",{"Hi, welcome to Clone Conservatory","I'm Server your virtual assistance.How can I help you?"});
+	response.put("suggestions",{"Place an Order","Strain Menu","Pricing","Help with an order","Take to a Representative","No, just browsing"});
+	return response;
+}
+return response;

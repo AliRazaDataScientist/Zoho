@@ -1,0 +1,5 @@
+response = Map();
+response.put("action","reply");
+response.put("replies",{"Hi, welcome to Clone Conservatory","I'm Server your virtual assistance.How can I help you?"});
+response.put("input",{"type":"select","options":{"Place an Order","Strain Menu","Pricing","Help with an order","Take to a Representative","No, just browsing"}});
+return response;

@@ -1,0 +1,615 @@
+response = Map();
+response.put("action","context");
+response.put("context_id",context_id);
+if(context_id.equals("time"))
+{
+	time = answers.get("time").get("text");
+	if(time.equalsIgnoreCase("I need help for existing order"))
+	{
+		if(!answers.containsKey("elsepart"))
+		{
+			question = {"name":"elsepart","replies":{"No problem. Thank you for ordering from TCC!","I'd be happy to assist you with that. I just need a bit more information so we can locate your order."},"input":{"type":"select","options":{"Sure, use my phone number","Sure, use my email"}}};
+			response.put("questions",{question});
+		}
+		else
+		{
+			elsepart = answers.get("elsepart").get("text");
+			if(elsepart.equalsIgnoreCase("Sure, use my phone number"))
+			{
+				if(!answers.containsKey("pone"))
+				{
+					question = {"name":"pone","replies":{"Please Enter your phone number"}};
+					response.put("questions",{question});
+				}
+				else
+				{
+					pone = answers.get("pone").get("text");
+					info pone;
+					recd = zoho.crm.getRecords("Contacts");
+					for each  num in recd
+					{
+						PhoneNo = num.get("Phone");
+						MobileNo = num.get("Mobile");
+						if(MobileNo == pone || PhoneNo == pone)
+						{
+							if(!answers.containsKey("show"))
+							{
+								question = {"name":"show","replies":{"Thank you I've find your order","Could you please provide some more details on how I can help?"}};
+								response.put("questions",{question});
+							}
+							else
+							{
+								show = answers.get("show").get("text");
+							}
+						}
+						else if(MobileNo != pone || PhoneNo != pone)
+						{
+							if(!answers.containsKey("show"))
+							{
+								question = {"name":"show","replies":{"Looks like my bot knowledge only give so far!. I wasn't able to locate your order, but I'm sure it's there.","Let's me tranfer you to one of our chat team experts."}};
+								response.put("questions",{question});
+							}
+							else
+							{
+								// 					show = answers.get("show").get("text");
+								response.put("action","forward");
+							}
+						}
+					}
+				}
+			}
+			else if(elsepart.equalsIgnoreCase("Sure, use my email"))
+			{
+				if(!answers.containsKey("anythingelse"))
+				{
+					question = {"name":"anythingelse","replies":{"Is there any thing else that I can assist you with?"},"input":{"type":"select","options":{"Yes","No"}}};
+					response.put("questions",{question});
+				}
+				else
+				{
+					anythingelse = answers.get("anythingelse").get("text");
+					if(anythingelse.equalsIgnoreCase("Yes"))
+					{
+						response.put("action","reply");
+						response.put("replies",{"Hello there! 👋 Looking for anything specific?"});
+						response.put("suggestions",{"I'm new here, just browsing","I'm an existing customer and need help","I want a product demo"});
+					}
+					else
+					{
+						response.put("action","end");
+						response.put("replies",{"Bye"});
+					}
+				}
+			}
+		}
+	}
+}
+else if(context_id.equals("pric"))
+{
+	pric = answers.get("pric").get("text");
+	if(pric.contains("94509") == true || pric.contains("93013") == true || pric.contains("92028") == true || pric.contains("90017") == true || pric.contains("92307") == true || pric.contains("95356") == true || pric.contains("95501") == true || pric.contains("91942") == true || pric.contains("92530") == true || pric.contains("92589") == true || pric.contains("93240") == true || pric.contains("95650") == true || pric.contains("95460") == true || pric.contains("90270") == true || pric.contains("91606") == true || pric.contains("94612") == true || pric.contains("92867") == true || pric.contains("92282") == true || pric.contains("96002") == true || pric.contains("94205") == true || pric.contains("92071") == true || pric.contains("95108") == true || pric.contains("93103") == true || pric.contains("92072") == true || pric.contains("95203") == true || pric.contains("95482") == true || pric.contains("91367") == true || pric.contains("92286") == true || pric.contains("60608") == true || pric.contains("02760") == true || pric.contains("97220") == true || pric.contains("97220") == true || pric.contains("73013") == true || pric.contains("89110") == true || pric.contains("49015") == true || pric.contains("48122") == true || pric.contains("48206") == true || pric.contains("49006") == true)
+	{
+		if(!answers.containsKey("separt"))
+		{
+			question = {"name":"separt","replies":{"We are able to find a nursery around your area.","Which is best for you?"}};
+			response.put("questions",{question});
+		}
+		else
+		{
+			separt = answers.get("separt").get("text");
+		}
+	}
+	else
+	{
+		if(!answers.containsKey("Nothing"))
+		{
+			question = {"name":"Nothing","replies":{"It look like we don't have nurseries in your states at this time.","We are able to ship both feminized seeds and/or clones to you.","Would you be interested in those menus?"},"input":{"type":"select","options":{"Seed Menu","Shipped Clones Menu","Not at this time"}}};
+			response.put("questions",{question});
+		}
+		else
+		{
+			Nothing = answers.get("Nothing").get("text");
+			if(Nothing.equalsIgnoreCase("Not at this time"))
+			{
+				if(!answers.containsKey("elsepart"))
+				{
+					question = {"name":"elsepart","replies":{"Okay!","Would you like to customer service rap contact you later this week?"},"input":{"type":"select","options":{"No thanks","Yes, Sure"}}};
+					response.put("questions",{question});
+				}
+				else
+				{
+					elsepart = answers.get("elsepart").get("text");
+					if(elsepart.equalsIgnoreCase("No thanks"))
+					{
+						response.put("action","end");
+						response.put("replies",{"No problem. Here's an artical on some of our upcoming exotic strains","[Exotic Strains Types Articles from Sales IQ Articles](https://www.zoho.com/social/webinars/social-media-marketing.html)","Feel free to reach out if you have any questions.You can call or text us at 424.427.4777"});
+					}
+					else if(elsepart.equalsIgnoreCase("Yes, Sure"))
+					{
+						if(!answers.containsKey("name"))
+						{
+							question = {"name":"name","replies":{"Ok awesome. I'll just need you to provide me with a few details.","User enter first name"}};
+							response.put("questions",{question});
+						}
+						else
+						{
+							name = answers.get("name").get("text");
+							if(!answers.containsKey("phone"))
+							{
+								question = {"name":"phone","replies":{{"text":"Great, thank you. What is a good number for them to call or text you back on?","validate":{"format":"phoneno","error":{"Enter a valid phone number"}},"field_name":"siq_phone"}}};
+								response.put("questions",{question});
+							}
+							else
+							{
+								phone = answers.get("phone").get("text");
+								if(!answers.containsKey("email"))
+								{
+									question = {"name":"email","replies":{"Perfectl! Lastly I'll just need a email for order confirmation",{"text":"User enter email","field_name":"siq_email","validate":{"format":"email","error":{"Enter a valid email"}}}}};
+									response.put("questions",{question});
+								}
+								else
+								{
+									email = answers.get("email").get("text");
+									if(!answers.containsKey("notes"))
+									{
+										question = {"name":"notes","replies":{"Is there any message you'd like me to leave with the customer service rep?","User enter message"}};
+										response.put("questions",{question});
+									}
+									else
+									{
+										notes = answers.get("notes").get("text");
+// 										crmdata = zoho.crm.searchRecords("Leads","(Email:equals:" + email + ")",0,0,{"converted":"both"},"zoho_crm");
+// 					info crmdata;
+// 					if(!crmdata.isEmpty())
+// 					{
+// 						_crmdata = crmdata.get(0);
+// 						info _crmdata;
+// 						id = _crmdata.get("id");
+// 						module = "Leads";
+// 						if(_crmdata.get("$converted") == true)
+// 						{
+// 							converted_detail = _crmdata.get("$converted_detail").toMap();
+// 							id = converted_detail.get("contact");
+// 							info id;
+// 							module = "Contacts";
+// 						}
+// 						crmdata = zoho.crm.updateRecord(module,id,{"Last_Name":name,"Lead_Source":"Chatbot","Phone":phone,"Email":email,"Your_Budget",notes},Map(),"zoho_crm");
+// 					}
+// 					else
+// 					{
+// 						// create new lead
+// 						crmdata = zoho.crm.createRecord("Leads",{"Email":email,"Last_Name":name,"Lead_Source":"Chatbot","Phone":phone,"Your_Budget",notes},Map(),"zoho_crm");
+// 					}
+// 					info crmdata;
+// 					leadid = crmdata.get("id");
+// 					info leadid;
+										mp = Map();
+								mp.put("Last_Name",name);
+								mp.put("Phone",phone);
+								mp.put("Email",email);
+								mp.put("Your_Budget",notes);
+								mp.put("Lead_Status","Live Chat");
+								cret = zoho.crm.createRecord("Leads",mp);
+										response.put("action","end");
+										response.put("replies",{"Thank you, " + name + "I'll be around if you need anything else. In the meantime I'll send this request to contect to the team."});
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			if(Nothing.equalsIgnoreCase("Seed Menu") || Nothing.equalsIgnoreCase("Shipped Clones Menu"))
+			{
+			}
+		}
+	}
+}
+else if(context_id.equals("demo"))
+{
+	time = answers.get("time").get("text");
+	if(!answers.containsKey("email"))
+	{
+		question = {"name":"email","replies":{{"text":"Do you have an email address where we can reach you?","field_name":"siq_email","validate":{"format":"email","error":{"Enter a valid email"}}}}};
+		response.put("questions",{question});
+	}
+	else
+	{
+		email = answers.get("email").get("text");
+		response.put("action","end");
+		response.put("replies",{"Thanks! One of our product specialists will reach out to you soon."});
+	}
+}
+else if(context_id.equals("order"))
+{
+	order = answers.get("order").get("text");
+	if(order.equalsIgnoreCase("Pick-Up Order"))
+	{
+		if(!answers.containsKey("name"))
+		{
+			question = {"name":"name","replies":{"I can help set up a pick-up date and time for you no problem!","Let me just get some basic info.","User enter first name"}};
+			response.put("questions",{question});
+		}
+		else
+		{
+			name = answers.get("name").get("text");
+			if(!answers.containsKey("phone"))
+			{
+				question = {"name":"phone","replies":{{"text":"Great, thank you. What is a good number for them to call or text you back on?","validate":{"format":"phoneno","error":{"Enter a valid phone number"}},"field_name":"siq_phone"}}};
+				response.put("questions",{question});
+			}
+			else
+			{
+				phone = answers.get("phone").get("text");
+				if(!answers.containsKey("email"))
+				{
+					question = {"name":"email","replies":{"Perfectl! Lastly I'll just need a email for order confirmation",{"text":"User enter email","field_name":"siq_email","validate":{"format":"email","error":{"Enter a valid email"}}}}};
+					response.put("questions",{question});
+				}
+				else
+				{
+					email = answers.get("email").get("text");
+					if(!answers.containsKey("notes"))
+					{
+						question = {"name":"notes","replies":{"Please just let me now what message you'd like me to send to the team","User enter message/order into notes"}};
+						response.put("questions",{question});
+					}
+					else
+					{
+						notes = answers.get("notes").get("text");
+						mp = Map();
+						mp.put("Last_Name",name);
+						mp.put("Phone",phone);
+						mp.put("Email",email);
+						mp.put("Your_Budget",notes);
+						mp.put("Lead_Status","Live Chat");
+						cret = zoho.crm.createRecord("Leads",mp);
+						response.put("action","end");
+						response.put("replies",{"Thank you, " + name + "I'll be around if you need anything else."});
+					}
+				}
+			}
+		}
+	}
+	else if(order.equalsIgnoreCase("Delivery Order"))
+	{
+		if(!answers.containsKey("option"))
+		{
+			question = {"name":"option","replies":{"Great! I can assist you with that.","A kind remember that delivery orders are typically orders over 100+ clones.","Are you still interested in a delivery order?"},"input":{"type":"select","options":{"Oh, I do not have an order over 100+","Yes, I will be ordering 100+"}}};
+			response.put("questions",{question});
+		}
+		else
+		{
+			option = answers.get("option").get("text");
+			if(option.equalsIgnoreCase("Yes, I will be ordering 100+"))
+			{
+				if(!answers.containsKey("mail"))
+				{
+					question = {"name":"mail","replies":{"Ok great! I just need a few more details.","What strains would you like and how many to each?","User enter message/notes"}};
+					response.put("questions",{question});
+				}
+				else
+				{
+					mail = answers.get("mail").get("text");
+					if(!answers.containsKey("name"))
+					{
+						question = {"name":"name","replies":{{"text":"Perfect! can I have the name this order is for?","field_name":"siq_name"}}};
+						response.put("questions",{question});
+					}
+					else
+					{
+						name = answers.get("name").get("text");
+						if(!answers.containsKey("phone"))
+						{
+							question = {"name":"phone","replies":{{"text":"Thank you. " + name + "What is a good number to reach you for any updates to your order?","validate":{"format":"phoneno","error":{"Enter a valid phone number"}},"field_name":"siq_phone"}}};
+							response.put("questions",{question});
+						}
+						else
+						{
+							phone = answers.get("phone").get("text");
+							if(!answers.containsKey("email"))
+							{
+								question = {"name":"email","replies":{"Awesome! Lastly, what email is best to send you an order confirmation to?",{"text":"User enter email","field_name":"siq_email","validate":{"format":"email","error":{"Enter a valid email"}}}}};
+								response.put("questions",{question});
+							}
+							else
+							{
+								email = answers.get("email").get("text");
+								mp = Map();
+								mp.put("Last_Name",name);
+								mp.put("Phone",phone);
+								mp.put("Email",email);
+								mp.put("Your_Budget",mail);
+								mp.put("Lead_Status","Live Chat");
+								cret = zoho.crm.createRecord("Leads",mp);
+								response.put("action","end");
+								response.put("replies",{"Thank You for contecting us. I'll update you soon."});
+							}
+						}
+					}
+				}
+			}
+			else if(option.equalsIgnoreCase("Oh, I do not have an order over 100+"))
+			{
+				if(!answers.containsKey("mail"))
+				{
+					question = {"name":"mail","replies":{"No worries! would you like assistance with our other order option?"},"input":{"type":"select","options":{"No, I need more time to look","Yes, show me the options!"}}};
+					response.put("questions",{question});
+				}
+				else
+				{
+					mail = answers.get("mail").get("text");
+					if(mail.equalsIgnoreCase("No, I need more time to look"))
+					{
+						response.put("action","end");
+						response.put("replies",{"No problem. Here's an artical on some of our upcoming exotic strains for your reading please","[Exotic Strains Types Articles from Sales IQ Articles](https://www.zoho.com/social/webinars/social-media-marketing.html)","Feel free to reach out if you have any questions.You can call or text us at 424.427.4777"});
+					}
+					else if(mail.equalsIgnoreCase("Yes, show me the options!"))
+					{
+						if(!answers.containsKey("suboption"))
+						{
+							question = {"name":"suboption","replies":{"Sure, we also offer the following order option!"},"input":{"type":"select","options":{"No, thanks","Clone shipment Order","Seed Order","Pick-up Order"}}};
+							response.put("questions",{question});
+						}
+						else
+						{
+							suboption = answers.get("suboption").get("text");
+							if(suboption.equalsIgnoreCase("No, thanks"))
+							{
+								response.put("action","end");
+								response.put("replies",{"No problem. Here's an artical on some of our upcoming exotic strains for your reading please","[Exotic Strains Types Articles from Sales IQ Articles](https://www.zoho.com/social/webinars/social-media-marketing.html)","Feel free to reach out if you have any questions.You can call or text us at 424.427.4777"});
+							}
+							else if(suboption.equalsIgnoreCase("Clone shipment Order") || suboption.equalsIgnoreCase("Seed Order") || suboption.equalsIgnoreCase("Pick-up Order"))
+							{
+								if(!answers.containsKey("name"))
+								{
+									question = {"name":"name","replies":{"Ok, awesome. I'll just need to provide me with a few details.","User enter first name"}};
+									response.put("questions",{question});
+								}
+								else
+								{
+									name = answers.get("name").get("text");
+									if(!answers.containsKey("phone"))
+									{
+										question = {"name":"phone","replies":{{"text":"Great, thank you. What is a good number for them to call or text you back on?","validate":{"format":"phoneno","error":{"Enter a valid phone number"}},"field_name":"siq_phone"}}};
+										response.put("questions",{question});
+									}
+									else
+									{
+										phone = answers.get("phone").get("text");
+										if(!answers.containsKey("email"))
+										{
+											question = {"name":"email","replies":{"Perfectl! Lastly I'll just need a email for order confirmation",{"text":"User enter email","field_name":"siq_email","validate":{"format":"email","error":{"Enter a valid email"}}}}};
+											response.put("questions",{question});
+										}
+										else
+										{
+											email = answers.get("email").get("text");
+											if(!answers.containsKey("notes"))
+											{
+												question = {"name":"notes","replies":{"Got it! What strains would you like and how many to each","User enter message/notes"}};
+												response.put("questions",{question});
+											}
+											else
+											{
+												notes = answers.get("notes").get("text");
+												mp = Map();
+												mp.put("Last_Name","name");
+												mp.put("Phone","phone");
+												mp.put("Email","email");
+												mp.put("Your_Budget","notes");
+												mp.put("Lead_Status","Live Chat");
+												cret = zoho.crm.createRecord("Leads",mp);
+												response.put("action","end");
+												response.put("replies",{"Thank you, " + name + "!","Your information has been sent to our sales team and they will follow up with you for payment processing and scheduling."});
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	else if(order.equalsIgnoreCase("Shipping Order"))
+	{
+		if(!answers.containsKey("option"))
+		{
+			question = {"name":"option","replies":{"Great! I just need to get a more details so I can sent your order to fullfillment","What strains would you like and how many of each?"},"suggestions":{"I'm not sure yet"}};
+			response.put("questions",{question});
+		}
+		else
+		{
+			option = answers.get("option").get("text");
+			if(option.equalsIgnoreCase("I'm not sure yet"))
+			{
+				if(!answers.containsKey("mail"))
+				{
+					question = {"name":"mail","replies":{"Completly understand.Is there any thing I can help with?"},"input":{"type":"select","options":{"No, I'll just to need look around","Sure, what are the option?"}}};
+					response.put("questions",{question});
+				}
+				else
+				{
+					mail = answers.get("mail").get("text");
+					if(mail.equalsIgnoreCase("No, I'll just to need look around"))
+					{
+						response.put("action","end");
+						response.put("replies",{"No problem. Here's an artical on some of our upcoming exotic strains","[Exotic Strains Types Articles from Sales IQ Articles](https://www.zoho.com/social/webinars/social-media-marketing.html)","Feel free to reach out if you have any questions.You can call or text us at 424.427.4777"});
+					}
+					if(mail.equalsIgnoreCase("Sure, what are the option?"))
+					{
+						if(!answers.containsKey("sure"))
+						{
+							question = {"name":"sure","replies":{"Thought, you'd never ask! Do any of these action look good?"},"input":{"type":"select","options":{"Feminized Seed","Clone That Can Be Shipped","Nurseries Near me","No, not at this time"}}};
+							response.put("questions",{question});
+						}
+						else
+						{
+							sure = answers.get("sure").get("text");
+							if(sure.equalsIgnoreCase("Nurseries Near me") || sure.equalsIgnoreCase("Clone That Can Be Shipped") || sure.equalsIgnoreCase("Feminized Seed"))
+							{
+								if(!answers.containsKey("browsing"))
+								{
+									question = {"name":"browsing","replies":{"okyyyyyy"}};
+									response.put("questions",{question});
+								}
+								else
+								{
+									browsing = answers.get("browsing").get("text");
+									response.put("action","end");
+									response.put("replies",{"Have a great day"});
+								}
+							}
+							else if(sure.equalsIgnoreCase("No, not at this time"))
+							{
+								response.put("action","end");
+								response.put("replies",{"No problem. Here's an artical on some of our upcoming exotic strains","[Exotic Strains Types Articles from Sales IQ Articles](https://www.zoho.com/social/webinars/social-media-marketing.html)","Feel free to reach out if you have any questions.You can call or text us at 424.427.4777"});
+							}
+						}
+					}
+				}
+			}
+			else
+			{
+				if(!answers.containsKey("name"))
+				{
+					question = {"name":"name","replies":{{"text":"Perfect! can I have the name this order is for?","field_name":"siq_name"}}};
+					response.put("questions",{question});
+				}
+				else
+				{
+					name = answers.get("name").get("text");
+					if(!answers.containsKey("phone"))
+					{
+						question = {"name":"phone","replies":{{"text":"Thank you. " + name + "What is a good number to reach you for any updates to your order?","validate":{"format":"phoneno","error":{"Enter a valid phone number"}},"field_name":"siq_phone"}}};
+						response.put("questions",{question});
+					}
+					else
+					{
+						phone = answers.get("phone").get("text");
+						if(!answers.containsKey("email"))
+						{
+							question = {"name":"email","replies":{"Awesome! Lastly, what email is best to send you an order confirmation to?",{"text":"User enter email","field_name":"siq_email","validate":{"format":"email","error":{"Enter a valid email"}}}}};
+							response.put("questions",{question});
+						}
+						else
+						{
+							email = answers.get("email").get("text");
+							mp = Map();
+							mp.put("Last_Name","name");
+							mp.put("Phone","phone");
+							mp.put("Email","email");
+							mp.put("Your_Budget","option");
+							mp.put("Lead_Status","Live Chat");
+							cret = zoho.crm.createRecord("Leads",mp);
+							response.put("action","end");
+							response.put("replies",{"Thank you for contecting us ,I'll update you very soon"});
+						}
+					}
+				}
+			}
+		}
+	}
+	else if(order.equalsIgnoreCase("Seed Order"))
+	{
+		if(!answers.containsKey("option"))
+		{
+			question = {"name":"option","replies":{"Wonderful! We have the largest seed section in the US.","If you can provide me your first and last name. I can get the order started"},"suggestions":{"I'm not sure yet"}};
+			response.put("questions",{question});
+		}
+		else
+		{
+			option = answers.get("option").get("text");
+			if(option.equalsIgnoreCase("I'm not sure yet"))
+			{
+				if(!answers.containsKey("mail"))
+				{
+					question = {"name":"mail","replies":{"Completly understand.Is there any thing I can help with?"},"input":{"type":"select","options":{"No, I'll just to need look around","Sure, what are the option?"}}};
+					response.put("questions",{question});
+				}
+				else
+				{
+					mail = answers.get("mail").get("text");
+					if(mail.equalsIgnoreCase("No, I'll just to need look around"))
+					{
+						response.put("action","end");
+						response.put("replies",{"No problem. Here's an artical on some of our upcoming exotic strains","[Exotic Strains Types Articles from Sales IQ Articles](https://www.zoho.com/social/webinars/social-media-marketing.html)","Feel free to reach out if you have any questions.You can call or text us at 424.427.4777"});
+					}
+					if(mail.equalsIgnoreCase("Sure, what are the option?"))
+					{
+						if(!answers.containsKey("sure"))
+						{
+							question = {"name":"sure","replies":{"Thought, you'd never ask! Do any of these action look good?"},"input":{"type":"select","options":{"Feminized Seed","Clone That Can Be Shipped","Nurseries Near me","No, not at this time"}}};
+							response.put("questions",{question});
+						}
+						else
+						{
+							sure = answers.get("sure").get("text");
+							if(sure.equalsIgnoreCase("Nurseries Near me") || sure.equalsIgnoreCase("Clone That Can Be Shipped") || sure.equalsIgnoreCase("Feminized Seed"))
+							{
+								if(!answers.containsKey("browsing"))
+								{
+									question = {"name":"browsing","replies":{"okyyyyyy"}};
+									response.put("questions",{question});
+								}
+								else
+								{
+									browsing = answers.get("browsing").get("text");
+									response.put("action","end");
+									response.put("replies",{"Have a great day"});
+								}
+							}
+							else if(sure.equalsIgnoreCase("No, not at this time"))
+							{
+								response.put("action","end");
+								response.put("replies",{"No problem. Here's an artical on some of our upcoming exotic strains","[Exotic Strains Types Articles from Sales IQ Articles](https://www.zoho.com/social/webinars/social-media-marketing.html)","Feel free to reach out if you have any questions.You can call or text us at 424.427.4777"});
+							}
+						}
+					}
+				}
+			}
+			else
+			{
+				if(!answers.containsKey("email"))
+				{
+					question = {"name":"email","replies":{"Perfectl! What email should we send the order confirmation to?",{"text":"User enter email","field_name":"siq_email","validate":{"format":"email","error":{"Enter a valid email"}}}}};
+					response.put("questions",{question});
+				}
+				else
+				{
+					email = answers.get("email").get("text");
+					if(!answers.containsKey("phone"))
+					{
+						question = {"name":"phone","replies":{{"text":"Thank you. " + name + "What is a good number to reach you for any updates to your order?","validate":{"format":"phoneno","error":{"Enter a valid phone number"}},"field_name":"siq_phone"}}};
+						response.put("questions",{question});
+					}
+					else
+					{
+						phone = answers.get("phone").get("text");
+						if(!answers.containsKey("notes"))
+						{
+							question = {"name":"notes","replies":{"Got it!","Last question. What strain would you like and how many of each"}};
+							response.put("questions",{question});
+						}
+						else
+						{
+							notes = answers.get("notes").get("text");
+							mp = Map();
+							mp.put("Last_Name","option");
+							mp.put("Phone","phone");
+							mp.put("Email","email");
+							mp.put("Your_Budget","notes");
+							mp.put("Lead_Status","Live Chat");
+							cret = zoho.crm.createRecord("Leads",mp);
+							response.put("action","end");
+							response.put("replies",{"Thank you for contecting, Have a nice day"});
+						}
+					}
+				}
+			}
+		}
+	}
+}
+return response;
