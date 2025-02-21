@@ -1,0 +1,22 @@
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    form {
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .required-field::after {
+      content: " *";
+      color: red;
+      margin-right: 4px;
+    }
+    /* .hiddenDiv {
+      display: none;
+    } */

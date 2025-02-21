@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lead Deatils</title>
+  <!-- Bootstrap CSS -->
+  <script src="https://live.zwidgets.com/js-sdk/1.2/ZohoEmbededAppSDK.min.js"></script>
+  <script src="onload.js"></script>
+  <script src="function.js"></script>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <form id="dealForm" onsubmit="event.preventDefault(); save_rec()" class="container">
+    <div class="deal-name-container row">
+      <div class="col-md-12">
+        <h2>Lead Information</h2>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="fname">First Name</label>
+          <input type="text" class="form-control" id="fname" name="fname">
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="lname">Last Name</label>
+          <input type="text" class="form-control" id="lname" name="lname">
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="femail">Email</label>
+          <input type="email" class="form-control" id="femail" name="femail">
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="unique_id">Unique Lead ID</label>
+          <input type="text" class="form-control" id="unique_id" name="unique_id">
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="camp_name">Campaign Name</label>
+          <input type="text" class="form-control" id="camp_name" name="camp_name">
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="lead_source">Lead Source</label>
+          <select class="form-control" id="lead_source" name="lead_source">
+            <option value="">None</option>
+            <option value="Chat">Chat</option>
+            <option value="Client Referral">Client Referral</option>
+            <option value="Cold Call">Cold Call</option>
+            <option value="Direct Mail">Direct Mail</option>
+            <option value="Email Campaign">Email Campaign</option>
+            <option value="External Referral">External Referral</option>
+            <option value="Facebook - Post/Messenger">Facebook - Post/Messenger</option>
+            <option value="Google Search">Google Search</option>
+            <option value="Open House">Open House</option>
+            <option value="Referral Partner">Referral Partner</option>
+            <option value="Seminar">Seminar</option>
+            <option value="Social Media Ad">Social Media Ad</option>
+            <option value="Trade Show">Trade Show</option>
+            <option value="Web Lead">Web Lead</option>
+            <option value="Website Contact Form">Website Contact Form</option>
+          </select>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="AD">AD Name</label>
+          <input type="number" class="form-control" id="AD" name="AD" >
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="Phone">Phone</label>
+          <input type="number" min="0" class="form-control" id="Phone" name="Phone">
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="County">County</label>
+          <input type="text" class="form-control" id="County" name="County">
+        </div>
+      </div>
+    </div>
+    <div class="deal-name-container row">
+      <div class="col-md-12">
+        <h2>Lead Form Details</h2>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="formname">Lead Forms Name</label>
+          <input type="text" class="form-control" id="formname" name="formname">
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="source">Lead Source Platform</label>
+          <select class="form-control" id="source" name="source">
+            <option value="">None</option>
+            <option value="Facebook">Facebook</option>
+            <option value="Instagram">Instagram</option>
+            <option value="Google">Google</option>
+            <option value="Website">Website</option>
+            <option value="Email Campaign">Email Campaign</option>
+            <option value="Referral">Referral</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="home_ny">Would you like to buy a home in NY?</label>
+          <select class="form-control" id="home_ny" name="home_ny">
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </select>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="first_home">Are you a First Time Home Buyer?</label>
+          <select class="form-control" id="first_home" name="first_home">
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </select>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="dream_home">Would $$ help you acheive your dream home?</label>
+          <select class="form-control" id="dream_home" name="dream_home">
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </select>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="payment">Do you have between 1-3% for down payment?</label>
+          <select class="form-control" id="payment" name="payment">
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </select>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="yearly_income">What is your yearly household income?</label>
+          <select class="form-control" id="yearly_income" name="yearly_income">
+            <option value="Below $50,000">Below $50,000</option>
+            <option value="Between $50,001 - $80,000">Between $50,001 - $80,000</option>
+            <option value="Between $80,000 - $125,000">Between $80,000 - $125,000</option>
+            <option value="Over $125,001">Over $125,001</option>
+          </select>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="score">What Range does your credit score fall?</label>
+          <select class="form-control" id="score" name="score">
+            <option value="Between 500-600 fico">Between 500-600 fico</option>
+            <option value="Between 601-680 fico">Between 601-680 fico</option>
+            <option value="Between 681-740 fico">Between 681-740 fico</option>
+            <option value="Over 741 fico">Over 741 fico</option>
+          </select>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="contact_you">When should we contact you?</label>
+          <select class="form-control" id="contact_you" name="contact_you">
+            <option value="Immediately">Immediately</option>
+            <option value="Next Week">Next Week</option>
+            <option value="Next Month">Next Month</option>
+            <option value="Next Year">Next Year</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="deal-name-container row">
+      <div class="col-md-12">
+        <h2>Borrower Information</h2>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="street">Street</label>
+          <input type="text" class="form-control" id="street" name="street">
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="City">City</label>
+          <input type="text" class="form-control" id="City" name="City">
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="state">State</label>
+          <input type="text" class="form-control" id="state" name="state">
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="zipcode">Zip Code</label>
+          <input type="text" class="form-control" id="zipcode" name="zipcode">
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="dob">Prospect DOB</label>
+          <input type="date" class="form-control" id="dob" name="dob">
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="Security_Number">Social Security Number</label>
+          <input type="number" class="form-control" id="Security_Number" name="Security_Number" >
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="Income">Annual Income</label>
+          <input type="number" class="form-control" id="Income" name="Income" >
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="Assets">Current Assets</label>
+          <input type="number" class="form-control" id="Assets" name="Assets" >
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="employer">Current Employer</label>
+          <input type="text" class="form-control" id="employer" name="employer">
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="secondary_income">Do you have secondary income?</label>
+          <select class="form-control" id="secondary_income" name="secondary_income">
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </select>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="date">Start Date</label>
+          <input type="date" class="form-control" id="date" name="date">
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="Veteran">Do you have a VA benefit? : </label>
+          <select class="form-control" id="Veteran" name="Veteran">
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </select>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="notes">Borrower Notes</label>
+          <textarea class="form-control" id="notes" name="notes" rows="4"></textarea>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="co-borrower">Do you have a co-borrower? : </label>
+          <input type="checkbox" class="" id="co-borrower" name="co-borrower">
+        </div>
+      </div>
+    </div>
+    <div class="hiddenDiv row" id="hide">
+        <div class="col-md-12">
+          <h2>Co-Borrower Information</h2>
+        </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="b2fname">B2 First Name</label>
+          <input type="text" class="form-control" id="b2fname" name="b2fname">
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="b2lname">B2 Last Name</label>
+          <input type="text" class="form-control" id="b2lname" name="b2lname">
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="email">B2 Email</label>
+          <input type="email" class="form-control" id="email" name="email">
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="b2dob">B2 DOB</label>
+          <input type="date" class="form-control" id="b2dob" name="b2dob">
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="b2_address">B2 Address</label>
+          <input type="text" class="form-control" id="b2_address" name="b2_address">
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="b2_City">B2 City</label>
+          <input type="text" class="form-control" id="b2_City" name="b2_City">
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="b2_state">B2 State</label>
+          <input type="text" class="form-control" id="b2_state" name="b2_state">
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="b2_zipcode">B2 Zip Code</label>
+          <input type="text" class="form-control" id="b2_zipcode" name="b2_zipcode">
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="b2_Income">B2 Annual Income</label>
+          <input type="number" class="form-control" id="b2_Income" name="b2_Income" >
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="b2_notes">B2 Borrower Notes</label>
+          <textarea class="form-control" id="b2_notes" name="b2_notes" rows="4"></textarea>
+        </div>
+      </div>
+    </div>
+    <!-- Submit Button -->
+    <button type="submit" class="btn btn-primary" id="submitbutton">Save</button>
+  </form>
+</body>
+</html>
