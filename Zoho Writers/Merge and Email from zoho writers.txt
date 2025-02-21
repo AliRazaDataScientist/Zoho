@@ -1,0 +1,33 @@
+// id = "e96qlbadcaa1479294e07a8164511129782df";
+response = invokeurl
+[
+	url :"https://zohoapis.eu/writer/api/v1/documents/3bedja9dce1d34e43416c8b62cf44fc46b323/fields"
+	type :GET
+	connection:"writer"
+];
+info response;
+// https://www.zohoapis.eu/writer/api/v1/documents/3bedja9dce1d34e43416c8b62cf44fc46b323/merge/email
+// dealId = 247956000006463631;
+// dealMap = zoho.crm.getRecordById("Deals",dealId);
+// // //Get Deal Variables
+// dealName = dealMap.get("Deal_Name");
+// dealacct = dealMap.get("Amount");
+// dealcont = dealMap.get("Closing_Date");
+// data = Map();
+// data.put("Deal_Name",dealName);
+// data.put("Closing_Date",dealcont);
+// data.put("Amount",dealacct);
+// param = Map();
+// param.put("message","Only for testing.");
+// param.put("subject","Contract");
+// param.put("merge_data",{"data":data});
+// param.put("output_format","pdf");
+// param.put("recipient_email","tecnospark6go1234567890@gmail.com");
+// rec = invokeurl
+// [
+// 	url :""
+// 	type :post
+// 	parameters:param
+// 	connection:"writer"
+// ];
+// info rec;

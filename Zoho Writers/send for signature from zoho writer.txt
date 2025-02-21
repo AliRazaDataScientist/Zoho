@@ -1,0 +1,77 @@
+// document_id = "fgs198989354addbc4cabbb58c9a097247623";///TDF Template
+// document_id = "fgs19baecc5fb3bdb42bd9f70eca6abb8fdb6";///Tax Template
+// response = invokeurl
+// [
+// 	url :"https://zohoapis.eu/writer/api/v1/documents/"+document_id+"/fields"
+// 	type :GET
+// 	connection:"writer"
+// ];
+// info response;
+rec = invokeurl
+[
+	url :"https://www.zohoapis.eu/crm/v6/Deals/" + dealId
+	type :GET
+	connection:"crm_oauth_connection"
+];
+dealMap = rec.getJSON("data");
+cont_id = dealMap.getJSON("Contact_Name").getJSON("id");
+get_rec = zoho.crm.getRecordById("Contacts",cont_id);
+email = get_rec.getJSON("Email");
+fullname = get_rec.getJSON("Full_Name");
+pro = dealMap.getJSON("Product");
+// //Get Deal Variables
+data = Map();
+data.put("Account_Name",dealMap.getJSON("Account_Name").getJSON("name"));
+data.put("Product",pro.getJSON("name"));
+data.put("Company_ID_Number",dealMap.getJSON("Company_ID_Number"));
+data.put("Company_Address",dealMap.getJSON("Company_Address"));
+data.put("Number_of_Weeks",dealMap.getJSON("Number_of_Weeks"));
+data.put("Date_From",dealMap.getJSON("Date_From"));
+data.put("Date_To",dealMap.getJSON("Date_To"));
+data.put("Final_Deadline",dealMap.getJSON("Final_Deadline"));
+data.put("Grant_Writer_Name",dealMap.getJSON("Grant_Writer").getJSON("Grant_Writer").getJSON("name"));
+data.put("Fixed_Fee_Amount",dealMap.getJSON("Fixed_Fee_Amount"));
+data.put("Success_Fee_Percentage",dealMap.getJSON("Success_Fee_Percentage"));
+pro_id = pro.getJSON("id");
+pro_rec = zoho.crm.getRecordById("Products",pro_id);
+Temp_Name = pro_rec.getJSON("Template_Name");
+productname = pro_rec.getJSON("Product_Name");
+filename = fullname+" "+productname+" "+Temp_Name;
+//............. Merge and Sign...............//
+signerList = List();
+signerObj1 = Map();
+signerObj1.put("recipient_1",email);
+signerObj1.put("action_type","sign");
+signerList.add(signerObj1);
+signerObj2 = Map();
+signerObj2.put("recipient_2","info@islandsdottir.is");
+signerObj2.put("action_type","sign");
+signerList.add(signerObj2);
+/////////////////////////////////////////////////
+params = Map();
+params.put("merge_data",{"data":data});
+params.put("sign_in_order","true");
+params.put("subject","Contract Sign");
+msg = "Please review and sign this";
+params.put("message",msg);
+params.put("signer_data",signerList);
+params.put("filename",filename);
+params.put("service_name","zohosign");
+//..................create record in sign document module...................//
+if(Temp_Name == "Quote-Contract_Tax")
+{
+	document_id = "fgs19baecc5fb3bdb42bd9f70eca6abb8fdb6";
+}
+else
+{
+	document_id = "fgs198989354addbc4cabbb58c9a097247623";
+}
+url = "https://writer.zoho.eu/api/v1/documents/" + document_id + "/merge/sign";
+sendDocs = invokeurl
+[
+	url :url
+	type :POST
+	parameters:params
+	connection:"writer"
+];
+info sendDocs;
