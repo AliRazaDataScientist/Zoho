@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deal Form</title>
+  <!-- Bootstrap CSS -->
+  <script src="https://live.zwidgets.com/js-sdk/1.2/ZohoEmbededAppSDK.min.js"></script>
+  <script src="onload.js"></script>
+  <script src="function.js"></script>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <!-- Bootstrap JS (Optional) -->
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+  <form id="dealForm" onsubmit="event.preventDefault(); checkvalidation()">
+    <div class="form-group" id="radio_section">
+      <div>
+        <label class="mr-2">Do you want to create a deal?</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" id="yes" name="createDeal" value="yes" onclick="toggleDealNameField(true),show_btn()">
+        <label class="form-check-label" for="yes">Yes</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" id="no" name="createDeal" value="no" onclick="toggleDealNameField(false),show_btn()">
+        <label class="form-check-label" for="no">No</label>
+      </div>
+    </div>
+
+    <div class="deal-name-container">
+      <div class="form-group">
+        <label for="amount" class="required-field">Amount</label>
+        <input type="number" min="0" class="form-control" id="amount" name="amount" required>
+      </div>
+
+      <div class="form-group">
+        <label for="dealName" class="required-field">Deal Name</label>
+        <input type="text" class="form-control" id="dealName" name="dealName" required>
+      </div>
+
+      <div class="form-group">
+        <label for="date" class="required-field">Booking / Sale Date</label>
+        <input type="date" class="form-control" id="date" name="date" required>
+      </div>
+
+      <div class="form-group">
+        <label for="stage" class="required-field">Stage</label>
+        <select class="form-control" id="stage" name="stage" required>
+          <option value="qualification">Qualification</option>
+          <option value="needsAnalysis">Needs Analysis</option>
+          <option value="valueProposition">Value Proposition</option>
+          <option value="identifyDecisionMakers">Identify Decision Makers</option>
+          <option value="proposalPriceQuote">Proposal/Price Quote</option>
+          <option value="negotiationReview">Negotiation/Review</option>
+          <option value="closedWon">Closed Won</option>
+          <option value="closedLost">Closed Lost</option>
+          <option value="closedLostToCompetition">Closed-Lost to Competition</option>
+        </select>
+      </div>
+
+      <!-- <div class="form-group">
+        <label for="UploadSPA">Upload SPA</label>
+        <input type="file" class="form-control" id="UploadSPA" name="UploadSPA" accept=".pdf, .docx">
+      </div>
+
+      <div class="form-group">
+        <label for="Uploadpassport">Upload Passport Copy</label>
+        <input type="file" class="form-control" id="Uploadpassport" name="Uploadpassport" accept=".pdf, .docx">
+      </div> -->
+
+    </div>
+
+    <!-- Submit Button -->
+    <button type="submit" class="btn btn-primary" id="submitbutton">Convert</button>
+  </form>
+</body>
+</html>
