@@ -1,0 +1,10 @@
+mp = Map();
+		mp.put("Subject","Call the " + name);
+		mp.put("$se_module","Leads");
+		mp.put("What_Id",input.id);
+		mp.put("Due Date",zoho.currentdate);
+		mp.put("Status","Not Started");
+		mp.put("Priority","High");
+		mp.put("Send Notification Email",true);
+		createTask = zoho.crm.createRecord("Tasks",mp);
+		info createTask;
