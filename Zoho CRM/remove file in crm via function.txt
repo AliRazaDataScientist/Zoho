@@ -1,0 +1,18 @@
+get_recd = zoho.crm.getRecordById("Listings",crm_id.tolong(),Optional_Map,"crm");
+	getfile = get_recd.getJSON("File_Upload");
+	if(getfile != null)
+	{
+		attachment_id = getfile.getJSON("attachment_Id");
+		filelist = List();
+		mp = Map();
+		mp.put("attachment_id",attachment_id);
+		mp.put("_delete",null);
+		filelist.add(mp);
+		update = zoho.crm.updateRecord("Listings",crm_id.tolong(),{"File_Upload":filelist},Optional_Map,"crm");
+		// 	info update;
+		check_con = 1;
+	}
+	else
+	{
+		check_con = 2;
+	}
