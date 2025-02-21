@@ -1,0 +1,945 @@
+response = Map();
+response.put("action","context");
+response.put("context_id",context_id);
+if(context_id.equals("demo_name"))
+{
+	demo_name = answers.get("demo_name").get("text");
+	if(demo_name.equalsIgnoreCase("Email Me"))
+	{
+		if(!answers.containsKey("mail"))
+		{
+			question = {"name":"mail","replies":{{"text":"Please enter your email address where we can reach you?","field_name":"siq_email","validate":{"format":"email","error":{"Enter a valid email"}}}}};
+			response.put("questions",{question});
+		}
+		else
+		{
+			mail = answers.get("mail").get("text");
+			if(!answers.containsKey("name"))
+			{
+				question = {"name":"name","replies":{{"text":"Thank you for that. May I also have your *full name* please?","field_name":"siq_name"}}};
+				response.put("questions",{question});
+			}
+			else
+			{
+				name = answers.get("name").get("text");
+				if(!answers.containsKey("area"))
+				{
+					question = {"name":"area","replies":{"What area would you like to rent in?"}};
+					response.put("questions",{question});
+				}
+				else
+				{
+					area = answers.get("area").get("text");
+					if(!answers.containsKey("budget"))
+					{
+						question = {"name":"budget","replies":{"What’s your budget?"}};
+						response.put("questions",{question});
+					}
+					else
+					{
+						budget = answers.get("budget").get("text");
+						if(!answers.containsKey("market"))
+						{
+							question = {"name":"market","replies":{"Is your income at least 3 times the market rental prices?"}};
+							response.put("questions",{question});
+						}
+						else
+						{
+							market = answers.get("market").get("text");
+							if(!answers.containsKey("move"))
+							{
+								question = {"name":"move","replies":{"How soon would you like to move?"}};
+								response.put("questions",{question});
+							}
+							else
+							{
+								move = answers.get("move").get("text");
+								if(!answers.containsKey("agent"))
+								{
+									question = {"name":"agent","replies":{"Are you working with another agent?"}};
+									response.put("questions",{question});
+								}
+								else
+								{
+									agent = answers.get("agent").get("text");
+									crmdata = zoho.crm.searchRecords("Leads","(Email:equals:" + mail + ")",0,0,{"converted":"both"},"connection");
+									if(!crmdata.isEmpty())
+									{
+										_crmdata = crmdata.get(0);
+										id = _crmdata.get("id");
+										module = "Leads";
+										if(_crmdata.get("$converted") == true)
+										{
+											converted_detail = _crmdata.get("$converted_detail").toMap();
+											id = converted_detail.get("contact");
+											module = "Contacts";
+										}
+										crmdata = zoho.crm.updateRecord(module,id,{"Last_Name":name,"Lead_Purpose":"Looking for a rental","What_area_would_you_like_to_rent_in":area,"What_s_your_budget":budget,"Is_your_income_at_least_3_times_the_market_rental":market,"How_soon_would_you_like_to_move":move,"Are_you_working_with_another_agent":agent},Map(),"connection");
+									}
+									else
+									{
+										// create new lead
+										crmdata = zoho.crm.createRecord("Leads",{"Email":mail,"Last_Name":name,"Lead_Purpose":"Looking for a rental","What_area_would_you_like_to_rent_in":area,"What_s_your_budget":budget,"Is_your_income_at_least_3_times_the_market_rental":market,"How_soon_would_you_like_to_move":move,"Are_you_working_with_another_agent":agent},Map(),"connection");
+									}
+									leadid = crmdata.get("id");
+									response.put("action","end");
+									response.put("replies",{"Thanks for visiting Benjaminhouse","One of our sales representative contact you very soon","Have a Good day"});
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	else if(demo_name.equalsIgnoreCase("Call Me"))
+	{
+		if(!answers.containsKey("phone"))
+		{
+			question = {"name":"phone","replies":{"What's the best number to reach you?"},"input":{"type":"tel","placeholder":"Enter your phone number","country_code":"+1","value":" ","error":{"Enter a Valid Number"}}};
+			response.put("questions",{question});
+		}
+		else
+		{
+			phone = answers.get("phone").get("text");
+			if(!answers.containsKey("name"))
+			{
+				question = {"name":"name","replies":{{"text":"Thank you for that. May I also have your *full name* please?","field_name":"siq_name"}}};
+				response.put("questions",{question});
+			}
+			else
+			{
+				name = answers.get("name").get("text");
+				if(!answers.containsKey("area"))
+				{
+					question = {"name":"area","replies":{"What area would you like to rent in?"}};
+					response.put("questions",{question});
+				}
+				else
+				{
+					area = answers.get("area").get("text");
+					if(!answers.containsKey("budget"))
+					{
+						question = {"name":"budget","replies":{"What’s your budget?"}};
+						response.put("questions",{question});
+					}
+					else
+					{
+						budget = answers.get("budget").get("text");
+						if(!answers.containsKey("market"))
+						{
+							question = {"name":"market","replies":{"Is your income at least 3 times the market rental prices?"}};
+							response.put("questions",{question});
+						}
+						else
+						{
+							market = answers.get("market").get("text");
+							if(!answers.containsKey("move"))
+							{
+								question = {"name":"move","replies":{"How soon would you like to move?"}};
+								response.put("questions",{question});
+							}
+							else
+							{
+								move = answers.get("move").get("text");
+								if(!answers.containsKey("agent"))
+								{
+									question = {"name":"agent","replies":{"Are you working with another agent?"}};
+									response.put("questions",{question});
+								}
+								else
+								{
+									agent = answers.get("agent").get("text");
+									crmdata = zoho.crm.searchRecords("Leads","(Phone:equals:" + phone + ")",0,0,{"converted":"both"},"connection");
+									if(!crmdata.isEmpty())
+									{
+										_crmdata = crmdata.get(0);
+										id = _crmdata.get("id");
+										module = "Leads";
+										if(_crmdata.get("$converted") == true)
+										{
+											converted_detail = _crmdata.get("$converted_detail").toMap();
+											id = converted_detail.get("contact");
+											module = "Contacts";
+										}
+										crmdata = zoho.crm.updateRecord(module,id,{"Last_Name":name,"Lead_Purpose":"Looking for a rental","What_area_would_you_like_to_rent_in":area,"What_s_your_budget":budget,"Is_your_income_at_least_3_times_the_market_rental":market,"How_soon_would_you_like_to_move":move,"Are_you_working_with_another_agent":agent},Map(),"connection");
+									}
+									else
+									{
+										// create new lead
+										crmdata = zoho.crm.createRecord("Leads",{"Last_Name":name,"Phone":phone,"Lead_Purpose":"Looking for a rental","What_area_would_you_like_to_rent_in":area,"What_s_your_budget":budget,"Is_your_income_at_least_3_times_the_market_rental":market,"How_soon_would_you_like_to_move":move,"Are_you_working_with_another_agent":agent},Map(),"connection");
+									}
+									leadid = crmdata.get("id");
+									response.put("action","end");
+									response.put("replies",{"Thanks for visiting Benjaminhouse","One of our sales representative contact you very soon","Have a Good day"});
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	else if(demo_name.equalsIgnoreCase("I’d like to keep chatting"))
+	{
+		if(!answers.containsKey("question"))
+		{
+			question = {"name":"question","replies":{"What questions do you have?"}};
+			response.put("questions",{question});
+		}
+		else
+		{
+			question = answers.get("question").get("text");
+			response.put("action","forward");
+			response.put("replies",{"you are connecting to our Live support agent please wait..."});
+		}
+	}
+}
+else if(context_id.equals("visiter_name"))
+{
+	visiter_name = answers.get("visiter_name").get("text");
+	if(visiter_name.equalsIgnoreCase("Email Me"))
+	{
+		if(!answers.containsKey("email"))
+	{
+		question = {"name":"email","replies":{{"text":"Please enter your email address where we can reach you?","field_name":"siq_email","validate":{"format":"email","error":{"Enter a valid email"}}}}};
+		response.put("questions",{question});
+	}
+	else
+	{
+		email = answers.get("email").get("text");
+		if(!answers.containsKey("name"))
+		{
+			question = {"name":"name","replies":{"Thank you for that. May I also have your *full name* please?"}};
+			response.put("questions",{question});
+		}
+		else
+		{
+			name = answers.get("name").get("text");
+			if(!answers.containsKey("area"))
+			{
+				question = {"name":"area","replies":{"What area would you like to live in?"}};
+				response.put("questions",{question});
+			}
+			else
+			{
+				area = answers.get("area").get("text");
+				if(!answers.containsKey("budget"))
+				{
+					question = {"name":"budget","replies":{"What’s your budget?"}};
+					response.put("questions",{question});
+				}
+				else
+				{
+					budget = answers.get("budget").get("text");
+					if(!answers.containsKey("qualified"))
+					{
+						question = {"name":"qualified","replies":{"Have you already been pre-qualified?"}};
+						response.put("questions",{question});
+					}
+					else
+					{
+						qualified = answers.get("qualified").get("text");
+						if(!answers.containsKey("move"))
+						{
+							question = {"name":"move","replies":{"How soon would you like to move?"}};
+							response.put("questions",{question});
+						}
+						else
+						{
+							move = answers.get("move").get("text");
+							if(!answers.containsKey("agent"))
+							{
+								question = {"name":"agent","replies":{"Are you under a buyer’s brokerage agreement with another agent?"}};
+								response.put("questions",{question});
+							}
+							else
+							{
+								agent = answers.get("agent").get("text");
+								crmdata = zoho.crm.searchRecords("Leads","(Email:equals:" + email + ")",0,0,{"converted":"both"},"connection");
+								if(!crmdata.isEmpty())
+								{
+									_crmdata = crmdata.get(0);
+									id = _crmdata.get("id");
+									module = "Leads";
+									if(_crmdata.get("$converted") == true)
+									{
+										converted_detail = _crmdata.get("$converted_detail").toMap();
+										id = converted_detail.get("contact");
+										module = "Contacts";
+									}
+									crmdata = zoho.crm.updateRecord(module,id,{"Last_Name":name,"Lead_Purpose":"Looking for a property to buy","Pre_qualified":qualified,"How_soon_like_to_move":move,"Agreement_with_another_agent":agent,"Area_to_live":area,"Your_Budget":budget},Map(),"connection");
+								}
+								else
+								{
+									// create new lead
+									crmdata = zoho.crm.createRecord("Leads",{"Email":email,"Last_Name":name,"Lead_Purpose":"Looking for a property to buy","Pre_qualified":qualified,"How_soon_like_to_move":move,"Agreement_with_another_agent":agent,"Area_to_live":area,"Your_Budget":budget},Map(),"connection");
+								}
+								leadid = crmdata.get("id");
+								response.put("action","end");
+								response.put("replies",{"Thanks for visiting Benjaminhouse","One of our sales representative contact you very soon","Have a Good day"});
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+		//info "Ok";
+	}
+	if(visiter_name.equalsIgnoreCase("Call Me"))
+	{
+			if(!answers.containsKey("phone"))
+	{
+		question = {"name":"phone","replies":{"What's the best number to reach you?"},"input":{"type":"tel","placeholder":"Enter your phone number","country_code":"+1","value":" ","error":{"Enter a Valid Number"}}};
+		response.put("questions",{question});
+	}
+	else
+	{
+		phone = answers.get("phone").get("text");
+		if(!answers.containsKey("name"))
+		{
+			question = {"name":"name","replies":{"Thank you for that. May I also have your *full name* please?"}};
+			response.put("questions",{question});
+		}
+		else
+		{
+			name = answers.get("name").get("text");
+			if(!answers.containsKey("area"))
+			{
+				question = {"name":"area","replies":{"What area would you like to live in?"}};
+				response.put("questions",{question});
+			}
+			else
+			{
+				area = answers.get("area").get("text");
+				if(!answers.containsKey("budget"))
+				{
+					question = {"name":"budget","replies":{"What’s your budget?"}};
+					response.put("questions",{question});
+				}
+				else
+				{
+					budget = answers.get("budget").get("text");
+					if(!answers.containsKey("qualified"))
+					{
+						question = {"name":"qualified","replies":{"Have you already been pre-qualified?"}};
+						response.put("questions",{question});
+					}
+					else
+					{
+						qualified = answers.get("qualified").get("text");
+						if(!answers.containsKey("move"))
+						{
+							question = {"name":"move","replies":{"How soon would you like to move?"}};
+							response.put("questions",{question});
+						}
+						else
+						{
+							move = answers.get("move").get("text");
+							if(!answers.containsKey("agent"))
+							{
+								question = {"name":"agent","replies":{"Are you under a buyer’s brokerage agreement with another agent?"}};
+								response.put("questions",{question});
+							}
+							else
+							{
+								agent = answers.get("agent").get("text");
+								crmdata = zoho.crm.searchRecords("Leads","(Phone:equals:" + phone + ")",0,0,{"converted":"both"},"connection");
+								if(!crmdata.isEmpty())
+								{
+									_crmdata = crmdata.get(0);
+									id = _crmdata.get("id");
+									module = "Leads";
+									if(_crmdata.get("$converted") == true)
+									{
+										converted_detail = _crmdata.get("$converted_detail").toMap();
+										id = converted_detail.get("contact");
+										module = "Contacts";
+									}
+									crmdata = zoho.crm.updateRecord(module,id,{"Last_Name":name,"Lead_Purpose":"Looking for a property to buy","Pre_qualified":qualified,"How_soon_like_to_move":move,"Agreement_with_another_agent":agent,"Area_to_live":area,"Your_Budget":budget},Map(),"connection");
+								}
+								else
+								{
+									// create new lead
+									crmdata = zoho.crm.createRecord("Leads",{"Last_Name":name,"Phone":phone,"Lead_Purpose":"Looking for a property to buy","Pre_qualified":qualified,"How_soon_like_to_move":move,"Agreement_with_another_agent":agent,"Area_to_live":area,"Your_Budget":budget},Map(),"connection");
+								}
+								leadid = crmdata.get("id");
+								response.put("action","end");
+								response.put("replies",{"Thanks for visiting Benjaminhouse","One of our sales representative contact you very soon","Have a Good day"});
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	}
+	if(visiter_name.equalsIgnoreCase("I’d like to keep chatting"))
+	{
+		if(!answers.containsKey("question"))
+		{
+			question = {"name":"question","replies":{"What questions do you have?"}};
+			response.put("questions",{question});
+		}
+		else
+		{
+			question = answers.get("question").get("text");
+			response.put("action","forward");
+			response.put("replies",{"you are connecting to our Live support agent please wait..."});
+		}
+	}
+}
+else if(context_id.equals("namee"))
+{
+	namee = answers.get("namee").get("text");
+	if(namee.equalsIgnoreCase("Email Me"))
+	{
+		if(!answers.containsKey("email"))
+	{
+		question = {"name":"email","replies":{{"text":"Please enter your email address where we can reach you?","field_name":"siq_email","validate":{"format":"email","error":{"Enter a valid email"}}}}};
+		response.put("questions",{question});
+	}
+	else
+	{
+		email = answers.get("email").get("text");
+		if(!answers.containsKey("name"))
+		{
+			question = {"name":"name","replies":{"Thank you for that. May I also have your *full name* please?"}};
+			response.put("questions",{question});
+		}
+		else
+		{
+			name = answers.get("name").get("text");
+			if(!answers.containsKey("payments"))
+			{
+				question = {"name":"payments","replies":{"How many payments are you behind?"}};
+				response.put("questions",{question});
+			}
+			else
+			{
+				payments = answers.get("payments").get("text");
+				if(!answers.containsKey("set"))
+				{
+					question = {"name":"set","replies":{"Has an auction date been set?"}};
+					response.put("questions",{question});
+				}
+				else
+				{
+					set = answers.get("set").get("text");
+					if(!answers.containsKey("condition"))
+					{
+						question = {"name":"condition","replies":{"Is the home in a livable condition?"}};
+						response.put("questions",{question});
+					}
+					else
+					{
+						condition = answers.get("condition").get("text");
+						if(!answers.containsKey("repaired"))
+						{
+							question = {"name":"repaired","replies":{"Does anything need to be repaired soon?"}};
+							response.put("questions",{question});
+						}
+						else
+						{
+							repaired = answers.get("repaired").get("text");
+							if(!answers.containsKey("bank"))
+							{
+								question = {"name":"bank","replies":{"Has the bank sent a payoff amount with a future date?"}};
+								response.put("questions",{question});
+							}
+							else
+							{
+								bank = answers.get("bank").get("text");
+								if(!answers.containsKey("property"))
+								{
+									question = {"name":"property","replies":{"Is there more than one lien on the property?"}};
+									response.put("questions",{question});
+								}
+								else
+								{
+									property = answers.get("property").get("text");
+									if(!answers.containsKey("owners"))
+									{
+										question = {"name":"owners","replies":{"Are you the owner or are there multiple owners? "}};
+										response.put("questions",{question});
+									}
+									else
+									{
+										owners = answers.get("owners").get("text");
+										if(!answers.containsKey("living"))
+										{
+											question = {"name":"living","replies":{"If someone else is the owner, are they still living?"}};
+											response.put("questions",{question});
+										}
+										else
+										{
+											living = answers.get("living").get("text");
+											if(!answers.containsKey("investment"))
+											{
+												question = {"name":"investment","replies":{"Has a contract been signed with any other investment company?"}};
+												response.put("questions",{question});
+											}
+											else
+											{
+												investment = answers.get("investment").get("text");
+												crmdata = zoho.crm.searchRecords("Leads","(Email:equals:" + email + ")",0,0,{"converted":"both"},"connection");
+												if(!crmdata.isEmpty())
+												{
+													_crmdata = crmdata.get(0);
+													id = _crmdata.get("id");
+													module = "Leads";
+													if(_crmdata.get("$converted") == true)
+													{
+														converted_detail = _crmdata.get("$converted_detail").toMap();
+														id = converted_detail.get("contact");
+														module = "Contacts";
+													}
+													crmdata = zoho.crm.updateRecord(module,id,{"Last_Name":name,"Lead_Purpose":"I need to sell a property quickly","How_many_payments_are_you_behind":payments,"Has_an_auction_date_been_set":set,"Is_the_home_in_a_livable_condition":condition,"Does_anything_need_to_be_repaired_soon":repaired,"Has_bank_sent_a_payoff_amount_with_a_future_date":bank,"Is_there_more_than_one_lien_on_the_property":property,"Are_you_the_owner_or_are_there_multiple_owners":owners,"If_someone_else_is_the_owner_are_they_still_live":living,"Contract_signed_with_any_other_investment_comany":investment},Map(),"connection");
+												}
+												else
+												{
+													// create new lead
+													crmdata = zoho.crm.createRecord("Leads",{"Email":email,"Last_Name":name,"Lead_Purpose":"I need to sell a property quickly","How_many_payments_are_you_behind":payments,"Has_an_auction_date_been_set":set,"Is_the_home_in_a_livable_condition":condition,"Does_anything_need_to_be_repaired_soon":repaired,"Has_bank_sent_a_payoff_amount_with_a_future_date":bank,"Is_there_more_than_one_lien_on_the_property":property,"Are_you_the_owner_or_are_there_multiple_owners":owners,"If_someone_else_is_the_owner_are_they_still_live":living,"Contract_signed_with_any_other_investment_comany":investment},Map(),"connection");
+												}
+												leadid = crmdata.get("id");
+												response.put("action","end");
+												response.put("replies",{"Thanks for visiting Benjaminhouse","One of our sales representative contact you very soon","Have a Good day"});
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	}
+	if(namee.equalsIgnoreCase("Call Me"))
+	{
+		if(!answers.containsKey("phone"))
+	{
+		question = {"name":"phone","replies":{"What's the best number to reach you?"},"input":{"type":"tel","placeholder":"Enter your phone number","country_code":"+1","value":" ","error":{"Enter a Valid Number"}}};
+		response.put("questions",{question});
+	}
+	else
+	{
+		phone = answers.get("phone").get("text");
+		if(!answers.containsKey("name"))
+		{
+			question = {"name":"name","replies":{"Thank you for that. May I also have your *full name* please?"}};
+			response.put("questions",{question});
+		}
+		else
+		{
+			name = answers.get("name").get("text");
+			if(!answers.containsKey("payments"))
+			{
+				question = {"name":"payments","replies":{"How many payments are you behind?"}};
+				response.put("questions",{question});
+			}
+			else
+			{
+				payments = answers.get("payments").get("text");
+				if(!answers.containsKey("set"))
+				{
+					question = {"name":"set","replies":{"Has an auction date been set?"}};
+					response.put("questions",{question});
+				}
+				else
+				{
+					set = answers.get("set").get("text");
+					if(!answers.containsKey("condition"))
+					{
+						question = {"name":"condition","replies":{"Is the home in a livable condition?"}};
+						response.put("questions",{question});
+					}
+					else
+					{
+						condition = answers.get("condition").get("text");
+						if(!answers.containsKey("repaired"))
+						{
+							question = {"name":"repaired","replies":{"Does anything need to be repaired soon?"}};
+							response.put("questions",{question});
+						}
+						else
+						{
+							repaired = answers.get("repaired").get("text");
+							if(!answers.containsKey("bank"))
+							{
+								question = {"name":"bank","replies":{"Has the bank sent a payoff amount with a future date?"}};
+								response.put("questions",{question});
+							}
+							else
+							{
+								bank = answers.get("bank").get("text");
+								if(!answers.containsKey("property"))
+								{
+									question = {"name":"property","replies":{"Is there more than one lien on the property?"}};
+									response.put("questions",{question});
+								}
+								else
+								{
+									property = answers.get("property").get("text");
+									if(!answers.containsKey("owners"))
+									{
+										question = {"name":"owners","replies":{"Are you the owner or are there multiple owners? "}};
+										response.put("questions",{question});
+									}
+									else
+									{
+										owners = answers.get("owners").get("text");
+										if(!answers.containsKey("living"))
+										{
+											question = {"name":"living","replies":{"If someone else is the owner, are they still living?"}};
+											response.put("questions",{question});
+										}
+										else
+										{
+											living = answers.get("living").get("text");
+											if(!answers.containsKey("investment"))
+											{
+												question = {"name":"investment","replies":{"Has a contract been signed with any other investment company?"}};
+												response.put("questions",{question});
+											}
+											else
+											{
+												investment = answers.get("investment").get("text");
+												crmdata = zoho.crm.searchRecords("Leads","(Phone:equals:" + phone + ")",0,0,{"converted":"both"},"connection");
+												if(!crmdata.isEmpty())
+												{
+													_crmdata = crmdata.get(0);
+													id = _crmdata.get("id");
+													module = "Leads";
+													if(_crmdata.get("$converted") == true)
+													{
+														converted_detail = _crmdata.get("$converted_detail").toMap();
+														id = converted_detail.get("contact");
+														module = "Contacts";
+													}
+													crmdata = zoho.crm.updateRecord(module,id,{"Last_Name":name,"Lead_Purpose":"I need to sell a property quickly","How_many_payments_are_you_behind":payments,"Has_an_auction_date_been_set":set,"Is_the_home_in_a_livable_condition":condition,"Does_anything_need_to_be_repaired_soon":repaired,"Has_bank_sent_a_payoff_amount_with_a_future_date":bank,"Is_there_more_than_one_lien_on_the_property":property,"Are_you_the_owner_or_are_there_multiple_owners":owners,"If_someone_else_is_the_owner_are_they_still_live":living,"Contract_signed_with_any_other_investment_comany":investment},Map(),"connection");
+												}
+												else
+												{
+													// create new lead
+													crmdata = zoho.crm.createRecord("Leads",{"Last_Name":name,"Phone":phone,"Lead_Purpose":"I need to sell a property quickly","How_many_payments_are_you_behind":payments,"Has_an_auction_date_been_set":set,"Is_the_home_in_a_livable_condition":condition,"Does_anything_need_to_be_repaired_soon":repaired,"Has_bank_sent_a_payoff_amount_with_a_future_date":bank,"Is_there_more_than_one_lien_on_the_property":property,"Are_you_the_owner_or_are_there_multiple_owners":owners,"If_someone_else_is_the_owner_are_they_still_live":living,"Contract_signed_with_any_other_investment_comany":investment},Map(),"connection");
+												}
+												leadid = crmdata.get("id");
+												response.put("action","end");
+												response.put("replies",{"Thanks for visiting Benjaminhouse","One of our sales representative contact you very soon","Have a Good day"});
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	}
+	if(namee.equalsIgnoreCase("I’d like to keep chatting"))
+	{
+		if(!answers.containsKey("question"))
+		{
+			question = {"name":"question","replies":{"What questions do you have?"}};
+			response.put("questions",{question});
+		}
+		else
+		{
+			question = answers.get("question").get("text");
+			response.put("action","forward");
+			response.put("replies",{"you are connecting to our Live support agent please wait..."});
+		}
+	}
+}
+else if(context_id.equals("browsing_name"))
+{
+	browsing_name = answers.get("browsing_name").get("text");
+	if(browsing_name.equalsIgnoreCase("Email Me"))
+	{
+		if(!answers.containsKey("email"))
+	{
+		question = {"name":"email","replies":{{"text":"Please enter your email address where we can reach you?","field_name":"siq_email","validate":{"format":"email","error":{"Enter a valid email"}}}}};
+		response.put("questions",{question});
+	}
+	else
+	{
+		email = answers.get("email").get("text");
+		if(!answers.containsKey("name"))
+		{
+			question = {"name":"name","replies":{"Thank you for that. May I also have your *full name* please?"}};
+			response.put("questions",{question});
+		}
+		else
+		{
+			name = answers.get("name").get("text");
+			if(!answers.containsKey("option"))
+			{
+				question = {"name":"option","replies":{"Do you own the property or are you assisting the person"},"input":{"type":"select","options":{"Own the property","Assisting the person who owns the property"}}};
+				response.put("questions",{question});
+			}
+			else
+			{
+				option = answers.get("option").get("text");
+				if(option.equalsIgnoreCase("Own the property"))
+				{
+					if(!answers.containsKey("sell"))
+					{
+						question = {"name":"sell","replies":{"How soon would you like to sell?"}};
+						response.put("questions",{question});
+					}
+					else
+					{
+						sell = answers.get("sell").get("text");
+						if(!answers.containsKey("issues"))
+						{
+							question = {"name":"issues","replies":{"Is there any issues that would need to be addressed before the property could be listed?"}};
+							response.put("questions",{question});
+						}
+						else
+						{
+							issues = answers.get("issues").get("text");
+							if(!answers.containsKey("see"))
+							{
+								question = {"name":"see","replies":{"When can we see the house?"}};
+								response.put("questions",{question});
+							}
+							else
+							{
+								see = answers.get("see").get("text");
+								crmdata = zoho.crm.searchRecords("Leads","(Email:equals:" + email + ")",0,0,{"converted":"both"},"connection");
+								if(!crmdata.isEmpty())
+								{
+									_crmdata = crmdata.get(0);
+									id = _crmdata.get("id");
+									module = "Leads";
+									if(_crmdata.get("$converted") == true)
+									{
+										converted_detail = _crmdata.get("$converted_detail").toMap();
+										id = converted_detail.get("contact");
+										module = "Contacts";
+									}
+									crmdata = zoho.crm.updateRecord(module,id,{"Last_Name":name,"Lead_Purpose":"I need to list my property","How_soon_would_you_like_to_sell":sell,"Any_issue_addressed_before_the_property_be_listed":issues,"When_can_we_see_the_house":see,"Do_you_own_the_property_or_are_you_assist_person":option},Map(),"connection");
+								}
+								else
+								{
+									// create new lead
+									crmdata = zoho.crm.createRecord("Leads",{"Email":email,"Last_Name":name,"Lead_Purpose":"I need to list my property","How_soon_would_you_like_to_sell":sell,"Any_issue_addressed_before_the_property_be_listed":issues,"When_can_we_see_the_house":see,"Do_you_own_the_property_or_are_you_assist_person":option},Map(),"connection");
+								}
+								leadid = crmdata.get("id");
+								response.put("action","end");
+								response.put("replies",{"Thanks for visiting Benjaminhouse","One of our sales representative contact you very soon","Have a Good day"});
+							}
+						}
+					}
+				}
+				else if(option.equalsIgnoreCase("Assisting the person who owns the property"))
+				{
+					if(!answers.containsKey("issues"))
+					{
+						question = {"name":"issues","replies":{"Is there any issues that would need to be addressed before the property could be listed?"}};
+						response.put("questions",{question});
+					}
+					else
+					{
+						issues = answers.get("issues").get("text");
+						if(!answers.containsKey("see"))
+						{
+							question = {"name":"see","replies":{"How soon would you like to move?"}};
+							response.put("questions",{question});
+						}
+						else
+						{
+							see = answers.get("see").get("text");
+							if(!answers.containsKey("namme"))
+							{
+								question = {"name":"namme","replies":{"Whose name is on the title of the property, and where are they?"}};
+								response.put("questions",{question});
+							}
+							else
+							{
+								namme = answers.get("namme").get("text");
+								crmdata = zoho.crm.searchRecords("Leads","(Email:equals:" + email + ")",0,0,{"converted":"both"},"connection");
+								if(!crmdata.isEmpty())
+								{
+									_crmdata = crmdata.get(0);
+									id = _crmdata.get("id");
+									module = "Leads";
+									if(_crmdata.get("$converted") == true)
+									{
+										converted_detail = _crmdata.get("$converted_detail").toMap();
+										id = converted_detail.get("contact");
+										module = "Contacts";
+									}
+									crmdata = zoho.crm.updateRecord(module,id,{"Last_Name":name,"Lead_Purpose":"I need to list my property","Owner_of_the_property_and_where_are_they":namme,"Any_issue_addressed_before_the_property_be_listed":issues,"When_can_we_see_the_house":see,"Do_you_own_the_property_or_are_you_assist_person":option},Map(),"connection");
+								}
+								else
+								{
+									// create new lead
+									crmdata = zoho.crm.createRecord("Leads",{"Email":email,"Last_Name":name,"Lead_Purpose":"I need to list my property","Owner_of_the_property_and_where_are_they":namme,"Any_issue_addressed_before_the_property_be_listed":issues,"When_can_we_see_the_house":see,"Do_you_own_the_property_or_are_you_assist_person":option},Map(),"connection");
+								}
+								leadid = crmdata.get("id");
+								response.put("action","end");
+								response.put("replies",{"Thanks for visiting Benjaminhouse","One of our sales representative contact you very soon","Have a Good day"});
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	}
+	if(browsing_name.equalsIgnoreCase("Call Me"))
+	{
+		if(!answers.containsKey("phone"))
+	{
+		question = {"name":"phone","replies":{"What's the best number to reach you?"},"input":{"type":"tel","placeholder":"Enter your phone number","country_code":"+1","value":" ","error":{"Enter a Valid Number"}}};
+		response.put("questions",{question});
+	}
+	else
+	{
+		phone = answers.get("phone").get("text");
+		if(!answers.containsKey("namme"))
+		{
+			question = {"name":"namme","replies":{"Thank you for that. May I also have your *full name* please?"}};
+			response.put("questions",{question});
+		}
+		else
+		{
+			namme = answers.get("namme").get("text");
+			if(!answers.containsKey("option"))
+			{
+				question = {"name":"option","replies":{"Do you own the property or are you assisting the person"},"input":{"type":"select","options":{"Own the property","Assisting the person who owns the property"}}};
+				response.put("questions",{question});
+			}
+			else
+			{
+				option = answers.get("option").get("text");
+				if(option.equalsIgnoreCase("Own the property"))
+				{
+					if(!answers.containsKey("sell"))
+					{
+						question = {"name":"sell","replies":{"How soon would you like to sell?"}};
+						response.put("questions",{question});
+					}
+					else
+					{
+						sell = answers.get("sell").get("text");
+						if(!answers.containsKey("issues"))
+						{
+							question = {"name":"issues","replies":{"Is there any issues that would need to be addressed before the property could be listed?"}};
+							response.put("questions",{question});
+						}
+						else
+						{
+							issues = answers.get("issues").get("text");
+							if(!answers.containsKey("see"))
+							{
+								question = {"name":"see","replies":{"When can we see the house?"}};
+								response.put("questions",{question});
+							}
+							else
+							{
+								see = answers.get("see").get("text");
+								crmdata = zoho.crm.searchRecords("Leads","(Phone:equals:" + phone + ")",0,0,{"converted":"both"},"connection");
+								if(!crmdata.isEmpty())
+								{
+									_crmdata = crmdata.get(0);
+									id = _crmdata.get("id");
+									module = "Leads";
+									if(_crmdata.get("$converted") == true)
+									{
+										converted_detail = _crmdata.get("$converted_detail").toMap();
+										id = converted_detail.get("contact");
+										module = "Contacts";
+									}
+									crmdata = zoho.crm.updateRecord(module,id,{"Last_Name":namme,"Lead_Purpose":"I need to list my property","How_soon_would_you_like_to_sell":sell,"Any_issue_addressed_before_the_property_be_listed":issues,"When_can_we_see_the_house":see,"Do_you_own_the_property_or_are_you_assist_person":option},Map(),"connection");
+								}
+								else
+								{
+									// create new lead
+									crmdata = zoho.crm.createRecord("Leads",{"Last_Name":namme,"Phone":phone,"Lead_Purpose":"I need to list my property","How_soon_would_you_like_to_sell":sell,"Any_issue_addressed_before_the_property_be_listed":issues,"When_can_we_see_the_house":see,"Do_you_own_the_property_or_are_you_assist_person":option},Map(),"connection");
+								}
+								leadid = crmdata.get("id");
+								response.put("action","end");
+								response.put("replies",{"Thanks for visiting Benjaminhouse","One of our sales representative contact you very soon","Have a Good day"});
+							}
+						}
+					}
+				}
+				else if(option.equalsIgnoreCase("Assisting the person who owns the property"))
+				{
+					if(!answers.containsKey("issues"))
+					{
+						question = {"name":"issues","replies":{"Is there any issues that would need to be addressed before the property could be listed?"}};
+						response.put("questions",{question});
+					}
+					else
+					{
+						issues = answers.get("issues").get("text");
+						if(!answers.containsKey("see"))
+						{
+							question = {"name":"see","replies":{"How soon would you like to move?"}};
+							response.put("questions",{question});
+						}
+						else
+						{
+							see = answers.get("see").get("text");
+							if(!answers.containsKey("name"))
+							{
+								question = {"name":"name","replies":{"Whose name is on the title of the property, and where are they?"}};
+								response.put("questions",{question});
+							}
+							else
+							{
+								name = answers.get("name").get("text");
+								crmdata = zoho.crm.searchRecords("Leads","(Phone:equals:" + phone + ")",0,0,{"converted":"both"},"connection");
+								if(!crmdata.isEmpty())
+								{
+									_crmdata = crmdata.get(0);
+									id = _crmdata.get("id");
+									module = "Leads";
+									if(_crmdata.get("$converted") == true)
+									{
+										converted_detail = _crmdata.get("$converted_detail").toMap();
+										id = converted_detail.get("contact");
+										module = "Contacts";
+									}
+									crmdata = zoho.crm.updateRecord(module,id,{"Last_Name":namme,"Lead_Purpose":"I need to list my property","Owner_of_the_property_and_where_are_they":name,"Any_issue_addressed_before_the_property_be_listed":issues,"When_can_we_see_the_house":see,"Do_you_own_the_property_or_are_you_assist_person":option},Map(),"connection");
+								}
+								else
+								{
+									// create new lead
+									crmdata = zoho.crm.createRecord("Leads",{"Last_Name":namme,"Phone":phone,"Lead_Purpose":"I need to list my property","Owner_of_the_property_and_where_are_they":name,"Any_issue_addressed_before_the_property_be_listed":issues,"When_can_we_see_the_house":see,"Do_you_own_the_property_or_are_you_assist_person":option},Map(),"connection");
+								}
+								leadid = crmdata.get("id");
+								response.put("action","end");
+								response.put("replies",{"Thanks for visiting Benjaminhouse","One of our sales representative contact you very soon","Have a Good day"});
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	}
+	if(browsing_name.equalsIgnoreCase("I’d like to keep chatting"))
+	{
+		if(!answers.containsKey("question"))
+		{
+			question = {"name":"question","replies":{"What questions do you have?"}};
+			response.put("questions",{question});
+		}
+		else
+		{
+			question = answers.get("question").get("text");
+			response.put("action","forward");
+			response.put("replies",{"you are connecting to our Live support agent please wait..."});
+		}
+	}
+}
+return response;

@@ -1,0 +1,5 @@
+response = Map();
+response.put("action","reply");
+response.put("replies",{"Hey, there. I'm Ben, the virtual assistant.","Can I help point you in the right direction?"});
+response.put("input",{"type":"select","options":{"Looking for a property to buy","Looking for a rental","I need to list my property","I need to sell a property quickly","I have another question"}});
+return response;

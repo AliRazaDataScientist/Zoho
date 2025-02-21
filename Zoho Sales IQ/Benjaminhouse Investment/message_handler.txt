@@ -1,0 +1,36 @@
+response = Map();
+msg = message.get("text");
+if(msg.equalsIgnoreCase("I need to list my property"))
+{
+	response.put("action","context");
+	response.put("context_id","browsing_name");
+	question = {"name":"browsing_name","replies":{"Great! I’d love to help.","How would you prefer to proceed?"},"input":{"type":"select","options":{"Email Me","Call Me","I’d like to keep chatting"}}};
+	response.put("questions",{question});
+}
+else if(msg.equalsIgnoreCase("Looking for a property to buy"))
+{
+	response.put("action","context");
+	response.put("context_id","visiter_name");
+	question = {"name":"visiter_name","replies":{"Great! I’d love to help.","How would you prefer to proceed?"},"input":{"type":"select","options":{"Email Me","Call Me","I’d like to keep chatting"}}};
+	response.put("questions",{question});
+}
+else if(msg.equalsIgnoreCase("Looking for a rental"))
+{
+	response.put("action","context");
+	response.put("context_id","demo_name");
+	question = {"name":"demo_name","replies":{"Great! I’d love to help.","How would you prefer to proceed?"},"input":{"type":"select","options":{"Email Me","Call Me","I’d like to keep chatting"}}};
+	response.put("questions",{question});
+}
+else if(msg.equalsIgnoreCase("I need to sell a property quickly"))
+{
+	response.put("action","context");
+	response.put("context_id","namee");
+	question = {"name":"namee","replies":{"Great! I’d love to help.","How would you prefer to proceed?"},"input":{"type":"select","options":{"Email Me","Call Me","I’d like to keep chatting"}}};
+	response.put("questions",{question});
+}
+else if(msg.equalsIgnoreCase("I have another question"))
+{
+	response.put("action","end");
+	response.put("replies",{"Contact us 24/7 by sending an email to: info@benjaminhouse.us","Thanks for visiting"});
+}
+return response;
