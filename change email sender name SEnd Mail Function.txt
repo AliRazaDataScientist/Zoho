@@ -1,0 +1,7 @@
+sendmail
+	[
+		from : "'Thorunn Jonsdottir' <" + zoho.loginuserid + ">"
+		to :email
+		subject :"Grant Application Kickoff: Let's Get Started!"
+		message :"Test msg"
+	]
