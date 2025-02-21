@@ -1,0 +1,196 @@
+//create a button for updating the subform
+recd_id = 5451947000000389996;
+//creating a list
+edu_details_subform = list();
+//creating a subform row 1 Map
+// subform_row1=Map();
+// subform_row1.put("Institute_Name", "Govt High School");
+// subform_row1.put("Total_Marks", 1100);
+// subform_row1.put("Obtained_Marks", 770);
+// subform_row1.put("Percentage", 70);
+// //creating a subform row 2 Map
+// subform_row2=Map();
+// subform_row2.put("Institute_Name", "Govt College");
+// subform_row2.put("Total_Marks", 1100);
+// subform_row2.put("Obtained_Marks", 660);
+// subform_row2.put("Percentage", 60);
+// //creating a subform row 3 Map
+// subform_row3=Map();
+// subform_row3.put("Institute_Name", "Govt National University");
+// subform_row3.put("Total_Marks", 1200);
+// subform_row3.put("Obtained_Marks", 600);
+// subform_row3.put("Percentage", 50);
+//get record from the contact module
+get_recd = zoho.crm.getRecordById("Contacts",recd_id);
+collect = get_recd.get("Education_Details");
+// if the record in collection is empty then it will created a new record though map function
+if(collect.isEmpty())
+{
+	edu_details_subform.add(subform_row1);
+	edu_details_subform.add(subform_row2);
+	edu_details_subform.add(subform_row3);
+	info edu_details_subform ;
+	//Map subform in eduction details
+	add_recd_subform= Map();
+	add_recd_subform.put("Education_Details",edu_details_subform);
+	//here we update the our record
+	updat_recd = zoho.crm.updateRecord("Contacts",recd_id,add_recd_subform);
+info updat_recd;
+return "Record Successfully Created in three subfoarm rows";
+}
+else 
+{
+	for each  record in collect
+	{
+		if(record.get("Institute_Name").contains("School") && record.get("Institute_Name").notContains("College") && record.get("Institute_Name").notContains("University"))
+		{
+			info "College && University is empty";
+			//get the data belonge to school information
+			get_subform_row1_data=Map();
+			get_subform_row1_data.put("Institute_Name", record.get("Institute_Name"));
+			get_subform_row1_data.put("Total_Marks", record.get("Total_Marks"));
+			get_subform_row1_data.put("Obtained_Marks", record.get("Obtained_Marks"));
+			get_subform_row1_data.put("Percentage", record.get("Percentage"));
+			edu_details_subform.add(get_subform_row1_data);
+	edu_details_subform.add(subform_row2);
+	edu_details_subform.add(subform_row3);
+	info edu_details_subform ;
+	//Map subform in eduction details
+	add_recd_subform= Map();
+	add_recd_subform.put("Education_Details",edu_details_subform);
+	//here we update the our record
+	updat_recd = zoho.crm.updateRecord("Contacts",recd_id,add_recd_subform);
+info updat_recd;
+return "Record Successfully Created in last 2 subfoarm rows";
+		}
+		else if(record.get("Institute_Name").contains("College") && record.get("Institute_Name").notContains("School") && record.get("Institute_Name").notContains("University"))
+		{
+			info "School && University is empty";
+	edu_details_subform.add(subform_row1);
+			//get the data belonge to colllege information
+			get_subform_row2_data=Map();
+			get_subform_row2_data.put("Institute_Name", record.get("Institute_Name"));
+			get_subform_row2_data.put("Total_Marks", record.get("Total_Marks"));
+			get_subform_row2_data.put("Obtained_Marks", record.get("Obtained_Marks"));
+			get_subform_row2_data.put("Percentage", record.get("Percentage"));
+			edu_details_subform.add(get_subform_row2_data);
+	edu_details_subform.add(subform_row3);
+	info edu_details_subform ;
+	//Map subform in eduction details
+	add_recd_subform= Map();
+	add_recd_subform.put("Education_Details",edu_details_subform);
+	//here we update the our record
+	updat_recd = zoho.crm.updateRecord("Contacts",recd_id,add_recd_subform);
+info updat_recd;
+return "Record Successfully Created in last 2 subfoarm rows";
+		}
+		else if(record.get("Institute_Name").contains("University") && record.get("Institute_Name").notContains("School") && record.get("Institute_Name").notContains("College"))
+		{
+			info "School && College is empty";
+	edu_details_subform.add(subform_row1);
+	edu_details_subform.add(subform_row2);
+			//get the data belonge to College information
+			get_subform_row3_data=Map();
+			get_subform_row3_data.put("Institute_Name", record.get("Institute_Name"));
+			get_subform_row3_data.put("Total_Marks", record.get("Total_Marks"));
+			get_subform_row3_data.put("Obtained_Marks", record.get("Obtained_Marks"));
+			get_subform_row3_data.put("Percentage", record.get("Percentage"));
+			edu_details_subform.add(get_subform_row3_data);
+	info edu_details_subform ;
+	//Map subform in eduction details
+	add_recd_subform= Map();
+	add_recd_subform.put("Education_Details",edu_details_subform);
+	//here we update the our record
+	updat_recd = zoho.crm.updateRecord("Contacts",recd_id,add_recd_subform);
+info updat_recd;
+return "Record Successfully Created in last 2 subfoarm rows";
+		}
+		}
+	//for two index
+	variable_no_0= collect.get(0).get("Institute_Name") ;
+	info variable_no_0 ;
+	variable_no_1= collect.get(1).get("Institute_Name") ;
+	info variable_no_1;
+	if(variable_no_0.contains("College") && variable_no_1.contains("University"))
+	{
+		info "School is empty";
+	edu_details_subform.add(subform_row1);
+			//get the data belonge to college information
+			get_subform_row1_data=Map();
+			get_subform_row1_data.put("Institute_Name", collect.get(0).get("Institute_Name"));
+			get_subform_row1_data.put("Total_Marks", collect.get(0).get("Total_Marks"));
+			get_subform_row1_data.put("Obtained_Marks", collect.get(0).get("Obtained_Marks"));
+			get_subform_row1_data.put("Percentage", collect.get(0).get("Percentage"));
+			edu_details_subform.add(get_subform_row1_data);
+			//get the data belonge to University information
+			get_subform_row2_data=Map();
+			get_subform_row2_data.put("Institute_Name", collect.get(1).get("Institute_Name"));
+			get_subform_row2_data.put("Total_Marks", collect.get(1).get("Total_Marks"));
+			get_subform_row2_data.put("Obtained_Marks", collect.get(1).get("Obtained_Marks"));
+			get_subform_row2_data.put("Percentage", collect.get(1).get("Percentage"));
+			edu_details_subform.add(get_subform_row2_data);
+	info edu_details_subform ;
+	//Map subform in eduction details
+	add_recd_subform= Map();
+	add_recd_subform.put("Education_Details",edu_details_subform);
+	//here we update the our record
+	updat_recd = zoho.crm.updateRecord("Contacts",recd_id,add_recd_subform);
+info updat_recd;
+return "School record successfully added in subfoarm rows";
+	}
+	else if(variable_no_0.contains("School") && variable_no_1.contains("College"))
+	{
+		info "University is empty";
+			//get the data belonge to school information
+			get_subform_row1_data=Map();
+			get_subform_row1_data.put("Institute_Name", collect.get(0).get("Institute_Name"));
+			get_subform_row1_data.put("Total_Marks", collect.get(0).get("Total_Marks"));
+			get_subform_row1_data.put("Obtained_Marks", collect.get(0).get("Obtained_Marks"));
+			get_subform_row1_data.put("Percentage", collect.get(0).get("Percentage"));
+			edu_details_subform.add(get_subform_row1_data);
+			//get the data belonge to college information
+			get_subform_row2_data=Map();
+			get_subform_row2_data.put("Institute_Name", collect.get(1).get("Institute_Name"));
+			get_subform_row2_data.put("Total_Marks", collect.get(1).get("Total_Marks"));
+			get_subform_row2_data.put("Obtained_Marks", collect.get(1).get("Obtained_Marks"));
+			get_subform_row2_data.put("Percentage", collect.get(1).get("Percentage"));
+			edu_details_subform.add(get_subform_row2_data);
+	edu_details_subform.add(subform_row3);
+	info edu_details_subform ;
+	//Map subform in eduction details
+	add_recd_subform= Map();
+	add_recd_subform.put("Education_Details",edu_details_subform);
+	//here we update the our record
+	updat_recd = zoho.crm.updateRecord("Contacts",recd_id,add_recd_subform);
+info updat_recd;
+return "School record successfully added in subfoarm rows";
+	}
+	else if(variable_no_0.contains("School") && variable_no_1.contains("University"))
+	{
+		info "College is empty";
+			//get the data belonge to school information
+			get_subform_row1_data=Map();
+			get_subform_row1_data.put("Institute_Name", collect.get(0).get("Institute_Name"));
+			get_subform_row1_data.put("Total_Marks", collect.get(0).get("Total_Marks"));
+			get_subform_row1_data.put("Obtained_Marks", collect.get(0).get("Obtained_Marks"));
+			get_subform_row1_data.put("Percentage", collect.get(0).get("Percentage"));
+			edu_details_subform.add(get_subform_row1_data);
+	edu_details_subform.add(subform_row2);
+			//get the data belonge to university information
+			get_subform_row2_data=Map();
+			get_subform_row2_data.put("Institute_Name", collect.get(1).get("Institute_Name"));
+			get_subform_row2_data.put("Total_Marks", collect.get(1).get("Total_Marks"));
+			get_subform_row2_data.put("Obtained_Marks", collect.get(1).get("Obtained_Marks"));
+			get_subform_row2_data.put("Percentage", collect.get(1).get("Percentage"));
+			edu_details_subform.add(get_subform_row2_data);
+	info edu_details_subform ;
+	//Map subform in eduction details
+	add_recd_subform= Map();
+	add_recd_subform.put("Education_Details",edu_details_subform);
+	//here we update the our record
+	updat_recd = zoho.crm.updateRecord("Contacts",recd_id,add_recd_subform);
+info updat_recd;
+return "School record successfully added in subfoarm rows";
+	}
+}
+return "";

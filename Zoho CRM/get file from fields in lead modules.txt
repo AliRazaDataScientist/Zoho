@@ -1,0 +1,22 @@
+id = 5506114000000814828;
+recd = zoho.crm.getRecordById("Ali_Test_Practice",id);
+// info recd.getJSON("Documents") ;
+for each  collect in recd.getJSON("Documents")
+{
+	attachementId = collect.getJSON("attachment_Id");
+	doc = invokeurl
+	[
+		url :"https://www.zohoapis.com/crm/v2/Ali_Test_Practice/" + id + "/Attachments/" + attachementId
+		type :GET
+		connection:"crm_connection"
+	];
+	info doc;
+	sendmail
+	[
+		from :zoho.adminuserid
+		to :"gignekatru@gufum.com"
+		subject :"Test attachment"
+		message :"This is only for demo purpose"
+		Attachments :file:doc
+	]
+}

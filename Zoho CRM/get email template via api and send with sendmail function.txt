@@ -1,0 +1,29 @@
+get_account = zoho.crm.getRecordById("Accounts",account.toLong());
+	if(get_account.getJSON("Email_Templates") == "BROKER- WELCOME TO MEDBLUE SENT AFTER CONTRACT SIGNED")
+	{
+		// get url of specfic email 
+		template_url = "https://www.zohoapis.com/crm/v3/settings/email_templates/" + "4671408000012867110";
+		/// email template response
+		response = invokeurl
+		[
+			url :template_url
+			type :GET
+			connection:"emailtemplate"
+		];
+		email_content = response.getJSON("email_templates").getJSON("mail_content");
+		if(get_account.getJSON("Account_Name") != null)
+		{
+			email_contentsrep = email_content.replaceAll("\$\{!Accounts.Account_Name\}",get_account.getJSON("Account_Name"));
+		}
+		else
+		{
+			email_contentsrep = email_content.remove("${!Accounts.Account_Name}");
+		}
+		subject = "BROKER- WELCOME TO MEDBLUE SENT AFTER CONTRACT SIGNED";
+sendmail
+	[
+		from :"Medblue <team@medblue.com>"
+		to :get_account.getJSON("Email_1")
+		subject :subject
+		message :email_contentsrep
+	]

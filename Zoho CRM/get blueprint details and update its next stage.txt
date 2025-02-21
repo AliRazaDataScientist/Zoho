@@ -1,0 +1,33 @@
+recd = zoho.crm.getRecordById("zohosign__ZohoSign_Documents",id);
+// info recd ;
+recd_name = recd.getJSON("Name");
+// info recd_name ;
+lead_id = recd.getJSON("zohosign__Lead").getJSON("id");
+// info lead_id;
+getres = invokeurl
+[
+	url :"https://www.zohoapis.com/crm/v2/Leads/" + lead_id + "/actions/blueprint"
+	type :GET
+	connection:"itself_connection"
+];
+// 	info getres;
+transactionId = getres.getJSON("blueprint").getJSON("transitions").getJSON("id");
+// 	info transactionId;
+blueprint_map = Map();
+blueprint_list = List();
+process_info_map = Map();
+update_map = Map();
+update_map.put("field_value","Funding Package Ready");
+process_info_map.put("transition_id",transactionId);
+process_info_map.put("data",update_map);
+blueprint_list.add(process_info_map);
+blueprint_map.put("blueprint",blueprint_list);
+//here we put the values in blueprint
+response = invokeurl
+[
+	url :"https://www.zohoapis.com/crm/v2/Leads/" + lead_id + "/actions/blueprint"
+	type :PUT
+	parameters:blueprint_map.toString()
+	connection:"itself_connection"
+];
+info response;

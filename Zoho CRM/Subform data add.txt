@@ -1,0 +1,22 @@
+// Get record by id
+recd=zoho.crm.getRecordById("Accounts", 5413236000000592781);
+form=Map();
+subform_recd=List();
+for each collect in recd.get("Student_Data")
+{
+info collect.get("University_Name") ;
+info collect.get("Total_Marks") ;
+info collect.get("Percentage") ;
+info collect.get("Obtained_Marks") ;
+ create_recd=Map();
+ create_recd.put("University_Name", collect.get("University_Name"));
+ create_recd.put("Total_Marks", collect.get("Total_Marks"));
+ create_recd.put("Percentage", collect.get("Percentage"));
+ create_recd.put("Obtained_Marks", collect.get("Obtained_Marks"));
+info create_recd ;
+subform_recd.add(create_recd);
+}
+form.put("Student_Data", subform_recd);
+recds=zoho.crm.updateRecord("Accounts", 5413236000000390097, form);
+info recds ;
+

@@ -1,0 +1,27 @@
+// id = 5451947000000395215;
+get_recd = zoho.crm.getRecordById("Leads",id);
+email = get_recd.get("Email");
+// info email ; 
+fname = get_recd.get("First_Name");
+lname = get_recd.get("Last_Name");
+name = fname + " " + lname;
+// info name ;
+//record search on the bases of email
+srch_Recd = zoho.crm.searchRecords("Contacts","(Email:equals:" + email + ")");
+if(!srch_Recd.isEmpty())
+{
+	//if record existing then it will update
+	cont_id = srch_Recd.get(0).get("id");
+	// info cont_id ;
+	crmdata = zoho.crm.updateRecord("Contacts",cont_id,{"Last_Name":name,"Phone":get_recd.get("Phone"),"Skype_ID":get_recd.get("Skype_ID"),"Twitter":get_recd.get("Twitter"),"Lead_Source":get_recd.get("Lead_Source"),"Title":get_recd.get("Designation"),"Description":get_recd.get("Description"),"Mailing_Country":get_recd.get("Country")},Map());
+	// 					info crmdata ;
+}
+else
+{
+	//create new contact
+	crmdata = zoho.crm.createRecord("Contacts",{"Email":email,"Last_Name":name,"Phone":get_recd.get("Phone"),"Skype_ID":get_recd.get("Skype_ID"),"Twitter":get_recd.get("Twitter"),"Lead_Source":get_recd.get("Lead_Source"),"Title":get_recd.get("Designation"),"Description":get_recd.get("Description"),"Mailing_Country":get_recd.get("Country")},Map());
+	// 		info crmdata;
+	contact_id = crmdata.get("id");
+	// 					info contact_id;
+}
+return "Successful Executed Please Check";

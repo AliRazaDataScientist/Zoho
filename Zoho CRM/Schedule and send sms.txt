@@ -1,0 +1,170 @@
+get_deal = zoho.crm.getRecordById("Leads",id);
+info get_deal;
+today = today;
+if(get_deal.getJSON("Day_Scheduled") == "Day 1")
+{
+	data = Map();
+	next_date = today.addDay(1).toString("yyyy-MM-dd");
+	info next_date;
+	data.put("Next_Date",next_date);
+	data.put("Day_Scheduled","Day 2");
+	response = zoho.crm.updateRecord("Leads",id,data);
+}
+else if(get_deal.getJSON("Day_Scheduled") == "Day 2")
+{
+	header = Map();
+	ClientID = "rCn4XbGATHKKyCM4ArwsyQ";
+	ClientSecret = "eX3SE9pNTb6xJo4hEXXWWQqf_e94C9Sj--FBXxgAByrA";
+	ClientCredsPlainText = ClientID + ":" + ClientSecret;
+	baseEncoded = zoho.encryption.base64Encode(ClientCredsPlainText);
+	// info baseEncoded ;
+	header.put("Accept","application/json");
+	header.put("Content-Type","application/x-www-form-urlencoded");
+	header.put("Authorization","Basic " + baseEncoded);
+	token_URL = "https://platform.devtest.ringcentral.com/restapi/oauth/token";
+	para_map = Map();
+	para_map.put("grant_type","password");
+	para_map.put("username","+19493392036");
+	para_map.put("extension","101");
+	para_map.put("password","DeathB4Dishonor");
+	// info para_map ;
+	ringCentralAPI = invokeurl
+	[
+		url :token_URL
+		type :POST
+		parameters:para_map
+		headers:header
+	];
+	// info ringCentralAPI;
+	access_token = ringCentralAPI.getJSON("access_token");
+	// info access_token;
+	sendSMS_url = "https://platform.devtest.ringcentral.com/restapi/v1.0/account/~/extension/~/sms";
+	header_map = Map();
+	header_map.put("Content-Type","application/json");
+	header_map.put("Authorization","Bearer " + access_token);
+	parameter_map = Map();
+	tomap = Map();
+	tomap.put("phoneNumber","+18003851874");
+	listto = list();
+	listto.add(tomap);
+	frommap = Map();
+	frommap.put("phoneNumber","+14243165822");
+	parameter_map.put("to",listto);
+	parameter_map.put("from",frommap);
+	parameter_map.put("text","This is only for Demo");
+	// // info header_map;
+	// info parameter_map;
+	// info header_map;
+	sms_send_response = invokeurl
+	[
+		url :sendSMS_url
+		type :POST
+		parameters:parameter_map.toString()
+		headers:header_map
+	];
+	data = Map();
+	next_date = today.addDay(1).toString("yyyy-MM-dd");
+	info next_date;
+	data.put("Next_Date",next_date);
+	data.put("Day_Scheduled","Day 3");
+	response = zoho.crm.updateRecord("Leads",id,data);
+}
+else if(get_deal.getJSON("Day_Scheduled") == "Day 3")
+{
+	data = Map();
+	next_date = today.addDay(1).toString("yyyy-MM-dd");
+	info next_date;
+	data.put("Next_Date",next_date);
+	data.put("Day_Scheduled","Day 4");
+	response = zoho.crm.updateRecord("Leads",id,data);
+}
+else if(get_deal.getJSON("Day_Scheduled") == "Day 4")
+{
+	header = Map();
+	ClientID = "rCn4XbGATHKKyCM4ArwsyQ";
+	ClientSecret = "eX3SE9pNTb6xJo4hEXXWWQqf_e94C9Sj--FBXxgAByrA";
+	ClientCredsPlainText = ClientID + ":" + ClientSecret;
+	baseEncoded = zoho.encryption.base64Encode(ClientCredsPlainText);
+	// info baseEncoded ;
+	header.put("Accept","application/json");
+	header.put("Content-Type","application/x-www-form-urlencoded");
+	header.put("Authorization","Basic " + baseEncoded);
+	token_URL = "https://platform.devtest.ringcentral.com/restapi/oauth/token";
+	para_map = Map();
+	para_map.put("grant_type","password");
+	para_map.put("username","+19493392036");
+	para_map.put("extension","101");
+	para_map.put("password","DeathB4Dishonor");
+	// info para_map ;
+	ringCentralAPI = invokeurl
+	[
+		url :token_URL
+		type :POST
+		parameters:para_map
+		headers:header
+	];
+	// info ringCentralAPI;
+	access_token = ringCentralAPI.getJSON("access_token");
+	// info access_token;
+	sendSMS_url = "https://platform.devtest.ringcentral.com/restapi/v1.0/account/~/extension/~/sms";
+	header_map = Map();
+	header_map.put("Content-Type","application/json");
+	header_map.put("Authorization","Bearer " + access_token);
+	parameter_map = Map();
+	tomap = Map();
+	tomap.put("phoneNumber","+18003851874");
+	listto = list();
+	listto.add(tomap);
+	frommap = Map();
+	frommap.put("phoneNumber","+14243165822");
+	parameter_map.put("to",listto);
+	parameter_map.put("from",frommap);
+	parameter_map.put("text","This is only for Demo");
+	// // info header_map;
+	// info parameter_map;
+	// info header_map;
+	sms_send_response = invokeurl
+	[
+		url :sendSMS_url
+		type :POST
+		parameters:parameter_map.toString()
+		headers:header_map
+	];
+	data = Map();
+	next_date = today.addDay(1).toString("yyyy-MM-dd");
+	data.put("Next_Date",next_date);
+	data.put("Day_Scheduled","Day 5");
+	response = zoho.crm.updateRecord("Leads",id,data);
+}
+else if(get_deal.getJSON("Day_Scheduled") == "Day 5")
+{
+	data = Map();
+	next_date = today.addDay(2).toString("yyyy-MM-dd");
+	data.put("Next_Date",next_date);
+	data.put("Day_Scheduled","Day 5");
+	response = zoho.crm.updateRecord("Leads",id,data);
+}
+else if(get_deal.getJSON("Day_Scheduled") == "Day 7")
+{
+	data = Map();
+	next_date = today.addDay(4).toString("yyyy-MM-dd");
+	data.put("Next_Date",next_date);
+	data.put("Day_Scheduled","Day 4");
+	response = zoho.crm.updateRecord("Leads",id,data);
+}
+else if(get_deal.getJSON("Day_Scheduled") == "Day 11")
+{
+	data = Map();
+	next_date = today.addDay(1).toString("yyyy-MM-dd");
+	data.put("Next_Date",next_date);
+	data.put("Day_Scheduled","Day 12");
+	response = zoho.crm.updateRecord("Leads",id,data);
+}
+else if(get_deal.getJSON("Day_Scheduled") == "Day 12")
+{
+	data = Map();
+	next_date = today.addDay(4).toString("yyyy-MM-dd");
+	data.put("Next_Date",next_date);
+	data.put("Day_Scheduled","Day 12");
+	response = zoho.crm.updateRecord("Leads",id,data);
+}

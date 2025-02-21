@@ -1,0 +1,81 @@
+//get record by id & records and 
+get_all_rec = invokeurl
+[
+	url :"https://creator.zoho.com/api/v2/hassan814/test-email/report/Goods_Sales_Purches_Report"
+	type :GET
+	connection:"creator_crm_con"
+];
+data = get_all_rec.get("data");
+for each  all_rec in data
+{
+	// delete records
+/*
+	if ( all_rec.get("Price") <= 50 ) 
+    {
+	del_id= all_rec.get("ID") ;
+	info del_id ;
+del_rec = invokeurl
+[
+	url: "https://creator.zoho.com/api/v2/hassan814/test-email/report/Goods_Sales_Purches_Report/" + del_id + ""
+	type: DELETE
+	connection:"creator_crm_con"
+];
+info del_rec ;
+    }
+	*/
+	// update records
+	if ( all_rec.get("Price") < 100 ) 
+    {
+		up_ids= all_rec.get("ID") ;
+		update=Map();
+		update.put("Price", 200);
+		updat_map=Map();
+		updat_map.put("data", update);
+		string_update=updat_map.toString();
+		update_recd = invokeurl
+[
+	url: "https://creator.zoho.com/api/v2/hassan814/test-email/report/Goods_Sales_Purches_Report/"+ up_ids +""
+	type: PUT
+	parameters: string_update
+	connection:"creator_crm_con"
+];
+info update_recd ;
+    }
+}
+
+//add record in zoho creator
+
+// add=Map();
+// add.put("Name_Producet", "Phone");
+// add.put("Price", 50);
+// add.put("Quantity", 50);
+// add.put("Date_field", "05-Aug-2022");
+// new_add=Map();
+// new_add.put("data", add);
+// string_data=new_add.toString();
+// add_record = invokeurl
+// [
+// 	url: "https://creator.zoho.com/api/v2/hassan814/test-email/form/Goods_Sales_Purches"
+// 	type: POST
+// 	parameters: string_data
+// 	connection:"creator_crm_con"
+// ];
+// info add_record ;
+/*
+//update record by id
+update_recd = invokeurl
+[
+	url: "https://creator.zoho.com/api/v2/hassan814/test-email/report/Goods_Sales_Purches_Report/4382298000000050003"
+	type: PUT
+	parameters: string_data
+	connection:"creator_crm_con"
+];
+info update_recd ;*/
+//delete record
+// del_rec = invokeurl
+// [
+// 	url: "https://creator.zoho.com/api/v2/hassan814/test-email/report/Goods_Sales_Purches_Report"
+// 	type: DELETE
+// 	connection:"creator_crm_con"
+// ];
+// info del_rec ;
