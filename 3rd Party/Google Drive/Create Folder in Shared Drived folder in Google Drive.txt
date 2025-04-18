@@ -1,0 +1,41 @@
+
+rec = zoho.crm.getRecordById("Accounts",id);
+folderName = rec.getJSON("Account_Name");
+///// Generate access token here
+paramMap = Map();
+paramMap.put("client_id",client_id);
+paramMap.put("client_secret",client_secret);
+paramMap.put("refresh_token",refresh_token);
+paramMap.put("grant_type","refresh_token");
+response = invokeurl
+[
+	url :"https://oauth2.googleapis.com/token"
+	type :POST
+	parameters:paramMap.toMap()
+	content-type:"application/x-www-form-urlencoded"
+];
+accessToken = response.get("access_token");
+/////Creating folder here
+parentFolderId = "0AHkRhT7wIfT3Uk9PVA";
+parentList = list();
+parentList.add(parentFolderId);
+requestBodyMap = Map();
+requestBodyMap.put("name",folderName);
+requestBodyMap.put("mimeType","application/vnd.google-apps.folder");
+requestBodyMap.put("parents",parentList);
+headersMap = Map();
+headersMap.put("Authorization","Bearer " + accessToken);
+headersMap.put("Content-Type","application/json");
+response = invokeurl
+[
+	url :"https://www.googleapis.com/drive/v3/files?supportsAllDrives=true"
+	type :POST
+	body:requestBodyMap.toString()
+	headers:headersMap
+];
+googledrive_folder_id = response.getJSON("id");
+update_map = Map();
+update_map.put("Google_Drive_Folder_Id",googledrive_folder_id);
+update_map.put("Google_Drive_Link","https://drive.google.com/drive/folders/" + googledrive_folder_id);
+update_rec = zoho.crm.updateRecord("Accounts",id,update_map);
+info update_rec;

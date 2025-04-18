@@ -1,0 +1,207 @@
+///// Generate access token here
+paramMap = Map();
+paramMap.put("client_id",client_id);
+paramMap.put("client_secret",client_secret);
+paramMap.put("refresh_token",refresh_token);
+paramMap.put("grant_type","refresh_token");
+response = invokeurl
+[
+	url :"https://oauth2.googleapis.com/token"
+	type :POST
+	parameters:paramMap.toMap()
+	content-type:"application/x-www-form-urlencoded"
+];
+accessToken = response.get("access_token");
+headersMap = Map();
+headersMap.put("Authorization","Bearer " + accessToken);
+headersMap.put("Content-Type","application/json");
+////////
+hotelrec = zoho.crm.getRecordById("Hotel_Bookings",id);
+deal_id = hotelrec.getJSON("Event_Name").getJSON("id");
+deal_rec = zoho.crm.getRecordById("Deals",deal_id);
+subfolders_id = deal_rec.getJSON("Sub_Folders_ID");
+drive_folder_id = subfolders_id.getJSON("Hotel");
+/////Get attachments id
+attachment_list = List();
+resp = invokeurl
+[
+	url :"https://www.zohoapis.com/crm/v7/Hotel_Bookings/" + id
+	type :GET
+	connection:"crm_con"
+];
+response = resp.getJSON("data");
+att_1 = response.getJSON("Attachment_1");
+if(att_1 != null)
+{
+	att_1_id = att_1.getJSON("id");
+	att_1_name = att_1.getJSON("File_Name__s");
+	att1 = Map();
+	att1.put("id",att_1_id);
+	att1.put("name",att_1_name);
+	attachment_list.add(att1);
+}
+att_2 = response.getJSON("Attachment_2");
+if(att_2 != null)
+{
+	att_2_id = att_2.getJSON("id");
+	att_2_name = att_2.getJSON("File_Name__s");
+	att2 = Map();
+	att2.put("id",att_2_id);
+	att2.put("name",att_2_name);
+	attachment_list.add(att2);
+}
+att_3 = response.getJSON("Attachment_3");
+if(att_3 != null)
+{
+	att_3_id = att_3.getJSON("id");
+	att_3_name = att_3.getJSON("File_Name__s");
+	att3 = Map();
+	att3.put("id",att_3_id);
+	att3.put("name",att_3_name);
+	attachment_list.add(att3);
+}
+att_4 = response.getJSON("Attachment_4");
+if(att_4 != null)
+{
+	att_4_id = att_4.getJSON("id");
+	att_4_name = att_4.getJSON("File_Name__s");
+	att4 = Map();
+	att4.put("id",att_4_id);
+	att4.put("name",att_4_name);
+	attachment_list.add(att4);
+}
+att_5 = response.getJSON("Attachment_5");
+if(att_5 != null)
+{
+	att_5_id = att_5.getJSON("id");
+	att_5_name = att_5.getJSON("File_Name__s");
+	att5 = Map();
+	att5.put("id",att_5_id);
+	att5.put("name",att_5_name);
+	attachment_list.add(att5);
+}
+info attachment_list;
+relatt = zoho.crm.getRelatedRecords("Attachments","Hotel_Bookings",id);
+if(attachment_list.size() > 0)
+{
+	for each  rec in attachment_list
+	{
+		fileId = rec.get("id");
+		fileName = rec.get("name");
+		fileContent = invokeurl
+		[
+			url :"https://www.zohoapis.com/crm/v2/Hotel_Bookings/" + id + "/Attachments/" + fileId
+			type :GET
+			connection:"crm_con"
+		];
+		metaData = Map();
+		metaData.put("name",fileName);
+		metaData.put("mimeType","application/octet-stream");
+		parentsList = List();
+		parentsList.add(drive_folder_id);
+		metaData.put("parents",parentsList);
+		metaPart = Map();
+		metaPart.put("stringPart","true");
+		metaPart.put("paramName","metadata");
+		metaPart.put("content",metaData.toString());
+		metaPart.put("contentType","application/json");
+		mimeType = "application/octet-stream";
+		if(fileName.endsWith(".pdf"))
+		{
+			mimeType = "application/pdf";
+		}
+		else if(fileName.endsWith(".docx"))
+		{
+			mimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+		}
+		else if(fileName.endsWith(".doc"))
+		{
+			mimeType = "application/msword";
+		}
+		else if(fileName.endsWith(".jpg") || fileName.endsWith(".jpeg"))
+		{
+			mimeType = "image/jpeg";
+		}
+		else if(fileName.endsWith(".png"))
+		{
+			mimeType = "image/png";
+		}
+		else if(fileName.endsWith(".txt"))
+		{
+			mimeType = "text/plain";
+		}
+		else if(fileName.endsWith(".xlsx"))
+		{
+			mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+		}
+		else if(fileName.endsWith(".xls"))
+		{
+			mimeType = "application/vnd.ms-excel";
+		}
+		else if(fileName.endsWith(".pptx"))
+		{
+			mimeType = "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+		}
+		else if(fileName.endsWith(".ppt"))
+		{
+			mimeType = "application/vnd.ms-powerpoint";
+		}
+		else if(fileName.endsWith(".csv"))
+		{
+			mimeType = "text/csv";
+		}
+		else if(fileName.endsWith(".zip"))
+		{
+			mimeType = "application/zip";
+		}
+		else if(fileName.endsWith(".rar"))
+		{
+			mimeType = "application/vnd.rar";
+		}
+		else if(fileName.endsWith(".gif"))
+		{
+			mimeType = "image/gif";
+		}
+		else if(fileName.endsWith(".bmp"))
+		{
+			mimeType = "image/bmp";
+		}
+		else if(fileName.endsWith(".svg"))
+		{
+			mimeType = "image/svg+xml";
+		}
+		else if(fileName.endsWith(".mp4"))
+		{
+			mimeType = "video/mp4";
+		}
+		else if(fileName.endsWith(".mp3"))
+		{
+			mimeType = "audio/mpeg";
+		}
+		else if(fileName.endsWith(".json"))
+		{
+			mimeType = "application/json";
+		}
+		else if(fileName.endsWith(".xml"))
+		{
+			mimeType = "application/xml";
+		}
+		filePart = Map();
+		filePart.put("paramName","file");
+		filePart.put("content",fileContent);
+		filePart.put("fileName",fileName);
+		filePart.put("contentType",mimeType);
+		filesList = List();
+		filesList.add(metaPart);
+		filesList.add(filePart);
+		uploadResp = invokeurl
+		[
+			url :"https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&supportsAllDrives=true"
+			type :POST
+			headers:headersMap
+			files:filesList
+		];
+		info uploadResp;
+	}
+}
+info zoho.crm.updateRecord("Hotel_Bookings",id,{"UploadData":false,"Google_Drive_Link":"https://drive.google.com/drive/folders/" + drive_folder_id});
