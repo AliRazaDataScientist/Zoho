@@ -1,0 +1,177 @@
+resp = zoho.desk.getRecordById(871956608,"tickets",Ticket_id.toLong());
+customFields = resp.getJSON("customFields");
+existed_ticket = null;
+if(customFields != null)
+{
+	existed_ticket = customFields.getJSON("CBG Health Id");
+}
+params = Map();
+params.put("refresh_token","");
+params.put("client_id","");
+params.put("client_secret","");
+params.put("grant_type","refresh_token");
+headers_map = Map();
+headers_map.put("Content-Type","application/x-www-form-urlencoded");
+response = invokeurl
+[
+	url :"https://accounts.zoho.com/oauth/v2/token"
+	type :POST
+	parameters:params
+	headers:headers_map
+];
+access_token = response.getJSON("access_token");
+headers = Map();
+headers.put("Content-Type","application/json");
+headers.put("Authorization","Zoho-oauthtoken " + access_token);
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////second system access token
+params1 = Map();
+params1.put("refresh_token","");
+params1.put("client_id","G");
+params1.put("client_secret","");
+params1.put("grant_type","refresh_token");
+headers_map1 = Map();
+headers_map1.put("Content-Type","application/x-www-form-urlencoded");
+response1 = invokeurl
+[
+	url :"https://accounts.zoho.com/oauth/v2/token"
+	type :POST
+	parameters:params1
+	headers:headers_map1
+];
+access_token1 = response1.getJSON("access_token");
+headers1 = Map();
+headers1.put("Content-Type","application/json");
+headers1.put("Authorization","Zoho-oauthtoken " + access_token1);
+////////////////////////////////////////
+customFields_map = Map();
+customFields_map.put("Comment Checkbox",true);
+customFields_map.put("Checkbox",true);
+field_map = Map();
+field_map.put("customFields",customFields_map);
+record = invokeurl
+[
+	url :"https://desk.zoho.com/api/v1/tickets/" + Ticket_id
+	type :PATCH
+	parameters:field_map.tostring()
+	headers:headers
+];
+info "This record is updated";
+customFields_map = Map();
+customFields_map.put("Comment Checkbox",true);
+customFields_map.put("Checkbox",true);
+field_map = Map();
+field_map.put("customFields",customFields_map);
+record = invokeurl
+[
+	url :"https://desk.zoho.com/api/v1/tickets/" + existed_ticket
+	type :PATCH
+	parameters:field_map.tostring()
+	headers:headers1
+];
+info "Another record is updated";
+////////////////////////////////////////
+comments = invokeurl
+[
+	url :"https://desk.zoho.com/api/v1/tickets/" + Ticket_id + "/comments?include=mentions,plainText"
+	type :GET
+	headers:headers
+];
+data = comments.getJSON("data");
+if(data != null)
+{
+	for each  everydata in data
+	{
+		commentedTime = everydata.getJSON("commentedTime");
+		createdtime_str = commentedTime.replaceAll("T"," ");
+		createdtime = createdtime_str.toDateTime("yyyy-MM-dd HH:mm:ss");
+		today_datetime = zoho.currenttime;
+		difference = createdtime.timeBetween(today_datetime);
+		stringlength = difference.length();
+		str_prefix = difference.getPrefix(":");
+		if(str_prefix == null || str_prefix.trim() == "")
+		{
+			str = 0;
+		}
+		else
+		{
+			str = str_prefix.toNumber();
+		}
+		if(stringlength <= 4 && str <= 1)
+		{
+			attachmentss = everydata.getJSON("attachments");
+			if(attachmentss != null)
+			{
+				attachmentid = List();
+				for each  getattachment in attachmentss
+				{
+					end_point = getattachment.getJSON("href");
+					attachment = invokeurl
+					[
+						url :end_point
+						type :GET
+						headers:headers
+					];
+					fileName = getattachment.getJSON("name");
+					attachment.setFileName(fileName);
+					attachment.SetParamName("file");
+					attachment_list = List();
+					attachment_list.add(attachment);
+					parameters = Map();
+					parameters.put("file",attachment_list.tostring());
+					attach = invokeurl
+					[
+						url :"https://desk.zoho.com/api/v1/tickets/" + existed_ticket + "/attachments"
+						type :POST
+						parameters:parameters
+						headers:headers1
+						files:attachment_list
+					];
+					attachmentid.add(attach.getJSON("id"));
+				}
+			}
+			data = Map();
+			data.put("isPublic",everydata.getJSON("isPublic"));
+			data.put("contentType",everydata.getJSON("contentType"));
+			data.put("content",everydata.getJSON("content"));
+			data.put("attachmentIds",attachmentid);
+			response = invokeurl
+			[
+				url :"https://desk.zoho.com/api/v1/tickets/" + existed_ticket + "/comments"
+				type :POST
+				parameters:data.toString()
+				headers:headers1
+			];
+			info response;
+		}
+	}
+}
+////////////////////////////////////////
+getUrl("https://httpstat.us/200?sleep=59000");
+customFields_map = Map();
+customFields_map.put("Comment Checkbox",false);
+customFields_map.put("Checkbox",false);
+field_map = Map();
+field_map.put("customFields",customFields_map);
+record = invokeurl
+[
+	url :"https://desk.zoho.com/api/v1/tickets/" + Ticket_id
+	type :PATCH
+	parameters:field_map.tostring()
+	headers:headers
+];
+info "This record is updated";
+customFields_map = Map();
+customFields_map.put("Comment Checkbox",false);
+customFields_map.put("Checkbox",false);
+field_map = Map();
+field_map.put("customFields",customFields_map);
+record = invokeurl
+[
+	url :"https://desk.zoho.com/api/v1/tickets/" + existed_ticket
+	type :PATCH
+	parameters:field_map.tostring()
+	headers:headers1
+];
+info "Another record is updated";
+////////////////////////////////////////

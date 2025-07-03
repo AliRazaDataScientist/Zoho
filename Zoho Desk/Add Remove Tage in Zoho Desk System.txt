@@ -1,0 +1,81 @@
+params = Map();
+params.put("refresh_token","");
+params.put("client_id","");
+params.put("client_secret","");
+params.put("grant_type","refresh_token");
+headers_map = Map();
+headers_map.put("Content-Type","application/x-www-form-urlencoded");
+response = invokeurl
+[
+	url :"https://accounts.zoho.com/oauth/v2/token"
+	type :POST
+	parameters:params
+	headers:headers_map
+];
+access_token = response.getJSON("access_token");
+headers = Map();
+headers.put("Content-Type","application/json");
+headers.put("Authorization","Zoho-oauthtoken " + access_token);
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////second system access token
+params1 = Map();
+params1.put("refresh_token","");
+params1.put("client_id","");
+params1.put("client_secret","");
+params1.put("grant_type","refresh_token");
+headers_map1 = Map();
+headers_map1.put("Content-Type","application/x-www-form-urlencoded");
+response1 = invokeurl
+[
+	url :"https://accounts.zoho.com/oauth/v2/token"
+	type :POST
+	parameters:params1
+	headers:headers_map1
+];
+access_token1 = response1.getJSON("access_token");
+headers1 = Map();
+headers1.put("Content-Type","application/json");
+headers1.put("Authorization","Zoho-oauthtoken " + access_token1);
+///////////////////////////////////////
+// Ticket_id = 1063443000001840001;
+resp = zoho.desk.getRecordById(871956608,"tickets",Ticket_id.toLong());
+customFields = resp.getJSON("customFields");
+existed_ticket = null;
+if(customFields != null)
+{
+	existed_ticket = customFields.getJSON("CBG Health Id");
+	Associated_Tags = customFields.getJSON("Associated Tags");
+}
+all_tags = invokeurl
+[
+	url :"https://desk.zoho.com/api/v1/tickets/" + Ticket_id + "/tags"
+	type :GET
+	headers:headers
+];
+tag_size = all_tags.getJSON("tags");
+if(tag_size.size() > 0)
+{
+	tagList = list();
+	for each  tags in all_tags
+	{
+		tagname = tags.getJSON("name");
+		tagList.add(tagname);
+	}
+	tagMap = Map();
+	tagMap.put("tags",tagList);
+	url = "https://desk.zoho.com/api/v1/tickets/" + existed_ticket + "/associateTag";
+	response = postUrl(url,tagMap.toString(),headers1);
+	recordValue = {"Associated Tags":tagList};
+	tag_update = zoho.desk.update(871956608,"tickets",Ticket_id.toLong(),{"customFields":recordValue});
+	info tag_update;
+}
+else if(tag_size.size() == 0 && Associated_Tags != null)
+{
+	tagMap = Map();
+	tagMap.put("tags",Associated_Tags.toList());
+	url = "https://desk.zoho.com/api/v1/tickets/" + existed_ticket + "/dissociateTag";
+	response = postUrl(url,tagMap.toString(),headers1);
+	recordValue = {"Associated Tags":""};
+	tag_update = zoho.desk.update(871956608,"tickets",Ticket_id.toLong(),{"customFields":recordValue});
+	info tag_update;
+}

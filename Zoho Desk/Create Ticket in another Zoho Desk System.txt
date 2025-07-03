@@ -1,0 +1,80 @@
+resp = zoho.desk.getRecordById(871956608,"tickets",Ticket_id.toLong());
+contidd = resp.getJSON("contactId");
+cont_rec = zoho.desk.getRecordById(871956608,"contacts",contidd.toLong());
+email = cont_rec.getJSON("email");
+params1 = Map();
+params1.put("refresh_token","");
+params1.put("client_id","");
+params1.put("client_secret","");
+params1.put("grant_type","refresh_token");
+headers_map1 = Map();
+headers_map1.put("Content-Type","application/x-www-form-urlencoded");
+response1 = invokeurl
+[
+	url :"https://accounts.zoho.com/oauth/v2/token"
+	type :POST
+	parameters:params1
+	headers:headers_map1
+];
+access_token1 = response1.getJSON("access_token");
+headers1 = Map();
+headers1.put("Content-Type","application/json");
+headers1.put("Authorization","Zoho-oauthtoken " + access_token1);
+searchrecord = invokeurl
+[
+	url :"https://desk.zoho.com/api/v1/contacts/search?limit=10&email=" + email
+	type :GET
+	headers:headers1
+];
+if(searchrecord.size() > 0)
+{
+	contactId = searchrecord.getJSON("data").getJSON("id");
+}
+else
+{
+	contact_map = Map();
+	contact_map.put("email",email);
+	contact_map.put("firstName",cont_rec.getJSON("firstName"));
+	contact_map.put("lastName",cont_rec.getJSON("lastName"));
+	contact_map.put("mobile",cont_rec.getJSON("mobile"));
+	contact_map.put("phone",cont_rec.getJSON("phone"));
+	contact_map.put("title",cont_rec.getJSON("title"));
+	contact_map.put("type",cont_rec.getJSON("type"));
+	create_contact = invokeurl
+	[
+		url :"https://desk.zoho.com/api/v1/contacts"
+		type :POST
+		parameters:contact_map.tostring()
+		headers:headers1
+	];
+	contactId = create_contact.getJSON("id");
+}
+field_map = Map();
+field_map.put("contactId",contactId);
+field_map.put("subject",resp.getJSON("subject"));
+field_map.put("description",resp.getJSON("description"));
+field_map.put("status",resp.getJSON("status"));
+field_map.put("resolution",resp.getJSON("resolution"));
+field_map.put("dueDate",resp.getJSON("dueDate"));
+field_map.put("priority",resp.getJSON("priority"));
+field_map.put("channel",resp.getJSON("channel"));
+field_map.put("language",resp.getJSON("language"));
+field_map.put("classification",resp.getJSON("classification"));
+field_map.put("phone",resp.getJSON("phone"));
+field_map.put("email",resp.getJSON("email"));
+field_map.put("departmentId","554558000023724033");
+customFields_map = Map();
+customFields_map.put("CBG Health Insurance Pal",Ticket_id);
+customFields_map.put("Checkbox",true);
+field_map.put("customFields",customFields_map);
+record = invokeurl
+[
+	url :"https://desk.zoho.com/api/v1/tickets"
+	type :POST
+	parameters:field_map.tostring()
+	headers:headers1
+];
+CBG_Health_Id = record.getJSON("id");
+recordValue = {"CBG Health Id":CBG_Health_Id};
+response = zoho.desk.update(871956608,"tickets",Ticket_id.toLong(),{"customFields":recordValue});
+info "create record";
