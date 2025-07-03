@@ -1,0 +1,46 @@
+string UpdateInvoiceStatus1(string EstimateNo, string Status)
+{
+searchParams = {"estimate_number":EstimateNo};
+estResp = zoho.books.getRecords("Estimates","201046516",searchParams,"books");
+estimates = estResp.get("estimates");
+estimate_id = estimates.get(0).get("estimate_id");
+estimateResp = zoho.books.getRecordsByID("estimates","201046516",estimate_id.toLong(),"books");
+estimate = estimateResp.get("estimate");
+invoice_ids = estimate.get("invoice_ids").toString();cfList = List();
+cfMap = Map();
+cfMap.put("label","Payment Status");
+cfMap.put("value",Status);
+cfList.add(cfMap);
+updateMap = Map();
+updateMap.put("custom_fields",cfList);
+updateResp = zoho.books.updateRecord("Invoices","20104656116",invoice_ids,updateMap,"books");
+info updateResp;
+Resp = zoho.books.getRecordsByID("Invoices","20104656116",invoice_ids.toLong(),"books");
+invoicedata = Resp.getJSON("invoice");
+customer_id = invoicedata.getJSON("customer_id");
+invoice_id = invoicedata.getJSON("invoice_id");
+amount = invoicedata.getJSON("total");
+invoice_number = invoicedata.getJSON("invoice_number");
+payment_data = Map();
+payment_data.put("customer_id",customer_id);
+payment_data.put("payment_mode","banktransfer");
+payment_data.put("amount",amount);
+payment_data.put("date",zoho.currentdate.toString("yyyy-MM-dd"));
+invoice_list = List();
+invoice_entry = Map();
+invoice_entry.put("invoice_id",invoice_id);
+invoice_entry.put("amount_applied",amount);
+invoice_list.add(invoice_entry);
+payment_data.put("invoices",invoice_list);
+payment_data.put("reference_number",invoice_number);
+payment_data.put("description","Payment received for invoice");
+response = invokeurl
+[
+	url :"https://www.zohoapis.eu/books/v3/customerpayments?organization_id=20104656116"
+	type :POST
+	parameters:payment_data.toString()
+	connection:"books"
+];
+info response;
+return invoice_ids;
+}
