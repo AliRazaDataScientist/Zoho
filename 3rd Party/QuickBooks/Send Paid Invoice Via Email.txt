@@ -1,0 +1,46 @@
+void Send_Paid_Invoice_Via_Email(string paymentid)
+{
+qb_payment_rec = invokeurl
+[
+	url :"https://quickbooks.api.intuit.com/v3/company/9341453479594590/payment/" + paymentid
+	type :GET
+	headers:{"Accept":"application/json","Content-Type":"application/json"}
+	connection:"my_quickbooks"
+];
+payment = qb_payment_rec.getJSON("Payment");
+if(payment != null && payment != "")
+{
+	paymentdetails = payment.getJSON("Line").getJSON("LinkedTxn");
+	module = paymentdetails.getJSON("TxnType");
+	if(module == "Invoice")
+	{
+		invoice_id = paymentdetails.getJSON("TxnId");
+		inv = invokeurl
+		[
+			url :"https://quickbooks.api.intuit.com/v3/company/9341453479594590/invoice/" + invoice_id
+			type :GET
+			headers:{"Accept":"application/json","Content-Type":"application/json"}
+			connection:"my_quickbooks"
+		];
+		Invoice = inv.getJSON("Invoice");
+		invoiceno = Invoice.getJSON("DocNumber");
+		email = Invoice.getJSON("BillEmail").getJSON("Address");
+		qb_invoice_rec = invokeurl
+		[
+			url :"https://quickbooks.api.intuit.com/v3/company/9341453479594590/invoice/" + invoice_id + "/pdf"
+			type :GET
+			headers:{"Accept":"application/pdf","Content-Type":"application/pdf"}
+			connection:"my_quickbooks"
+		];
+		qb_invoice_rec.setFileName(invoiceno + ".pdf");
+		sendmail
+		[
+			from :zoho.loginuserid
+			to :email
+			subject :"Receipt for Your Payment to BESTBUILD LLC"
+			message :"Dear Customer,<br><br>Thank you for your payment. We truly appreciate your business.<br><br>Attached, please find your invoice for your records.<br><br>If you have any questions or need further assistance, feel free to reach out.<br><br>	Thank you for choosing BESTBUILD LLC.<br><br>Best regards,<br>Team BESTBUILD"
+			Attachments :file:qb_invoice_rec
+		]
+	}
+}
+}

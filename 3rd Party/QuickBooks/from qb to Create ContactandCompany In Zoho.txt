@@ -1,0 +1,92 @@
+void Create_ContactandCompany_In_Zoho(string qb_id)
+{
+qb_contact_rec = invokeurl
+[
+	url :"https://quickbooks.api.intuit.com/v3/company/9341453479594590/customer/" + qb_id
+	type :GET
+	headers:{"Content-Type":"application/json","Accept":"application/json"}
+	connection:"my_quickbooks"
+];
+qb_rec = qb_contact_rec.getJSON("Customer");
+companyname = qb_rec.getJSON("CompanyName");
+contactname = qb_rec.getJSON("FamilyName") + "" + qb_rec.getJSON("GivenName");
+optional_map = Map();
+contact_map = Map();
+if(companyname != null)
+{
+	company_map = Map();
+	company_map.put("Account_Name",companyname);
+	company_map.put("Contact_Type","Client");
+	phonedetails = qb_rec.getJSON("PrimaryPhone");
+	if(phonedetails != null)
+	{
+		phonenumber = phonedetails.getJSON("FreeFormNumber");
+	}
+	company_map.put("Phone",phonenumber);
+	emailadd = qb_rec.getJSON("PrimaryEmailAddr");
+	if(emailadd != null)
+	{
+		email = emailadd.getJSON("Address");
+	}
+	company_map.put("Email",email);
+	company_map.put("Description",qb_rec.getJSON("Notes"));
+	company_map.put("Website",qb_rec.getJSON("Website"));
+	address = qb_rec.getJSON("BillAddr");
+	company_map.put("Billing_Street",address.getJSON("Line1"));
+	company_map.put("Billing_Code",address.getJSON("PostalCode"));
+	company_map.put("Billing_City",address.getJSON("City"));
+	company_map.put("Billing_State",address.getJSON("CountrySubDivisionCode"));
+	company_map.put("QB_ID",qb_id);
+	company_map.put("Quickbook_Sync",true);
+	company_record_created = zoho.bigin.createRecord("Accounts",company_map,optional_map,"bigin_con");
+	company_id = company_record_created.getJSON("data").getJSON("details").getJSON("id");
+	info company_id;
+	contact_map.put("Contact_Category","Company");
+}
+else
+{
+	contact_map.put("Contact_Category","Individual");
+}
+if(qb_rec.getJSON("FamilyName") != null || qb_rec.getJSON("GivenName") != null)
+{
+	Account = Map();
+	Account.put("id",company_id);
+	contact_map.put("Account_Name",Account);
+	contact_map.put("Primary_Contact",true);
+	address = qb_rec.getJSON("BillAddr");
+	contact_map.put("Billing_Street",address.getJSON("Line1"));
+	contact_map.put("Billing_Code",address.getJSON("PostalCode"));
+	contact_map.put("Billing_City",address.getJSON("City"));
+	contact_map.put("Billing_State",address.getJSON("CountrySubDivisionCode"));
+	contact_map.put("QB_ID",qb_rec.getJSON("Id"));
+	contact_map.put("SyncToken",qb_rec.getJSON("SyncToken"));
+	emailvalue = qb_rec.getJSON("PrimaryEmailAddr");
+	if(emailvalue != null)
+	{
+		email = emailvalue.getJSON("Address");
+	}
+	contact_map.put("Email",email);
+	phonevalue = qb_rec.getJSON("PrimaryPhone");
+	if(phonevalue != null)
+	{
+		phone = phonevalue.getJSON("FreeFormNumber");
+	}
+	contact_map.put("Phone",phone);
+	mobilevalue = qb_rec.getJSON("Mobile");
+	if(mobilevalue != null)
+	{
+		mobile = mobilevalue.getJSON("FreeFormNumber");
+	}
+	contact_map.put("Mobile",mobile);
+	contact_map.put("Quickbook_Sync",true);
+	contact_map.put("Contact_Type","Client");
+	contact_map.put("Company_Role","Owner");
+	contact_map.put("Description",qb_rec.getJSON("Notes"));
+	contact_map.put("Title",qb_rec.getJSON("Title"));
+	contact_map.put("First_Name",qb_rec.getJSON("GivenName"));
+	contact_map.put("Last_Name",qb_rec.getJSON("FamilyName"));
+	contact_record_created = zoho.bigin.createRecord("Contacts",contact_map,optional_map,"bigin_con");
+	company_id = contact_record_created.getJSON("data").getJSON("details").getJSON("id");
+	info company_id;
+}
+}
