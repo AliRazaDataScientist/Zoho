@@ -1,0 +1,47 @@
+
+estimateID = estimate.get("estimate_id");
+estimatedate = estimate.get("date").toDate();
+organizationID = organization.get("organization_id");
+rec = zoho.books.getRecordsByID("estimates",organizationID,estimateID,"books_con");
+invoice_price = rec.getJSON("estimate").getJSON("total");
+estimate_number = rec.getJSON("estimate").getJSON("estimate_number");
+headersMap = Map();
+headersMap.put("Content-Type","application/x-www-form-urlencoded");
+headersMap.put("Authorization","Basic *********");
+paramsMap = Map();
+paramsMap.put("currency","usd");
+unit_amount_cents = (invoice_price.toDecimal() * 100).round(0);
+paramsMap.put("unit_amount",unit_amount_cents.toLong());
+paramsMap.put("product_data[name]",estimate_number);
+create_prices = invokeurl
+[
+	url :"https://api.stripe.com/v1/prices"
+	type :POST
+	parameters:paramsMap
+	headers:headersMap
+];
+price_id = create_prices.getJSON("id");
+info "Price ID is " + price_id;
+paramsMap = Map();
+paramsMap.put("line_items[0][price]",price_id);
+paramsMap.put("line_items[0][quantity]","1");
+paramsMap.put("metadata[order_id]",estimate_number);
+paramsMap.put("payment_intent_data[metadata][order_id]",estimate_number);
+paymentlink = invokeurl
+[
+	url :"https://api.stripe.com/v1/payment_links"
+	type :POST
+	parameters:paramsMap
+	headers:headersMap
+];
+payment_url = paymentlink.getJSON("url");
+info payment_url;
+custom_field_update_map = Map();
+custom_field_update_map.put("label","Payment URL");
+custom_field_update_map.put("value",payment_url);
+custome_field_list = List();
+custome_field_list.add(custom_field_update_map);
+updateMAP = Map();
+updateMAP.put("custom_fields",custome_field_list);
+update_book = zoho.books.updateRecord("estimates",organizationID,estimateID,updateMAP,"books_con");
+info "updated record";
