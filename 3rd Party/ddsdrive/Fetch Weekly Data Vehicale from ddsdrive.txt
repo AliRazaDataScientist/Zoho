@@ -1,0 +1,158 @@
+today = zoho.currentdate;
+day_of_month = today.getDay();
+thismonth = today.getMonth();
+if(thismonth < 10)
+{
+	thismonth = "0" + thismonth;
+}
+thisyear = today.getYear();
+start_date = "01-" + thismonth + "-" + thisyear;
+concern_date1 = "07-" + thismonth + "-" + thisyear;
+concern_date2 = "14-" + thismonth + "-" + thisyear;
+concern_date3 = "21-" + thismonth + "-" + thisyear;
+concern_date4 = "28-" + thismonth + "-" + thisyear;
+starting_date = toDate(start_date,"dd-MM-yyyy");
+date1 = toDate(concern_date1,"dd-MM-yyyy");
+date2 = toDate(concern_date2,"dd-MM-yyyy");
+date3 = toDate(concern_date3,"dd-MM-yyyy");
+date4 = toDate(concern_date4,"dd-MM-yyyy");
+Period = thisyear + "-" + thismonth;
+if(date1 == today || date2 == today || date3 == today || date4 == today)
+{
+	try 
+	{
+		delete from Modus_VehicleData_Weekly_MTD[ID != 0];
+		// Get access token
+		token_url = "https://token-provider.modustools.com/oauth2/token";
+		username = "*******";
+		password = "*********";
+		client_id = "***********";
+		headers = Map();
+		headers.put("Content-Type","application/x-www-form-urlencoded");
+		headers.put("User-Agent","ZohoDeluge/1.0");
+		body = "username=" + encodeUrl(username) + "&password=" + encodeUrl(password) + "&grant_type=password&scope=offline&client_id=" + encodeUrl(client_id);
+		token_response = invokeUrl(token_url,"POST",body,headers);
+		token_data = token_response.toMap();
+		if(token_data == null || token_data.get("access_token") == null)
+		{
+			info "Failed to fetch access token: " + token_response.toString();
+		}
+		access_token = token_data.get("access_token");
+		query = "{ adminVehicleScoringReport ( filter: { date: { from: \"" + starting_date + "\", to: \"" + today + "\" } } pagination: { page: 1, perPage: 100 } ) { entities { accountName vehicle { id make model year nickname vin odometerByCalcLogic { value } } clientAgency currentScore firstTripAt harshAccelerationCount harshBrakingCount harshTurnCount highwayPercent lastTripAt localPercent majorPercent maxSpeed minorPercent phoneUsageCount phoneCallCount totalTripCount totalDistance totalTime maxSpeed speedingCount speedingDistance ruralRoadPercent suburbanRoadPercent urbanRoadPercent residentialPercent totalCrashes } pagination { totalEntries totalPages page } } }";
+		encodedQuery = encodeUrl(query);
+		fullUrl = "https://api.ddsdrive.com/?query=" + encodedQuery;
+		headersMap = Map();
+		headersMap.put("Content-Type","text/plain");
+		headersMap.put("Authorization","Bearer " + access_token);
+		response = invokeurl
+		[
+			url :fullUrl
+			type :GET
+			headers:headersMap
+			detailed:true
+		];
+		if(response.get("responseCode") == 200)
+		{
+			resultMap = response.get("responseText").toMap();
+		}
+		else
+		{
+			info "Error in API response";
+		}
+		data1 = response.get("responseText").get("data");
+		accounts1 = data1.get("adminVehicleScoringReport");
+		pagination1 = accounts1.get("pagination");
+		totalEntries = pagination1.get("totalEntries");
+		totalPages = pagination1.get("totalPages");
+		totalPages = totalPages;
+		info "totalPages" + totalPages;
+		// 			//Set up GraphQL endpoint
+		api_headers = Map();
+		api_headers.put("Authorization","Bearer " + access_token);
+		api_headers.put("Content-Type","application/json");
+		page_numbers = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50};
+		// 			// fetch up to 1500 records
+		total_inserted = 0;
+		PageCount = 0;
+		for each  page in page_numbers.subList(0,totalPages)
+		{
+			PageCount = PageCount + 1;
+			graphql_query = "{ adminVehicleScoringReport ( filter: { date: { from: \"" + starting_date + "\", to: \"" + today + "\" } } pagination: { page: " + page.toString() + ", perPage: 100 } ) { entities { accountName vehicle { id make model year nickname vin odometerByCalcLogic { value } } clientAgency currentScore firstTripAt harshAccelerationCount harshBrakingCount harshTurnCount highwayPercent lastTripAt localPercent majorPercent maxSpeed minorPercent phoneUsageCount phoneCallCount totalTripCount totalDistance totalTime maxSpeed speedingCount speedingDistance ruralRoadPercent suburbanRoadPercent urbanRoadPercent residentialPercent totalCrashes } pagination { totalEntries totalPages page } } }";
+			headersMap = Map();
+			headersMap.put("Content-Type","text/plain");
+			headersMap.put("Authorization","Bearer " + access_token);
+			// 				// 5. Perform the API call using invokeUrl with detailed output
+			encodedQuery = encodeUrl(graphql_query);
+			fullUrl = "https://api.ddsdrive.com/?query=" + encodedQuery;
+			api_data = invokeurl
+			[
+				url :fullUrl
+				type :GET
+				headers:headersMap
+				detailed:true
+			];
+			if(api_data == null)
+			{
+				info "Failed to fetch GraphQL data (Page " + page.toString() + "): " + api_data.toString();
+				break;
+			}
+			Vehicles = api_data.get("responseText").get("data").get("adminVehicleScoringReport").get("entities").toList();
+			for each  Vehicle in Vehicles
+			{
+				insert into Modus_VehicleData_Weekly_MTD
+				[
+					Added_User=zoho.loginuser
+					accountName=Vehicle.get("accountName")
+					clientAgency=Vehicle.get("clientAgency")
+					currentScore=Vehicle.get("currentScore")
+					firstTripAt=Vehicle.get("firstTripAt")
+					harshAccelerationCount=Vehicle.get("harshAccelerationCount")
+					harshBrakingCount=Vehicle.get("harshBrakingCount")
+					harshTurnCount=Vehicle.get("harshTurnCount")
+					highwayPercent=Vehicle.get("highwayPercent")
+					lastTripAt=Vehicle.get("lastTripAt")
+					localPercent=Vehicle.get("localPercent")
+					majorPercent=Vehicle.get("majorPercent")
+					maxSpeed=Vehicle.get("maxSpeed")
+					minorPercent=Vehicle.get("minorPercent")
+					phoneCallCount=Vehicle.get("phoneCallCount")
+					phoneUsageCount=Vehicle.get("phoneUsageCount")
+					residentialPercent=Vehicle.get("residentialPercent")
+					ruralRoadPercent=Vehicle.get("ruralRoadPercent")
+					speedingCount=Vehicle.get("speedingCount")
+					speedingDistance=Vehicle.get("speedingDistance")
+					suburbanRoadPercent=Vehicle.get("suburbanRoadPercent")
+					totalCrashes=Vehicle.get("totalCrashes")
+					totalDistance=Vehicle.get("totalDistance")
+					totalTime=Vehicle.get("totalTime")
+					totalTripCount=Vehicle.get("totalTripCount")
+					urbanRoadPercent=Vehicle.get("urbanRoadPercent")
+					vehicleid=Vehicle.get("vehicle").get("id")
+					vehiclemake=Vehicle.get("vehicle").get("make")
+					vehiclemodel=Vehicle.get("vehicle").get("model")
+					vehiclenickname=Vehicle.get("vehicle").get("nickname")
+					vehicleodometerByCalcLogic=Vehicle.get("vehicle").get("odometerByCalcLogic").get("value")
+					vehiclevin=Vehicle.get("vehicle").get("vin")
+					vehicleyear=Vehicle.get("vehicle").get("year")
+					Period=Period
+					ReportType="WeeklyMTD"
+				]
+				total_inserted = total_inserted + 1;
+				if(totalEntries == total_inserted)
+				{
+					break;
+				}
+			}
+		}
+		info "Total records inserted: " + total_inserted.toString();
+		info "Total PageCount: " + PageCount.toString();
+	}
+	catch (e)
+	{
+		info "Error: " + e.toString();
+	}
+}
+else
+{
+	info "Not concern date";
+}
