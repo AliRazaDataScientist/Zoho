@@ -1,0 +1,61 @@
+void Create_Invoice_In_QB(string estimate_id)
+{
+response = invokeurl
+[
+	url :"https://quickbooks.api.intuit.com/v3/company/9341453479594590/estimate/" + estimate_id
+	type :GET
+	headers:{"Content-Type":"application/json","Accept":"application/json"}
+	connection:"my_quickbooks"
+];
+Estimate_data = response.getJSON("Estimate");
+invoice = Map();
+if(Estimate_data.containKey("CustomerRef"))
+{
+	customer_id = Estimate_data.getJSON("CustomerRef").get("value");
+	CustomerRef = {"value":customer_id};
+	invoice.put("CustomerRef",CustomerRef);
+}
+SalesTermRef = Map();
+SalesTermRef.put("name","7 DAYS");
+SalesTermRef.put("value","6");
+invoice.put("SalesTermRef",SalesTermRef);
+invoice.put("ShipDate",ifnull(Estimate_data.getJSON("ShipDate"),""));
+invoice.put("TrackingNum",ifnull(Estimate_data.getJSON("TrackingNum"),""));
+invoice.put("DocNumber",Estimate_data.getJSON("DocNumber"));
+Line = List();
+if(Estimate_data.containKey("Line"))
+{
+	lineitems = Estimate_data.getJSON("Line");
+	for each  lineitem in lineitems
+	{
+		if(lineitem.containKey("SalesItemLineDetail"))
+		{
+			row_map = Map();
+			row_map.put("DetailType","SalesItemLineDetail");
+			row_map.put("Description",lineitem.getJSON("Description"));
+			row_map.put("Amount",lineitem.get("Amount"));
+			// Build SalesItemLineDetail
+			SalesItemLineDetail = Map();
+			ItemRef = Map();
+			ItemRef.put("value",lineitem.getJSON("SalesItemLineDetail").getJSON("ItemRef").get("value"));
+			ItemRef.put("name",lineitem.getJSON("SalesItemLineDetail").getJSON("ItemRef").get("name"));
+			SalesItemLineDetail.put("ItemRef",ItemRef);
+			SalesItemLineDetail.put("Qty",lineitem.getJSON("SalesItemLineDetail").getJSON("Qty"));
+			SalesItemLineDetail.put("UnitPrice",lineitem.getJSON("SalesItemLineDetail").getJSON("UnitPrice"));
+			row_map.put("SalesItemLineDetail",SalesItemLineDetail);
+			Line.add(row_map);
+		}
+	}
+}
+invoice.put("Line",Line);
+invoice.put("PrivateNote",Estimate_data.getJSON("PrivateNote"));
+response = invokeurl
+[
+	url :"https://quickbooks.api.intuit.com/v3/company/9341453479594590/invoice"
+	type :POST
+	body:invoice.toString()
+	headers:{"Content-Type":"application/json","Accept":"application/json"}
+	connection:"my_quickbooks"
+];
+info response;
+}

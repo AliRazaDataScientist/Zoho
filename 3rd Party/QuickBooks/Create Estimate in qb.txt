@@ -1,0 +1,34 @@
+void Create_Estimate_In_QB(string pipeline_id)
+{
+optional_map = Map();
+response = zoho.bigin.getRecordById("Pipelines",pipeline_id,optional_map,"bigin_con");
+contact_id = response.getJSON("data").getJSON("Contact_Name").getJSON("id");
+contact_rec = zoho.bigin.getRecordById("Contacts",contact_id,optional_map,"bigin_con");
+customer_qbid = contact_rec.getJSON("data").getJSON("QB_ID");
+if(customer_qbid != null)
+{
+	contact_id = customer_qbid;
+}
+formattedDate = zoho.currentdate.toString("yyyy-MM-dd");
+estimateData = Map();
+estimateData.put("CustomerRef",{"value":contact_id});
+estimateData.put("TxnDate",formattedDate);
+estimateData.put("PrivateNote","Zoho Stage Accepted");
+lineItem = Map();
+lineItem.put("DetailType","SalesItemLineDetail");
+lineItem.put("Amount",65);
+salesItem = Map();
+salesItem.put("ItemRef",{"value":"1010000131"});
+salesItem.put("Qty",1);
+lineItem.put("SalesItemLineDetail",salesItem);
+estimateData.put("Line",{lineItem});
+response = invokeurl
+[
+	url :"https://quickbooks.api.intuit.com/v3/company/9341453479594590/estimate"
+	type :POST
+	parameters:estimateData.toString()
+	headers:{"Content-Type":"application/json","Accept":"application/json"}
+	connection:"my_quickbooks"
+];
+info response;
+}

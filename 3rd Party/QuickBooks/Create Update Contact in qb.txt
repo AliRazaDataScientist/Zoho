@@ -1,0 +1,271 @@
+string Create_and_Update_Contact_in_QB(string Conact_Id)
+{
+id = Conact_Id;
+contact_rec = invokeurl
+[
+	url :"https://www.zohoapis.com/bigin/v2/Contacts/" + id
+	type :GET
+	connection:"bigin_con"
+];
+response = "error";
+str = null;
+record = contact_rec.getJSON("data");
+qbid = record.getJSON("QB_ID");
+type = record.getJSON("Contact_Type");
+if(type == "Client")
+{
+	module = "customer";
+	mod = "Customer";
+}
+else if(type == "Vendor")
+{
+	module = "vendor";
+	mod = "Vendor";
+}
+if(qbid != null && qbid != "")
+{
+	response = invokeurl
+	[
+		url :"https://quickbooks.api.intuit.com/v3/company/9341453479594590/" + module + "/" + qbid
+		type :GET
+		headers:{"Content-Type":"application/json","Accept":"application/json"}
+		connection:"my_quickbooks"
+	];
+	Modified_Time = response.getJSON(mod).getJSON("MetaData").getJSON("LastUpdatedTime");
+	time = Modified_Time.replaceAll("T"," ");
+	time = time.addHour(3);
+	today_datetime = zoho.currenttime;
+	difference = time.timeBetween(today_datetime);
+	stringlength = difference.length();
+	str_prefix = difference.getPrefix(":");
+	if(str_prefix == null || str_prefix.trim() == "")
+	{
+		str = 0;
+	}
+	else
+	{
+		str = str_prefix.toNumber();
+	}
+}
+else
+{
+	str = 2;
+}
+info "min " + str;
+if(str > 1)
+{
+	Primary_Contact = ifnull(record.getJSON("Primary_Contact"),false);
+	Contact_Type = ifnull(record.getJSON("Contact_Type"),"");
+	Contact_Category = ifnull(record.getJSON("Contact_Category"),"");
+	if(Primary_Contact == true && (Contact_Type == "Client" || Contact_Type == "Vendor"))
+	{
+		QB_ID = ifnull(record.getJSON("QB_ID"),null);
+		// CREATE Contact in QB
+		if(QB_ID == null && Contact_Category == "Individual")
+		{
+			Phone = ifnull(record.getJSON("Phone"),null);
+			PrimaryPhone = Map();
+			if(Phone != null)
+			{
+				PrimaryPhone.put("FreeFormNumber",Phone);
+			}
+			mobileValue = ifnull(record.getJSON("Mobile"),null);
+			Mobile = Map();
+			if(mobileValue != null)
+			{
+				Mobile.put("FreeFormNumber",mobileValue);
+			}
+			email = ifnull(record.getJSON("Email"),null);
+			emailAddress_map = Map();
+			if(email != null)
+			{
+				emailAddress_map.put("Address",email);
+			}
+			add = Map();
+			add.put("Line1",ifnull(record.getJSON("Billing_Street"),""));
+			add.put("PostalCode",ifnull(record.getJSON("Billing_Code"),""));
+			add.put("City",ifnull(record.getJSON("Billing_City"),""));
+			add.put("CountrySubDivisionCode",ifnull(record.getJSON("Billing_State"),""));
+			contact_map = Map();
+			contact_map.put("PrimaryEmailAddr",emailAddress_map);
+			contact_map.put("Title",ifnull(record.getJSON("Title"),""));
+			contact_map.put("PrimaryPhone",PrimaryPhone);
+			contact_map.put("Mobile",Mobile);
+			contact_map.put("BillAddr",add);
+			contact_map.put("ShipAddr",add);
+			contact_map.put("Notes",ifnull(record.getJSON("Description"),""));
+			contact_map.put("GivenName",ifnull(record.getJSON("First_Name"),""));
+			contact_map.put("FamilyName",ifnull(record.getJSON("Last_Name"),""));
+			contact_map.put("DisplayName",ifnull(record.getJSON("Full_Name"),""));
+			optional_map = Map();
+			update_contact = Map();
+			if(Contact_Type == "Client")
+			{
+				response = invokeurl
+				[
+					url :"https://quickbooks.api.intuit.com/v3/company/9341453479594590/" + module
+					type :POST
+					body:contact_map.toString()
+					headers:{"Content-Type":"application/json","Accept":"application/json"}
+					connection:"my_quickbooks"
+				];
+				update_contact.put("QB_ID",ifnull(response.getJSON(mod).getJSON("Id"),""));
+				info zoho.bigin.updateRecord("Contacts",id,update_contact,optional_map,"bigin_con");
+			}
+			else if(Contact_Type == "Vendor")
+			{
+				response = invokeurl
+				[
+					url :"https://quickbooks.api.intuit.com/v3/company/9341453479594590/vendor"
+					type :POST
+					body:contact_map.toString()
+					headers:{"Content-Type":"application/json","Accept":"application/json"}
+					connection:"my_quickbooks"
+				];
+				update_contact.put("QB_ID",ifnull(response.getJSON("Vendor").getJSON("Id"),""));
+				info zoho.bigin.updateRecord("Contacts",id,update_contact,optional_map,"bigin_con");
+			}
+		}
+		// UPDATE Contact in QB
+		else if(QB_ID != null && Contact_Category == "Individual")
+		{
+			QB_ID = ifnull(record.getJSON("QB_ID"),null);
+			sync_token = "";
+			Phone = ifnull(record.getJSON("Phone"),null);
+			PrimaryPhone = Map();
+			if(Phone != null)
+			{
+				PrimaryPhone.put("FreeFormNumber",Phone);
+			}
+			mobileValue = ifnull(record.getJSON("Mobile"),null);
+			Mobile = Map();
+			if(mobileValue != null)
+			{
+				Mobile.put("FreeFormNumber",mobileValue);
+			}
+			email = ifnull(record.getJSON("Email"),null);
+			emailAddress_map = Map();
+			if(email != null)
+			{
+				emailAddress_map.put("Address",email);
+			}
+			add = Map();
+			add.put("Line1",ifnull(record.getJSON("Billing_Street"),""));
+			add.put("PostalCode",ifnull(record.getJSON("Billing_Code"),""));
+			add.put("City",ifnull(record.getJSON("Billing_City"),""));
+			add.put("CountrySubDivisionCode",ifnull(record.getJSON("Billing_State"),""));
+			contact_map = Map();
+			contact_map.put("PrimaryEmailAddr",emailAddress_map);
+			contact_map.put("Title",ifnull(record.getJSON("Title"),""));
+			contact_map.put("PrimaryPhone",PrimaryPhone);
+			contact_map.put("Mobile",Mobile);
+			contact_map.put("BillAddr",add);
+			contact_map.put("ShipAddr",add);
+			contact_map.put("Notes",ifnull(record.getJSON("Description"),""));
+			contact_map.put("GivenName",ifnull(record.getJSON("First_Name"),""));
+			contact_map.put("FamilyName",ifnull(record.getJSON("Last_Name"),""));
+			contact_map.put("DisplayName",ifnull(record.getJSON("Full_Name"),""));
+			optional_map = Map();
+			update_contact = Map();
+			contact_map.put("Id",QB_ID);
+			respGet = invokeurl
+			[
+				url :"https://quickbooks.api.intuit.com/v3/company/9341453479594590/" + module + "/" + QB_ID + "?minorversion=65"
+				type :GET
+				headers:{"Content-Type":"application/json","Accept":"application/json"}
+				connection:"my_quickbooks"
+			];
+			//  Extract the current SyncToken
+			latestToken = respGet.getJSON(mod).getJSON("SyncToken");
+			contact_map.put("SyncToken",latestToken);
+			response = invokeurl
+			[
+				url :"https://quickbooks.api.intuit.com/v3/company/9341453479594590/" + module
+				type :POST
+				body:contact_map.toString()
+				headers:{"Content-Type":"application/json","Accept":"application/json"}
+				connection:"my_quickbooks"
+			];
+			info response;
+		}
+		else if(Contact_Category == "Company")
+		{
+			account_name = ifnull(record.getJSON("Account_Name"),"");
+			account_id = ifnull(account_name.get("id"),"");
+			company_rec = zoho.bigin.getRecordById("Accounts",account_id,{"":""},"bigin_con");
+			record1 = company_rec.get("data");
+			QB_ID = ifnull(record1.getJSON("QB_ID"),"");
+			info QB_ID;
+			companyname = ifnull(account_name.getJSON("name"),"");
+			sync_token = "";
+			Phone = ifnull(record1.getJSON("Phone"),null);
+			PrimaryPhone = Map();
+			if(Phone != null)
+			{
+				PrimaryPhone.put("FreeFormNumber",Phone);
+			}
+			mobileValue = ifnull(record.getJSON("Mobile"),null);
+			Mobile = Map();
+			if(mobileValue != null)
+			{
+				Mobile.put("FreeFormNumber",mobileValue);
+			}
+			email = ifnull(record.getJSON("Email"),null);
+			emailAddress_map = Map();
+			if(email != null)
+			{
+				emailAddress_map.put("Address",email);
+			}
+			website_map = Map();
+			website_map.put("URI",ifnull(record1.getJSON("Website"),""));
+			add = Map();
+			add.put("Line1",ifnull(record.getJSON("Billing_Street"),""));
+			add.put("PostalCode",ifnull(record.getJSON("Billing_Code"),""));
+			add.put("City",ifnull(record.getJSON("Billing_City"),""));
+			add.put("CountrySubDivisionCode",ifnull(record.getJSON("Billing_State"),""));
+			//Contact Fields
+			contact_map = Map();
+			contact_map.put("PrimaryEmailAddr",emailAddress_map);
+			contact_map.put("Title",ifnull(record.getJSON("Title"),""));
+			contact_map.put("GivenName",ifnull(record.getJSON("First_Name"),""));
+			contact_map.put("FamilyName",ifnull(record.getJSON("Last_Name"),""));
+			contact_map.put("Mobile",Mobile);
+			contact_map.put("Notes",ifnull(record.getJSON("Description"),""));
+			contact_map.put("BillAddr",add);
+			contact_map.put("ShipAddr",add);
+			//Company Fields
+			contact_map.put("DisplayName",companyname);
+			contact_map.put("CompanyName",companyname);
+			contact_map.put("WebAddr",website_map);
+			contact_map.put("PrimaryPhone",PrimaryPhone);
+			optional_map = Map();
+			update_contact = Map();
+			QB_ID = ifnull(ifnull(account_name,{}).getJSON("QB_ID"),QB_ID);
+			sync_token = ifnull(ifnull(account_name,{}).getJSON("SyncToken"),"0");
+			contact_map.put("Id",QB_ID);
+			respGet = invokeurl
+			[
+				url :"https://quickbooks.api.intuit.com/v3/company/9341453479594590/" + module + "/" + QB_ID + "?minorversion=65"
+				type :GET
+				headers:{"Content-Type":"application/json","Accept":"application/json"}
+				connection:"my_quickbooks"
+			];
+			//  Extract the current SyncToken
+			latestToken = respGet.getJSON(mod).getJSON("SyncToken");
+			contact_map.put("SyncToken",latestToken);
+			response = invokeurl
+			[
+				url :"https://quickbooks.api.intuit.com/v3/company/9341453479594590/" + module
+				type :POST
+				body:contact_map.toString()
+				headers:{"Content-Type":"application/json","Accept":"application/json"}
+				connection:"my_quickbooks"
+			];
+			info response;
+			update_contact.put("QB_ID",QB_ID);
+			info zoho.bigin.updateRecord("Contacts",id,update_contact,optional_map,"bigin_con");
+		}
+	}
+}
+return response;
+}
