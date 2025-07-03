@@ -1,0 +1,643 @@
+void Get_Project_Variable_1()
+{
+	document_id = "dgs6e186f397f80c34997935f1ff8b778f3fb";
+	response = invokeurl
+	[
+		url :"https://zohoapis.com/writer/api/v1/documents/" + document_id + "/fields"
+		type :GET
+		connection:"zoho_writer_connection"
+	];
+	// 	info response;
+	rec = TST_CF_EXPRESS_TRACTOR_PM_SHEET[ID == 4219829000001929031];
+	data = Map();
+	data.put("Unit",ifnull(rec.Unit,""));
+	data.put("Date",ifnull(rec.Date_field,""));
+	data.put("Kilometers",ifnull(rec.Kilometers,""));
+	data.put("Certificate",ifnull(rec.Certificate,""));
+	data.put("MOT_CVI",ifnull(rec.Check_if_Req_MOT_CVI_SAAQ_Yearly_Inspection_0003_0018_includes_0019,""));
+	Annual_Inspection_Req = rec.Annual_Inspection_Req;
+	if(Annual_Inspection_Req == "Yes")
+	{
+		data.put("Annual_Inspection",true);
+	}
+	else if(Annual_Inspection_Req == "No")
+	{
+		data.put("No_Annuel_Inspection",false);
+	}
+	A_Pm_grease_0002_Req = rec.A_Pm_grease_0002_Req;
+	if(A_Pm_grease_0002_Req == "Yes")
+	{
+		data.put("A_Pm_Yes",true);
+	}
+	else if(A_Pm_grease_0002_Req == "No")
+	{
+		data.put("A_Pm_No",false);
+	}
+	///////
+	All_lights_wiring_light_cord = rec.All_lights_wiring_light_cord;
+	if(All_lights_wiring_light_cord == "OK")
+	{
+		data.put("All_lights_Yes",true);
+	}
+	else if(All_lights_wiring_light_cord == "REP")
+	{
+		data.put("All_lights_No",true);
+	}
+	Steering_linkage_all_joints = rec.Steering_linkage_all_joints;
+	if(Steering_linkage_all_joints == "OK")
+	{
+		data.put("Steering_Yes",true);
+	}
+	else if(Steering_linkage_all_joints == "REP")
+	{
+		data.put("Steering_No",true);
+	}
+	Suspension_springs_shocks_etc = rec.Suspension_springs_shocks_etc;
+	if(Suspension_springs_shocks_etc == "OK")
+	{
+		data.put("Suspension_Yes",true);
+	}
+	else if(Suspension_springs_shocks_etc == "REP")
+	{
+		data.put("Suspension_No",true);
+	}
+	Air_brake_sys_oper_leaks_push_rod_travel_alarm = rec.Air_brake_sys_oper_leaks_push_rod_travel_alarm;
+	if(Air_brake_sys_oper_leaks_push_rod_travel_alarm == "OK")
+	{
+		data.put("Air_Yes",true);
+	}
+	else if(Air_brake_sys_oper_leaks_push_rod_travel_alarm == "REP")
+	{
+		data.put("Air_No",true);
+	}
+	Air_tanks_condition_drain_all_tanks = rec.Air_tanks_condition_drain_all_tanks;
+	if(Air_tanks_condition_drain_all_tanks == "OK")
+	{
+		data.put("Air_tanks_Yes",true);
+	}
+	else if(Air_tanks_condition_drain_all_tanks == "REP")
+	{
+		data.put("Air_tanks_No",true);
+	}
+	All_hoses_condition_mounting_chafing_gh_seals = rec.All_hoses_condition_mounting_chafing_gh_seals;
+	if(All_hoses_condition_mounting_chafing_gh_seals == "OK")
+	{
+		data.put("All_hoses_Yes",true);
+	}
+	else if(All_hoses_condition_mounting_chafing_gh_seals == "REP")
+	{
+		data.put("All_hoses_No",true);
+	}
+	Hubs_rims_fasteners_inspect_leaks_lube_level = rec.Hubs_rims_fasteners_inspect_leaks_lube_level;
+	if(Hubs_rims_fasteners_inspect_leaks_lube_level == "OK")
+	{
+		data.put("Hubs_Yes",true);
+	}
+	else if(Hubs_rims_fasteners_inspect_leaks_lube_level == "REP")
+	{
+		data.put("Hubs_No",true);
+	}
+	Tires_to_105_psi_condition_alligator_caps = rec.Tires_to_105_psi_condition_alligator_caps;
+	if(Tires_to_105_psi_condition_alligator_caps == "OK")
+	{
+		data.put("Tires_Yes",true);
+	}
+	else if(Tires_to_105_psi_condition_alligator_caps == "REP")
+	{
+		data.put("Tires_No",true);
+	}
+	Clutch_operation_adjust_to_spec = rec.Clutch_operation_adjust_to_spec;
+	if(Clutch_operation_adjust_to_spec == "OK")
+	{
+		data.put("Clutch_Yes",true);
+	}
+	else if(Clutch_operation_adjust_to_spec == "REP")
+	{
+		data.put("Clutch_No",true);
+	}
+	Excess_leaks_oil_fuel_exhausVcoolant = rec.Excess_leaks_oil_fuel_exhausVcoolant;
+	if(Excess_leaks_oil_fuel_exhausVcoolant == "OK")
+	{
+		data.put("Excess_Yes",true);
+	}
+	else if(Excess_leaks_oil_fuel_exhausVcoolant == "REP")
+	{
+		data.put("Excess_No",true);
+	}
+	Belts_hoses_condition_adjustment = rec.Belts_hoses_condition_adjustment;
+	if(Belts_hoses_condition_adjustment == "OK")
+	{
+		data.put("Belts_Yes",true);
+	}
+	else if(Belts_hoses_condition_adjustment == "REP")
+	{
+		data.put("Belts_No",true);
+	}
+	Drain_fuel_separator_check_air_filter_sys_restriction = rec.Drain_fuel_separator_check_air_filter_sys_restriction;
+	if(Drain_fuel_separator_check_air_filter_sys_restriction == "OK")
+	{
+		data.put("Drain_Yes",true);
+	}
+	else if(Drain_fuel_separator_check_air_filter_sys_restriction == "REP")
+	{
+		data.put("Drain_No",true);
+	}
+	Grease_chassis_doors_str_U_joint_etc = rec.Grease_chassis_doors_str_U_joint_etc;
+	if(Grease_chassis_doors_str_U_joint_etc == "OK")
+	{
+		data.put("Grease_Yes",true);
+	}
+	else if(Grease_chassis_doors_str_U_joint_etc == "REP")
+	{
+		data.put("Grease_No",true);
+	}
+	Lubricate_5th_wheel_clevises_terminals_etc = rec.Lubricate_5th_wheel_clevises_terminals_etc;
+	if(Lubricate_5th_wheel_clevises_terminals_etc == "OK")
+	{
+		data.put("Lubricate_Yes",true);
+	}
+	else if(Lubricate_5th_wheel_clevises_terminals_etc == "REP")
+	{
+		data.put("Lubricate_No",true);
+	}
+	Tailgate_operation_condition_fluid_hoses_lubricate = rec.Tailgate_operation_condition_fluid_hoses_lubricate;
+	if(Tailgate_operation_condition_fluid_hoses_lubricate == "OK")
+	{
+		data.put("Tailgate_Yes",true);
+	}
+	else if(Tailgate_operation_condition_fluid_hoses_lubricate == "REP")
+	{
+		data.put("Tailgate_No",true);
+	}
+	Door_wiring_power_supply_van_body = rec.Door_wiring_power_supply_van_body;
+	if(Door_wiring_power_supply_van_body == "OK")
+	{
+		data.put("Door_Yes",true);
+	}
+	else if(Door_wiring_power_supply_van_body == "REP")
+	{
+		data.put("Door_No",true);
+	}
+	///////////////////////
+	Engine_Oil_0001_includes_0002_Req = rec.Engine_Oil_0001_includes_0002_Req;
+	if(Engine_Oil_0001_includes_0002_Req == "Yes")
+	{
+		data.put("Engine_Oil_Yes",true);
+	}
+	else if(Engine_Oil_0001_includes_0002_Req == "No")
+	{
+		data.put("Engine_Oil_No",false);
+	}
+	Change_engine_oil_oil_fuel_filters_Davco_only_if_req = rec.Change_engine_oil_oil_fuel_filters_Davco_only_if_req;
+	if(Change_engine_oil_oil_fuel_filters_Davco_only_if_req == true)
+	{
+		data.put("Change_engine",true);
+	}
+	/////////////////////// B PM
+	B_Pm_Complete_0019_includes_0002_Req = rec.B_Pm_Complete_0019_includes_0002_Req;
+	if(B_Pm_Complete_0019_includes_0002_Req == "OK")
+	{
+		data.put("B_Pm_Yes",true);
+	}
+	else if(B_Pm_Complete_0019_includes_0002_Req == "REP")
+	{
+		data.put("B_Pm_No",true);
+	}
+	////////////section 1
+	Wash_truck_only_if_required = rec.Wash_truck_only_if_required;
+	if(Wash_truck_only_if_required == "OK")
+	{
+		data.put("Wash_truck_yes",true);
+	}
+	else if(Wash_truck_only_if_required == "REP")
+	{
+		data.put("Wash_truck_no",true);
+	}
+	Heater_wipers_washers_horn_gauges = rec.Heater_wipers_washers_horn_gauges;
+	if(Heater_wipers_washers_horn_gauges == "OK")
+	{
+		data.put("Heater_yes",true);
+	}
+	else if(Heater_wipers_washers_horn_gauges == "REP")
+	{
+		data.put("Heater_no",true);
+	}
+	Int_cab_seaVbelt_safety_equip_pedals_papers = rec.Int_cab_seaVbelt_safety_equip_pedals_papers;
+	if(Int_cab_seaVbelt_safety_equip_pedals_papers == "OK")
+	{
+		data.put("Int_yes",true);
+	}
+	else if(Int_cab_seaVbelt_safety_equip_pedals_papers == "REP")
+	{
+		data.put("Int_no",true);
+	}
+	Ext_cab_hood_doors_mirrors_glass_damage = rec.Ext_cab_hood_doors_mirrors_glass_damage;
+	if(Ext_cab_hood_doors_mirrors_glass_damage == "OK")
+	{
+		data.put("Ext_yes",true);
+	}
+	else if(Ext_cab_hood_doors_mirrors_glass_damage == "REP")
+	{
+		data.put("Ext_no",true);
+	}
+	Frame_brackets_mounts_tanks_etc = rec.Frame_brackets_mounts_tanks_etc;
+	if(Frame_brackets_mounts_tanks_etc == "OK")
+	{
+		data.put("Frame_yes",true);
+	}
+	else if(Frame_brackets_mounts_tanks_etc == "REP")
+	{
+		data.put("Frame_no",true);
+	}
+	Operation_condition_starting_charging_system = rec.Operation_condition_starting_charging_system;
+	if(Operation_condition_starting_charging_system == "OK")
+	{
+		data.put("Operation_yes",true);
+	}
+	else if(Operation_condition_starting_charging_system == "REP")
+	{
+		data.put("Operation_no",true);
+	}
+	th_wheel_operation_adjust_if_needed_mounting = rec.th_wheel_operation_adjust_if_needed_mounting;
+	if(th_wheel_operation_adjust_if_needed_mounting == "OK")
+	{
+		data.put("5th_wheel_yes",true);
+	}
+	else if(th_wheel_operation_adjust_if_needed_mounting == "REP")
+	{
+		data.put("5th_wheel_no",true);
+	}
+	//////////////////section 3
+	Rims_fasteners_retorque_all_fasteners = rec.Rims_fasteners_retorque_all_fasteners;
+	if(Rims_fasteners_retorque_all_fasteners == "OK")
+	{
+		data.put("Rims_yes",true);
+	}
+	else if(Rims_fasteners_retorque_all_fasteners == "REP")
+	{
+		data.put("Rims_no",true);
+	}
+	Tires_separation_mismatch = rec.Tires_separation_mismatch;
+	if(Tires_separation_mismatch == "OK")
+	{
+		data.put("Tires_separation_yes",true);
+	}
+	else if(Tires_separation_mismatch == "REP")
+	{
+		data.put("Tires_separation_no",true);
+	}
+	//////////section 2
+	Air_system_compressor_dryer_tanks_valves = rec.Air_system_compressor_dryer_tanks_valves;
+	if(Air_system_compressor_dryer_tanks_valves == "OK")
+	{
+		data.put("Air_system_yes",true);
+	}
+	else if(Air_system_compressor_dryer_tanks_valves == "REP")
+	{
+		data.put("Air_system_no",true);
+	}
+	Brake_components_chambers_slacks_cams = rec.Brake_components_chambers_slacks_cams;
+	if(Brake_components_chambers_slacks_cams == "OK")
+	{
+		data.put("Brake_components_yes",true);
+	}
+	else if(Brake_components_chambers_slacks_cams == "REP")
+	{
+		data.put("Brake_components_no",true);
+	}
+	Brake_lining_drums_cracks_contamination_wear = rec.Brake_lining_drums_cracks_contamination_wear;
+	if(Brake_lining_drums_cracks_contamination_wear == "OK")
+	{
+		data.put("Brake_lining_yes",true);
+	}
+	else if(Brake_lining_drums_cracks_contamination_wear == "REP")
+	{
+		data.put("Brake_lining_no",true);
+	}
+	Steering_column_power_steering_system = rec.Steering_column_power_steering_system;
+	if(Steering_column_power_steering_system == "OK")
+	{
+		data.put("Steering_column_yes",true);
+	}
+	else if(Steering_column_power_steering_system == "REP")
+	{
+		data.put("Steering_column_no",true);
+	}
+	///////////section 4
+	Clutch_linkage_hydraulic_system = rec.Clutch_linkage_hydraulic_system;
+	if(Clutch_linkage_hydraulic_system == "OK")
+	{
+		data.put("Clutch_linkage_yes",true);
+	}
+	else if(Clutch_linkage_hydraulic_system == "REP")
+	{
+		data.put("Clutch_linkage_no",true);
+	}
+	Tran_diff_operation_mounts_leaks_yoke_secure = rec.Tran_diff_operation_mounts_leaks_yoke_secure;
+	if(Tran_diff_operation_mounts_leaks_yoke_secure == "OK")
+	{
+		data.put("Tran_diff_yes",true);
+	}
+	else if(Tran_diff_operation_mounts_leaks_yoke_secure == "REP")
+	{
+		data.put("Tran_diff_no",true);
+	}
+	check_vents_lube_level_condition = rec.check_vents_lube_level_condition;
+	if(check_vents_lube_level_condition == "OK")
+	{
+		data.put("check_vents_yes",true);
+	}
+	else if(check_vents_lube_level_condition == "REP")
+	{
+		data.put("check_vents_no",true);
+	}
+	U_joints_driveshafts_condition_excess_play = rec.U_joints_driveshafts_condition_excess_play;
+	if(U_joints_driveshafts_condition_excess_play == "OK")
+	{
+		data.put("U_joints_yes",true);
+	}
+	else if(U_joints_driveshafts_condition_excess_play == "REP")
+	{
+		data.put("U_joints_no",true);
+	}
+	Engine_operation_mounts = rec.Engine_operation_mounts;
+	if(Engine_operation_mounts == "OK")
+	{
+		data.put("Engine_operation_yes",true);
+	}
+	else if(Engine_operation_mounts == "REP")
+	{
+		data.put("Engine_operation_no",true);
+	}
+	Exhaust_system_turbo_pipes_muffler = rec.Exhaust_system_turbo_pipes_muffler;
+	if(Exhaust_system_turbo_pipes_muffler == "OK")
+	{
+		data.put("Exhaust_system_yes",true);
+	}
+	else if(Exhaust_system_turbo_pipes_muffler == "REP")
+	{
+		data.put("Exhaust_system_no",true);
+	}
+	Cooling_system_rad_fan_hub_leaks = rec.Cooling_system_rad_fan_hub_leaks;
+	if(Cooling_system_rad_fan_hub_leaks == "OK")
+	{
+		data.put("Cooling_system_yes",true);
+	}
+	else if(Cooling_system_rad_fan_hub_leaks == "REP")
+	{
+		data.put("Cooling_system_no",true);
+	}
+	//////////////
+	Batt_3221 = rec.Batt_3221;
+	if(Batt_3221 == true)
+	{
+		data.put("Batt_3221",true);
+	}
+	Dryer_1322 = rec.Dryer_1322;
+	if(Dryer_1322 == true)
+	{
+		data.put("Dryer_1322",true);
+	}
+	DPF_4301 = rec.DPF_4301;
+	if(DPF_4301 == true)
+	{
+		data.put("DPF_4301",true);
+	}
+	AFl_4302 = rec.AFl_4302;
+	if(AFl_4302 == true)
+	{
+		data.put("AFl_4302",true);
+	}
+	DEF_4401 = rec.DEF_4401;
+	if(DEF_4401 == true)
+	{
+		data.put("DEF_4401",true);
+	}
+	DEF_4402 = rec.DEF_4402;
+	if(DEF_4402 == true)
+	{
+		data.put("DEF_4402",true);
+	}
+	CCB_4501 = rec.CCB_4501;
+	if(CCB_4501 == true)
+	{
+		data.put("CCB_4501",true);
+	}
+	Batteries_replace_if_due_3221_or_load_test = rec.Batteries_replace_if_due_3221_or_load_test;
+	if(Batteries_replace_if_due_3221_or_load_test == "OK")
+	{
+		data.put("Batteries_replace_yes",true);
+	}
+	else if(Batteries_replace_if_due_3221_or_load_test == "REP")
+	{
+		data.put("Batteries_replace_no",true);
+	}
+	Krown_spray_Cab_chassis_electrical_plugs = rec.Krown_spray_Cab_chassis_electrical_plugs;
+	if(Krown_spray_Cab_chassis_electrical_plugs == "OK")
+	{
+		data.put("Krown_spray_yes",true);
+	}
+	else if(Krown_spray_Cab_chassis_electrical_plugs == "REP")
+	{
+		data.put("Krown_spray_no",true);
+	}
+	All_cables_terminals_start_alt_batt_Inspect = rec.All_cables_terminals_start_alt_batt_Inspect;
+	if(All_cables_terminals_start_alt_batt_Inspect == "OK")
+	{
+		data.put("All_cables_yes",true);
+	}
+	else if(All_cables_terminals_start_alt_batt_Inspect == "REP")
+	{
+		data.put("All_cables_no",true);
+	}
+	Block_heater_operation_wiring = rec.Block_heater_operation_wiring;
+	if(Block_heater_operation_wiring == "OK")
+	{
+		data.put("Block_heater_yes",true);
+	}
+	else if(Block_heater_operation_wiring == "REP")
+	{
+		data.put("Block_heater_no",true);
+	}
+	DPF_service_if_due_4301 = rec.DPF_service_if_due_4301;
+	if(DPF_service_if_due_4301 == "OK")
+	{
+		data.put("DPF_yes",true);
+	}
+	else if(DPF_service_if_due_4301 == "REP")
+	{
+		data.put("DPF_no",true);
+	}
+	Air_dryer_replace_if_due_1322_or_check_operation = rec.Air_dryer_replace_if_due_1322_or_check_operation;
+	if(Air_dryer_replace_if_due_1322_or_check_operation == "OK")
+	{
+		data.put("Air_dryer_yes",true);
+	}
+	else if(Air_dryer_replace_if_due_1322_or_check_operation == "REP")
+	{
+		data.put("Air_dryer_no",true);
+	}
+	AFI_injector_service_if_due_4302 = rec.AFI_injector_service_if_due_4302;
+	if(AFI_injector_service_if_due_4302 == "OK")
+	{
+		data.put("AFI_yes",true);
+	}
+	else if(AFI_injector_service_if_due_4302 == "REP")
+	{
+		data.put("AFI_no",true);
+	}
+	Air_supply_sys_lines_operation_excess_oil = rec.Air_supply_sys_lines_operation_excess_oil;
+	if(Air_supply_sys_lines_operation_excess_oil == "OK")
+	{
+		data.put("Air_supply_sys_yes",true);
+	}
+	else if(Air_supply_sys_lines_operation_excess_oil == "REP")
+	{
+		data.put("Air_supply_sys_no",true);
+	}
+	DEF_tank_filter_replace_if_due_4401 = rec.DEF_tank_filter_replace_if_due_4401;
+	if(DEF_tank_filter_replace_if_due_4401 == "OK")
+	{
+		data.put("DEF_tank_yes",true);
+	}
+	else if(DEF_tank_filter_replace_if_due_4401 == "REP")
+	{
+		data.put("DEF_tank_no",true);
+	}
+	Coolant_min_35F_replace_coolant_filter = rec.Coolant_min_35F_replace_coolant_filter;
+	if(Coolant_min_35F_replace_coolant_filter == "OK")
+	{
+		data.put("Coolant_min_yes",true);
+	}
+	else if(Coolant_min_35F_replace_coolant_filter == "REP")
+	{
+		data.put("Coolant_min_no",true);
+	}
+	DEF_pump_filter_replace_if_due_4402 = rec.DEF_pump_filter_replace_if_due_4402;
+	if(DEF_pump_filter_replace_if_due_4402 == "OK")
+	{
+		data.put("DEF_pump_yes",true);
+	}
+	else if(DEF_pump_filter_replace_if_due_4402 == "REP")
+	{
+		data.put("DEF_pump_no",true);
+	}
+	Wheel_bearing_play_King_pin_wear = rec.Wheel_bearing_play_King_pin_wear;
+	if(Wheel_bearing_play_King_pin_wear == "OK")
+	{
+		data.put("Wheel_bearing_yes",true);
+	}
+	else if(Wheel_bearing_play_King_pin_wear == "REP")
+	{
+		data.put("Wheel_bearing_no",true);
+	}
+	Crankcase_breather_replace_if_due_4501 = rec.Crankcase_breather_replace_if_due_4501;
+	if(Crankcase_breather_replace_if_due_4501 == "OK")
+	{
+		data.put("Crankcase_yes",true);
+	}
+	else if(Crankcase_breather_replace_if_due_4501 == "REP")
+	{
+		data.put("Crankcase_no",true);
+	}
+	Suspension_ride_height_bushings_U_bolts_tight = rec.Suspension_ride_height_bushings_U_bolts_tight;
+	if(Suspension_ride_height_bushings_U_bolts_tight == "OK")
+	{
+		data.put("Suspension_ride_yes",true);
+	}
+	else if(Suspension_ride_height_bushings_U_bolts_tight == "REP")
+	{
+		data.put("Suspension_ride_no",true);
+	}
+	Auto_Trans_Hyd_Service_SHUNT_ONLY_2701 = rec.Auto_Trans_Hyd_Service_SHUNT_ONLY_2701;
+	if(Auto_Trans_Hyd_Service_SHUNT_ONLY_2701 == "OK")
+	{
+		data.put("Auto_Trans_yes",true);
+	}
+	else if(Auto_Trans_Hyd_Service_SHUNT_ONLY_2701 == "REP")
+	{
+		data.put("Auto_Trans_no",true);
+	}
+	Break_Inspection = rec.Break_Inspection;
+	if(Break_Inspection == "Yes")
+	{
+		data.put("Brake_Inspection_yes",true);
+	}
+	else if(Break_Inspection == "No")
+	{
+		data.put("Brake_Inspection_no",false);
+	}
+	Wheels_Removed = rec.Wheels_Removed;
+	if(Wheels_Removed == "Yes")
+	{
+		data.put("wheels_removed_yes",true);
+	}
+	else if(Wheels_Removed == "No")
+	{
+		data.put("wheels_removed_no",false);
+	}
+	////first subform
+	subList1 = List();
+	for each  item in rec.Drum_Measurements
+	{
+		tempMap = Map();
+		tempMap.put("Drum.Left_field",ifnull(item.Left_field,""));
+		tempMap.put("Drum.Right_field",ifnull(item.Right_field,""));
+		subList1.add(tempMap);
+	}
+	data.put("Drum",subList1);
+	////second subform
+	subList2 = List();
+	for each  items in rec.Brakes_Min_Frt
+	{
+		tempMap = Map();
+		tempMap.put("Brakes.Old_L",ifnull(items.Old_L,""));
+		tempMap.put("Brakes.Old_R",ifnull(items.Old_R,""));
+		tempMap.put("Brakes.New_Replaced_L",ifnull(items.New_Replaced_L,""));
+		tempMap.put("Brakes.New_Replaced_R",ifnull(items.New_Replaced_R,""));
+		tempMap.put("Brakes.Push_Rod_Travel_L",ifnull(items.Push_Rod_Travel_L,""));
+		tempMap.put("Brakes.Push_Rod_Travel_R",ifnull(items.Push_Rod_Travel_R,""));
+		subList2.add(tempMap);
+	}
+	data.put("Brakes",subList2);
+	////third subform
+	subList3 = List();
+	for each  item1 in rec.Tires_seperation_mismatch
+	{
+		tempMap = Map();
+		tempMap.put("OldTires.Left_1",ifnull(item1.Left_Inner,""));
+		tempMap.put("OldTires.Left_2",ifnull(item1.Left_Outer1,""));
+		tempMap.put("OldTires.Right_1",ifnull(item1.Right_Inner1,""));
+		tempMap.put("OldTires.Right_2",ifnull(item1.Right_Outer,""));
+		subList3.add(tempMap);
+	}
+	data.put("OldTires",subList3);
+	////third subform
+	subList4 = List();
+	for each  item2 in rec.New_Replaced_Tires_seperation_mismatch
+	{
+		tempMap = Map();
+		tempMap.put("NewReplacedTires.Left_1",ifnull(item2.Left_field,""));
+		tempMap.put("NewReplacedTires.Left_2",ifnull(item2.Left_2,""));
+		tempMap.put("NewReplacedTires.Right_1",ifnull(item2.Right_Inner,""));
+		tempMap.put("NewReplacedTires.Right_2",ifnull(item2.Right_Outer,""));
+		subList4.add(tempMap);
+	}
+	data.put("NewReplacedTires",subList4);
+	// //............. Merge and Send...............//
+	param = Map();
+	param.put("message","Please find your attached.");
+	param.put("subject","Data");
+	param.put("merge_data",{"data":data});
+	param.put("output_format","pdf");
+	param.put("recipient_email","ali.raza@cloudztechnologies.com");
+	param.put("attachment_name","TST-CF EXPRESS TRACTOR PM SHEET");
+	send = invokeurl
+	[
+		url :"https://www.zohoapis.com/writer/api/v1/documents/dgs6e186f397f80c34997935f1ff8b778f3fb/merge/email"
+		type :post
+		parameters:param
+		connection:"zoho_writer_connection"
+	];
+	info send;
+}
