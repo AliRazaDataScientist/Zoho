@@ -1,0 +1,54 @@
+string standalone.Create_Leads_In_Zoho_CRM(String crmAPIRequest)
+{
+crmAPIRequestMap = crmAPIRequest.toMap();
+request_body = crmAPIRequestMap.get("body");
+info request_body;
+if(request_body == "")
+{
+	leadMap = Map();
+	leadMap.put("Appsheet_Lead_Url",request_body.getJSON("Appsheet_Lead_Url"));
+	leadMap.put("Company",request_body.getJSON("Company"));
+	leadMap.put("Email",request_body.getJSON("Email"));
+	leadMap.put("Gender",request_body.getJSON("Gender"));
+	leadMap.put("LinkedIn_URL",request_body.getJSON("LinkedIn_URL"));
+	leadMap.put("Industry",request_body.getJSON("Industry"));
+	leadMap.put("Lead_Category",request_body.getJSON("Lead_Category"));
+	leadMap.put("Street",request_body.getJSON("Street"));
+	leadMap.put("Zip_Code",request_body.getJSON("Zip_Code"));
+	leadMap.put("Age_Range",request_body.getJSON("Age_Range"));
+	leadMap.put("New_Phone",request_body.getJSON("New_Phone"));
+	leadMap.put("No_of_Occupants",request_body.getJSON("No_of_Occupants"));
+	leadMap.put("City",request_body.getJSON("City"));
+	leadMap.put("No_of_Employees",request_body.getJSON("No_of_Employees"));
+	leadMap.put("State",request_body.getJSON("State"));
+	leadMap.put("Calendly_Url",request_body.getJSON("Calendly_Url"));
+	leadMap.put("Valid_Pass",request_body.getJSON("Valid_Pass"));
+	leadMap.put("Country",request_body.getJSON("Country"));
+	leadMap.put("Must_Move_By_Date",request_body.getJSON("Must_Move_By_Date"));
+	leadMap.put("Annual_Revenue",request_body.getJSON("Annual_Revenue"));
+	leadMap.put("Secondary_Email",request_body.getJSON("Secondary_Email"));
+	leadMap.put("Group",request_body.getJSON("Group"));
+	leadMap.put("App_Sheet_ID",request_body.getJSON("App_Sheet_ID"));
+	leadMap.put("Estimated_Move_in_Date",request_body.getJSON("Estimated_Move_in_Date"));
+	leadMap.put("Description",request_body.getJSON("Description"));
+	leadMap.put("Estimated_Duration_of_Stay_months",request_body.getJSON("Estimated_Duration_of_Stay_months"));
+	leadMap.put("Website",request_body.getJSON("Website"));
+	leadMap.put("Twitter",request_body.getJSON("Twitter"));
+	leadMap.put("Salutation",request_body.getJSON("Salutation"));
+	leadMap.put("First_Name",request_body.getJSON("First_Name"));
+	leadMap.put("Lead_Status",request_body.getJSON("Lead_Status"));
+	leadMap.put("Skype_ID",request_body.getJSON("Skype_ID"));
+	leadMap.put("Phone",request_body.getJSON("Phone"));
+	leadMap.put("Budget",request_body.getJSON("Budget"));
+	leadMap.put("Designation",request_body.getJSON("Designation"));
+	leadMap.put("Mobile",request_body.getJSON("Mobile"));
+	leadMap.put("Nationality",request_body.getJSON("Nationality"));
+	leadMap.put("Last_Name",request_body.getJSON("Last_Name"));
+	leadMap.put("Lead_Source",request_body.getJSON("Lead_Source"));
+	leadMap.put("Fax",request_body.getJSON("Fax"));
+	info leadMap;
+	create_record = zoho.crm.createRecord("Leads",leadMap);
+	info create_record;
+}
+return "Executed Successfully";
+}
