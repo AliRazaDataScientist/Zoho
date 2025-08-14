@@ -1,0 +1,10 @@
+
+organizationID = organization.get("organization_id");
+for each  prod in product
+{
+	product_id = prod.getJSON("item_id");
+}
+resultMap = Map();
+resultMap.put("code",0);
+// 0 - Success ; Other than 0 will consider as failure
+return resultMap;
