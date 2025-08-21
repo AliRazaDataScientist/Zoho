@@ -1,0 +1,13 @@
+void automation.CustomViewUpdateRecord()
+{
+loop = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20};
+for each page in loop
+{
+leads = zoho.crm.getRecords("Leads",1,200,{"cvid":"6846866000001389180"});
+for each rec in leads
+{
+	recid = rec.getJSON("id") ;
+	info zoho.crm.updateRecord("Leads", recid, {"Lead_Database_Type":"Old Archive Lead"});
+}
+}
+}
