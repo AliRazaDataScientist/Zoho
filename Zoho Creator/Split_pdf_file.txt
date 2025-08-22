@@ -1,0 +1,92 @@
+When record is created and file is in the upload file file get pdf file and split pdf and upload into workdrive and then get single single file and create record in zoho creator
+
+void splitfile_uploadfiles_createrecords(int id)
+{
+	////header Map
+	authorizationurl = "https://accounts.zoho.eu/oauth/v2/token";
+	params = Map();
+	params.put("refresh_token","*********");
+	params.put("client_id","******");
+	params.put("client_secret","******");
+	params.put("grant_type","refresh_token");
+	authorization_resp = invokeurl
+	[
+		url :authorizationurl
+		type :POST
+		parameters:params
+	];
+	access_token = authorization_resp.getJSON("access_token");
+	headersMap = Map();
+	headersMap.put("Authorization","Bearer " + access_token);
+	headersMap.put("Content-Type","application/json");
+	//json body
+	id = 150659000000085011;
+	rec = Pdf_Cls[ID == id];
+	pdfname = rec.Pdf_Name;
+	pdffile = invokeurl
+	[
+		url :"https://www.zohoapis.eu/creator/v2.1/data/qadrate/qadrate-pdf-extractor/report/Pdf_Cls_Report/" + id + "/Upload_Pdf/download"
+		type :GET
+		connection:"pdffiles"
+	];
+	pdffile.setParamName("file");
+	output_settings = Map();
+	output_settings.put("name",pdfname);
+	output_settings.put("folder_id","ljh5ae03725d36e4d4ae587c8a325f1889521");
+	output_settings.put("overwrite_existing_file","true");
+	input_options = Map();
+	split_arr = {"1"};
+	input_options.put("split_by",split_arr);
+	paramList = list();
+	paramList.add({"paramName":"file","content":pdffile});
+	paramList.add({"paramName":"output_settings","content":output_settings.toString(),"Content-Type":"application/json","stringPart":"true"});
+	paramList.add({"paramName":"input_options","content":input_options.toString(),"Content-Type":"application/json","stringPart":"true"});
+	//split and store url
+	url = "https://www.zohoapis.eu/pdfeditor/api/v1/pdf/pages/split/store";
+	splitpdf_response = invokeurl
+	[
+		url :url
+		type :POST
+		headers:headersMap
+		files:paramList
+	];
+	splitpdf_response_status = splitpdf_response.getJSON("status");
+	if(splitpdf_response_status == "inprogress")
+	{
+		documents_url = splitpdf_response.getJSON("documents");
+		for each  documentsdetails in documents_url
+		{
+			document_id = documentsdetails.getJSON("document_id");
+			filename = documentsdetails.getJSON("filename");
+			dataMap = Map();
+			dataMap.put("Pdf_Cls",id);
+			dataMap.put("PDF_Mode",rec.PDF_Mode);
+			dataMap.put("Pdf_Name",filename);
+			otherParams = Map();
+			create_record_in_creator = zoho.creator.createRecord("qadrate","qadrate-pdf-extractor","Pdf_Cls_Multiple_Records",dataMap,otherParams,"pdffiles");
+			code = create_record_in_creator.getJSON("code");
+			if(code == 3000)
+			{
+				create_record_id = create_record_in_creator.getJSON("data").getJSON("ID");
+				header = Map();
+				header.put("Accept","application/vnd.api+json");
+				pdffile = invokeurl
+				[
+					url :"https://download.zoho.eu/v1/workdrive/download/" + document_id
+					type :GET
+					headers:header
+					connection:"pdffiles"
+				];
+				pdffile.setParamName("file");
+				uploadpdffile = invokeurl
+				[
+					url :"https://www.zohoapis.eu/creator/v2.1/data/qadrate/qadrate-pdf-extractor/report/Pdf_Cls_Multiple_Records_Report/" + create_record_id + "/Upload_Pdf/upload"
+					type :POST
+					files:pdffile
+					connection:"pdffiles"
+				];
+				info uploadpdffile;
+			}
+		}
+	}
+}
