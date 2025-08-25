@@ -1,0 +1,16 @@
+file = input.Upload_Pdf;
+if(file != "")
+{
+	Pdf_Cls_id = input.Pdf_Cls;
+	pdf_rec = Pdf_Cls[ID == Pdf_Cls_id];
+	row1 = Pdf_Cls.Pdf_Data();
+	row1.Ora_Carico=input.Ora_Carico;
+	row1.Numero_Bolla=input.Numero_Bolla;
+	row1.Trasportatore=input.Trasportatore;
+	row1.Descrizione=input.Descrizione;
+	row1.Data=input.Data;
+	row1.Quantita=input.Quantita;
+	row1.Targa=input.Targa;
+	row1.Impianto=input.Impianto;
+	pdf_rec.Pdf_Data.insert(row1);
+}
