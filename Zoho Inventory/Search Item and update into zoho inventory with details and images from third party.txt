@@ -6,7 +6,7 @@ for each  prod in product
 	productid = prod.getJSON("item_id");
 	headers = Map();
 	headers.put("Accept","application/json");
-	headers.put("Authorization","Basic YmVsaUBjYXNhYm9oZW1pYWNyLmNvbTpiOTExYTVhOGJhZTU5YTliMTM5Mw==");
+	headers.put("Authorization","Basic *******");
 	all_records = invokeurl
 	[
 		url :"https://api.alegra.com/api/v1/items?query=" + encodeUrl(productName)
@@ -166,3 +166,4 @@ for each  prod in product
 resultMap = Map();
 resultMap.put("code",0);
 return resultMap;
+
