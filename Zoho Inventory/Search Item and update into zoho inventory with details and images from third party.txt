@@ -1,0 +1,168 @@
+
+organizationID = organization.get("organization_id");
+for each  prod in product
+{
+	productName = prod.getJSON("name");
+	productid = prod.getJSON("item_id");
+	headers = Map();
+	headers.put("Accept","application/json");
+	headers.put("Authorization","Basic YmVsaUBjYXNhYm9oZW1pYWNyLmNvbTpiOTExYTVhOGJhZTU5YTliMTM5Mw==");
+	all_records = invokeurl
+	[
+		url :"https://api.alegra.com/api/v1/items?query=" + encodeUrl(productName)
+		type :GET
+		headers:headers
+	];
+	for each  record in all_records
+	{
+		alegraproductname = record.getJSON("name");
+		if(alegraproductname == productName)
+		{
+			alegraproductid = record.getJSON("id");
+			///////////////////////////////////////////////////////
+			url = "https://api.alegra.com/api/v1/items/" + alegraproductid;
+			item_record = getUrl(url,headers);
+			itemstatus = item_record.getJSON("status");
+			// 			if(itemstatus == "active")
+			// 			{
+			itemmap = Map();
+			itemmap.put("name",item_record.getJSON("name"));
+			// 		itemmap.put("sku",item_record.getJSON("productKey"));
+			type = item_record.getJSON("type");
+			if(type == "product")
+			{
+				itemmap.put("can_be_purchased",true);
+				itemmap.put("track_inventory",true);
+				itemmap.put("item_type","inventory");
+				product_type = "goods";
+			}
+			else
+			{
+				itemmap.put("can_be_purchased",false);
+				itemmap.put("track_inventory",false);
+				itemmap.put("item_type","sales");
+				product_type = "service";
+			}
+			itemmap.put("product_type",product_type);
+			inventory = item_record.getJSON("inventory");
+			itemmap.put("unit",inventory.getJSON("unit"));
+			//// Inventory Track
+			inventorytrack_list = List();
+			warehouses = inventory.getJSON("warehouses");
+			for each  house in warehouses
+			{
+				housename = house.getJSON("name");
+				if(housename == "Local")
+				{
+					location_id = "6839755000000160168";
+				}
+				else if(housename == "Tamarindo")
+				{
+					location_id = "6839755000000197043";
+				}
+				else if(housename == "Decoplaza")
+				{
+					location_id = "6839755000000197077";
+				}
+				else
+				{
+					location_id = "6839755000000093093";
+				}
+				inventorytrack = Map();
+				inventorytrack.put("location_id",location_id);
+				initialstock = house.getJSON("availableQuantity");
+				if(initialstock < 0)
+				{
+					initialstock = 0;
+				}
+				inventorytrack.put("initial_stock",initialstock);
+				inventorytrack.put("initial_stock_rate",inventory.getJSON("unitCost"));
+				inventorytrack_list.add(inventorytrack);
+			}
+			itemmap.put("locations",inventorytrack_list);
+			// 		inventory_name = item_record.getJSON("accounting").getJSON("inventory");
+			// 		if(inventory_name != "" && inventory_name != null)
+			// 		{
+			// 			inventoryname = inventory_name.getJSON("name");
+			// 			if(inventoryname == "Inventarios")
+			// 			{
+			// 				itemmap.put("inventory_account_name","Inventory Asset");
+			// 			}
+			// 		}
+			//// Sales Information
+			itemprice = item_record.getJSON("price").getJSON("price");
+			totalprice = itemprice * 1.13;
+			itemmap.put("rate",totalprice.tonumber());
+			//// Purchase Information
+			itemmap.put("purchase_rate",inventory.getJSON("unitCost"));
+			//// Custom Field
+			custome_field_list = List();
+			custom_field_update_map1 = Map();
+			custom_field_update_map1.put("label","ID");
+			custom_field_update_map1.put("value",alegraproductid.toLong());
+			custome_field_list.add(custom_field_update_map1);
+			itemCategory = item_record.getJSON("itemCategory");
+			if(itemCategory != null)
+			{
+				custom_field_update_map2 = Map();
+				custom_field_update_map2.put("label","Item Category");
+				custom_field_update_map2.put("value",itemCategory.getJSON("name"));
+				custome_field_list.add(custom_field_update_map2);
+			}
+			if(item_record.getJSON("customFields").size() > 0)
+			{
+				customFields = item_record.getJSON("customFields");
+				ESTILO_field = customFields.getJSON("label");
+				if(ESTILO_field != null && ESTILO_field == "ESTILO")
+				{
+					custom_field_update_map3 = Map();
+					custom_field_update_map3.put("label","ESTILO");
+					custom_field_update_map3.put("value",customFields.getJSON("value"));
+					custome_field_list.add(custom_field_update_map3);
+				}
+			}
+			custom_field_update_map4 = Map();
+			custom_field_update_map4.put("label","Is Delete?");
+			custom_field_update_map4.put("value",true);
+			custome_field_list.add(custom_field_update_map4);
+			itemmap.put("custom_fields",custome_field_list);
+			///// Description
+			itemmap.put("description",item_record.getJSON("description"));
+			item_created = zoho.inventory.updateRecord("items","895181557",productid,itemmap,"inventory_con");
+			info item_created;
+			code = item_created.getJSON("code");
+			if(code == 0)
+			{
+				itemid = item_created.getJSON("item").getJSON("item_id");
+				if(itemid != null)
+				{
+					////Image Upload
+					images = item_record.getJSON("images");
+					if(images != null && images != "")
+					{
+						imageurl = images.getJSON("url");
+						imageFile = invokeurl
+						[
+							url :imageurl
+							type :GET
+						];
+						imageFile.setParamName("image");
+						uploadimage = invokeurl
+						[
+							url :"https://inventory.zoho.com/api/v1/items/" + itemid + "/images?organization_id=895181557"
+							type :POST
+							files:imageFile
+							connection:"inventory_con"
+						];
+						info uploadimage;
+					}
+				}
+			}
+			// 			}
+			///////////////////////////////////////////////////////
+		}
+	}
+}
+resultMap = Map();
+resultMap.put("code",0);
+return resultMap;
