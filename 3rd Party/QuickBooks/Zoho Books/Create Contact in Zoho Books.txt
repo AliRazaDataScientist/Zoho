@@ -1,0 +1,71 @@
+void Contacts()
+{
+contact_id = 2778;
+contact_id = 2720;
+contact_contact_info = invokeurl
+[
+	url :"https://quickbooks.api.intuit.com/v3/company/9341452287993091/customer/" + contact_id
+	type :GET
+	headers:{"Content-Type":"application/json","Accept":"application/json"}
+	connection:"qb"
+];
+contact_info = contact_contact_info.get("Customer");
+contact_create_map = Map();
+contact_create_map1 = Map();
+contact_create_list1 = List();
+contact_create_map1.put("first_name",contact_info.getJSON("GivenName"));
+contact_create_map1.put("last_name",contact_info.getJSON("FamilyName"));
+PrimaryEmailAddr = contact_info.getJSON("PrimaryEmailAddr");
+if(PrimaryEmailAddr != null && PrimaryEmailAddr != "")
+{
+	contact_create_map1.put("email",PrimaryEmailAddr.getJSON("Address"));
+}
+PrimaryPhone = contact_info.getJSON("PrimaryPhone");
+if(PrimaryPhone != null && PrimaryPhone != "")
+{
+	contact_create_map1.put("phone",PrimaryPhone.getJSON("FreeFormNumber"));
+}
+contact_create_list1.add(contact_create_map1);
+contact_create_map.put("contact_persons",contact_create_list1);
+contact_create_map.put("company_name","ABCD Company");
+contact_create_map.put("contact_name",contact_info.getJSON("GivenName") + " " + contact_info.getJSON("FamilyName"));
+contact_create_map.put("status",contact_info.getJSON("Active"));
+contact_create_map.put("notes",contact_info.getJSON("Notes"));
+////////////Custom Field
+custom_field_update_map = Map();
+custom_field_update_map.put("label","QB ID");
+custom_field_update_map.put("value",contact_id.toLong());
+custome_field_list = List();
+custome_field_list.add(custom_field_update_map);
+contact_create_map.put("custom_fields",custome_field_list);
+///////Address details
+ShipAddr = contact_info.getJSON("ShipAddr");
+if(ShipAddr != null && ShipAddr != "")
+{
+	ShipAddr_id = ShipAddr.getJSON("Id");
+	info ShipAddr_id;
+}
+BillAddr = contact_info.getJSON("BillAddr");
+if(BillAddr != null && BillAddr != "")
+{
+	BillAddr_id = BillAddr.getJSON("Id");
+	info BillAddr_id;
+}
+// contact_create_map.put("Mailing_State",contact_info.getJSON("billingAddress_state"));
+// contact_create_map.put("Mailing_City",contact_info.getJSON("billingAddress_city"));
+// contact_create_map.put("Mailing_Zip",contact_info.getJSON("billingAddress_countryCode"));
+// contact_create_map.put("Mailing_Zip",contact_info.getJSON("billingAddress_postalCode"));
+// contact_create_map.put("Mailing_Phone",contact_info.getJSON("billingAddress_phone"));
+// contact_create_map.put("shipping_address1",contact_info.get("shippingAddress_address1"));
+// contact_create_map.put("Shipping_Street_2",contact_info.get("shippingAddress_address2"));
+// contact_create_map.put("Shipping_Province",contact_info.get("shippingAddress_state"));
+// contact_create_map.put("Shipping_City",contact_info.get("shippingAddress_city"));
+// contact_create_map.put("Shipping_Postal_Code",contact_info.get("shippingAddress_countryCode"));
+// contact_create_map.put("Shipping_Postal_Code",contact_info.get("shippingAddress_postalCode"));
+// contact_create_map.put("Shipping_Phone",contact_info.get("shippingAddress_phone"));
+info contact_create_map;
+info zoho.books.createRecord("contacts","894983710",contact_create_map,"books");
+// info zoho.books.getRecordsByID("contacts","894983710","6804581000000543029","books");
+// search_customer = zoho.books.getRecords("contacts",org_id,"email=" + contact_info.get("customerEmail") + "","books");
+// info search_customer;
+}
