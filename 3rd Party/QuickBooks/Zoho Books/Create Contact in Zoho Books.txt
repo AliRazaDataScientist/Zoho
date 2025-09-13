@@ -4,7 +4,7 @@ contact_id = 2778;
 contact_id = 2720;
 contact_contact_info = invokeurl
 [
-	url :"https://quickbooks.api.intuit.com/v3/company/9341452287993091/customer/" + contact_id
+	url :"https://quickbooks.api.intuit.com/v3/company/00000000/customer/" + contact_id
 	type :GET
 	headers:{"Content-Type":"application/json","Accept":"application/json"}
 	connection:"qb"
@@ -64,8 +64,9 @@ if(BillAddr != null && BillAddr != "")
 // contact_create_map.put("Shipping_Postal_Code",contact_info.get("shippingAddress_postalCode"));
 // contact_create_map.put("Shipping_Phone",contact_info.get("shippingAddress_phone"));
 info contact_create_map;
-info zoho.books.createRecord("contacts","894983710",contact_create_map,"books");
-// info zoho.books.getRecordsByID("contacts","894983710","6804581000000543029","books");
+info zoho.books.createRecord("contacts","0000",contact_create_map,"books");
+// info zoho.books.getRecordsByID("contacts","0000","6804581000000543029","books");
 // search_customer = zoho.books.getRecords("contacts",org_id,"email=" + contact_info.get("customerEmail") + "","books");
 // info search_customer;
+
 }
