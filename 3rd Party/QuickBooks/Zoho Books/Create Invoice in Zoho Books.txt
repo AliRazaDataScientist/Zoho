@@ -1,0 +1,177 @@
+void Invoice(int invoice_id)
+{
+invoice_id = 4640;
+invoice_data = invokeurl
+[
+	url :"https://quickbooks.api.intuit.com/v3/company/9341452287993091/invoice/" + invoice_id
+	type :GET
+	headers:{"Content-Type":"application/json","Accept":"application/json"}
+	connection:"qb"
+];
+invoice_info = invoice_data.getJSON("Invoice");
+qb_customer_id = invoice_info.getJSON("CustomerRef").getJSON("value");
+if(qb_customer_id != null && qb_customer_id != "")
+{
+	response = invokeurl
+	[
+		url :"https://www.zohoapis.com/books/v3/contacts?organization_id=894983710&cf_qb_id=" + qb_customer_id
+		type :GET
+		connection:"books"
+	];
+	zbooks_contact = response.getJSON("contacts");
+	if(zbooks_contact.size() > 0)
+	{
+		zbooks_contact_id = zbooks_contact.getJSON("contact_id");
+	}
+	else
+	{
+		contact_contact_info = invokeurl
+		[
+			url :"https://quickbooks.api.intuit.com/v3/company/9341452287993091/customer/" + qb_customer_id
+			type :GET
+			headers:{"Content-Type":"application/json","Accept":"application/json"}
+			connection:"qb"
+		];
+		contact_info = contact_contact_info.get("Customer");
+		contact_create_map = Map();
+		contact_create_map1 = Map();
+		contact_create_list1 = List();
+		contact_create_map1.put("first_name",contact_info.getJSON("GivenName"));
+		contact_create_map1.put("last_name",contact_info.getJSON("FamilyName"));
+		PrimaryEmailAddr = contact_info.getJSON("PrimaryEmailAddr");
+		if(PrimaryEmailAddr != null && PrimaryEmailAddr != "")
+		{
+			contact_create_map1.put("email",PrimaryEmailAddr.getJSON("Address"));
+		}
+		PrimaryPhone = contact_info.getJSON("PrimaryPhone");
+		if(PrimaryPhone != null && PrimaryPhone != "")
+		{
+			contact_create_map1.put("phone",PrimaryPhone.getJSON("FreeFormNumber"));
+		}
+		contact_create_list1.add(contact_create_map1);
+		contact_create_map.put("contact_persons",contact_create_list1);
+		// 		contact_create_map.put("company_name","ABCD Company");
+		contact_create_map.put("contact_name",contact_info.getJSON("GivenName") + " " + contact_info.getJSON("FamilyName"));
+		contact_create_map.put("status",contact_info.getJSON("Active"));
+		contact_create_map.put("notes",contact_info.getJSON("Notes"));
+		////////////Custom Field
+		custom_field_update_map = Map();
+		custom_field_update_map.put("label","QB ID");
+		custom_field_update_map.put("value",qb_customer_id.toLong());
+		custome_field_list = List();
+		custome_field_list.add(custom_field_update_map);
+		contact_create_map.put("custom_fields",custome_field_list);
+		create_contact_book = zoho.books.createRecord("contacts","894983710",contact_create_map,"books");
+		create_contact = create_contact_book.getJSON("contact");
+		if(create_contact.size() > 0)
+		{
+			zbooks_contact_id = create_contact.getJSON("contact_id");
+		}
+	}
+}
+item_list = List();
+line_info = invoice_info.getJSON("Line");
+for each  items_info in line_info
+{
+	LineNum = items_info.getJSON("LineNum");
+	if(LineNum != null && LineNum != "")
+	{
+		desp = items_info.getJSON("Description");
+		qb_item_details = items_info.getJSON("SalesItemLineDetail");
+		qb_item_id = qb_item_details.getJSON("ItemRef").getJSON("value");
+		qb_item_quantity = qb_item_details.getJSON("Qty");
+		qb_item_price = qb_item_details.getJSON("UnitPrice");
+		respons = invokeurl
+		[
+			url :"https://www.zohoapis.com/books/v3/items?organization_id=894983710&cf_qb_id=" + qb_item_id
+			type :GET
+			connection:"books"
+		];
+		zbooks_item = respons.getJSON("items");
+		if(zbooks_item.size() > 0)
+		{
+			zbooks_item_id = zbooks_item.getJSON("item_id");
+		}
+		else
+		{
+			item_data = invokeurl
+			[
+				url :"https://quickbooks.api.intuit.com/v3/company/9341452287993091/item/" + qb_item_id
+				type :GET
+				headers:{"Content-Type":"application/json","Accept":"application/json"}
+				connection:"qb"
+			];
+			item_info = item_data.get("Item");
+			item_map = Map();
+			itemtype = item_info.getJSON("Type");
+			if(itemtype == "Service")
+			{
+				type = "service";
+			}
+			else if(itemtype == "NonInventory")
+			{
+				type = "goods";
+				item_map.put("can_be_purchased",true);
+				item_map.put("can_be_sold",true);
+			}
+			itemstatus = item_info.getJSON("Active");
+			if(itemstatus == true)
+			{
+				status = "active";
+			}
+			else if(itemstatus == false)
+			{
+				status = "inactive";
+			}
+			itemname = item_info.getJSON("TrackQtyOnHand");
+			item_map.put("product_type",type);
+			item_map.put("status",status);
+			item_map.put("name",ifnull(item_info.getJSON("Name"),""));
+			item_map.put("description",ifnull(item_info.getJSON("Description"),""));
+			item_map.put("rate",ifnull(item_info.getJSON("UnitPrice"),""));
+			item_map.put("purchase_rate",ifnull(item_info.getJSON("PurchaseCost"),""));
+			////////////Custom Field
+			custom_field_update_map = Map();
+			custom_field_update_map.put("label","QB ID");
+			custom_field_update_map.put("value",qb_item_id.toLong());
+			custome_field_list = List();
+			custome_field_list.add(custom_field_update_map);
+			item_map.put("custom_fields",custome_field_list);
+			create_item_qb = zoho.books.createRecord("items","894983710",item_map,"books");
+			zbooks_item_created = create_item_qb.getJSON("item");
+			if(zbooks_item_created.size() > 0)
+			{
+				zbooks_item_id = zbooks_item_created.getJSON("item_id");
+			}
+		}
+		lineitem_map = Map();
+		lineitem_map.put("item_id",zbooks_item_id);
+		lineitem_map.put("quantity",qb_item_quantity);
+		lineitem_map.put("rate",qb_item_price);
+		lineitem_map.put("description",desp);
+		item_list.add(lineitem_map);
+	}
+}
+item_map = Map();
+item_map.put("customer_id",zbooks_contact_id);
+item_map.put("due_date",invoice_info.getJSON("DueDate"));
+item_map.put("date",invoice_info.getJSON("TxnDate"));
+item_map.put("line_items",item_list);
+item_map.put("reference_number",invoice_info.getJSON("DocNumber"));
+item_map.put("notes",invoice_info.getJSON("CustomerMemo_value"));
+info item_map;
+invoice_create = zoho.books.createRecord("invoices","894983710",item_map,"books");
+invoice = invoice_create.getJSON("invoice");
+if(invoice.size() > 0)
+{
+	invoice_id = invoice.getJSON("invoice_id");
+	info invoice_id;
+	response = invokeurl
+	[
+		url :"https://www.zohoapis.com/books/v3/invoices/" + invoice_id + "/status/sent?organization_id=894983710"
+		type :POST
+		connection:"books"
+	];
+	info response;
+}
+}
