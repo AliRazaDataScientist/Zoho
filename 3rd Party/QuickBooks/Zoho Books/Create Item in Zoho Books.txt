@@ -1,0 +1,60 @@
+void Items()
+{
+item_id = 1010000016;
+item_id = 1010000001;
+item_data = invokeurl
+[
+	url :"https://quickbooks.api.intuit.com/v3/company/9341452287993091/item/" + item_id
+	type :GET
+	headers:{"Content-Type":"application/json","Accept":"application/json"}
+	connection:"qb"
+];
+item_info = item_data.get("Item");
+item_map = Map();
+itemtype = item_info.getJSON("Type");
+if(itemtype == "Service")
+{
+	type = "service";
+}
+else if(itemtype == "NonInventory")
+{
+	type = "goods";
+	item_map.put("can_be_purchased",true);
+	item_map.put("can_be_sold",true);
+}
+itemstatus = item_info.getJSON("Active");
+if(itemstatus == true)
+{
+	status = "active";
+}
+else if(itemstatus == false)
+{
+	status = "inactive";
+}
+itemname = item_info.getJSON("TrackQtyOnHand");
+item_map.put("product_type",type);
+item_map.put("status",status);
+item_map.put("name",ifnull(item_info.getJSON("Name"),""));
+item_map.put("description",ifnull(item_info.getJSON("Description"),""));
+item_map.put("rate",ifnull(item_info.getJSON("UnitPrice"),""));
+item_map.put("purchase_rate",ifnull(item_info.getJSON("PurchaseCost"),""));
+////////////Custom Field
+custom_field_update_map = Map();
+custom_field_update_map.put("label","QB ID");
+custom_field_update_map.put("value",item_id.toLong());
+custome_field_list = List();
+custome_field_list.add(custom_field_update_map);
+item_map.put("custom_fields",custome_field_list);
+// info zoho.books.getRecordsByID("items","894983710","6804581000000546032","books");
+info zoho.books.createRecord("items","894983710",item_map,"books");
+// realmId = "9341452287993091";
+// // your company ID
+// items_response = invokeurl
+// [
+// 	url :"https://quickbooks.api.intuit.com/v3/company/" + realmId + "/query?query=SELECT * FROM Item STARTPOSITION 1 MAXRESULTS 1000"
+// 	type :GET
+// 	headers:{"Content-Type":"application/json","Accept":"application/json"}
+// 	connection:"qb"
+// ];
+// info items_response;
+}
