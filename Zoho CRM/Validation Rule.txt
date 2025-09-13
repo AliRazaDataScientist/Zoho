@@ -1,0 +1,34 @@
+map validation_rule.Validation_Rule(String crmAPIRequest)
+{
+entityMap = crmAPIRequest.toMap().get("record");
+Serving_Notice = entityMap.get("Serving_Notice");
+nd_Stay_Start_Date = entityMap.get("nd_Stay_Start_Date");
+nd_Stay_End_Date = entityMap.get("nd_Stay_End_Date");
+nd_Customer = entityMap.get("nd_Customer");
+response = Map();
+if(nd_Customer.size() > 0)
+{
+	info "true condition";
+	info "/////" + Serving_Notice;
+	info "/////" + nd_Stay_Start_Date.isNull();
+	if(nd_Stay_Start_Date.isNull() == true)
+	{
+		response.put("status","error");
+		response.put("message","2nd Stay Start Date field is empty");
+	}
+	else if(nd_Stay_End_Date.isNull() == true && Serving_Notice == true)
+	{
+		response.put("status","error");
+		response.put("message","2nd Stay End Date field is empty");
+	}
+	else
+	{
+		response.put('status','success');
+	}
+}
+else
+{
+	response.put('status','success');
+}
+return response;
+}
