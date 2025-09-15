@@ -79,6 +79,7 @@ for each  items_info in line_info
 		desp = items_info.getJSON("Description");
 		qb_item_details = items_info.getJSON("SalesItemLineDetail");
 		qb_item_id = qb_item_details.getJSON("ItemRef").getJSON("value");
+		qb_item_tax_status = qb_item_details.getJSON("TaxCodeRef").getJSON("value");
 		qb_item_quantity = qb_item_details.getJSON("Qty");
 		qb_item_price = qb_item_details.getJSON("UnitPrice");
 		respons = invokeurl
@@ -145,6 +146,14 @@ for each  items_info in line_info
 			}
 		}
 		lineitem_map = Map();
+		if(qb_item_tax_status == "TAX")
+		{
+			lineitem_map.put("tax_id","6804581000000543700");
+		}
+		else if(qb_item_tax_status == "NON")
+		{
+			lineitem_map.put("tax_exemption_id","6804581000000543726");
+		}
 		lineitem_map.put("item_id",zbooks_item_id);
 		lineitem_map.put("quantity",qb_item_quantity);
 		lineitem_map.put("rate",qb_item_price);
@@ -176,3 +185,4 @@ if(invoice.size() > 0)
 }
 
 }
+
