@@ -2,7 +2,7 @@ void Update_Invoice(int invoice_id)
 {
 invoice_data = invokeurl
 [
-	url :"https://quickbooks.api.intuit.com/v3/company/9341452287993091/invoice/" + invoice_id
+	url :"https://quickbooks.api.intuit.com/v3/company/0000000/invoice/" + invoice_id
 	type :GET
 	headers:{"Content-Type":"application/json","Accept":"application/json"}
 	connection:"qb"
@@ -59,7 +59,7 @@ if(qb_customer_id != null && qb_customer_id != "")
 	{
 		contact_contact_info = invokeurl
 		[
-			url :"https://quickbooks.api.intuit.com/v3/company/9341452287993091/customer/" + qb_customer_id
+			url :"https://quickbooks.api.intuit.com/v3/company/0000/customer/" + qb_customer_id
 			type :GET
 			headers:{"Content-Type":"application/json","Accept":"application/json"}
 			connection:"qb"
@@ -102,6 +102,7 @@ if(qb_customer_id != null && qb_customer_id != "")
 	}
 }
 item_list = List();
+discount = 0;
 line_info = invoice_info.getJSON("Line");
 for each  items_info in line_info
 {
@@ -132,7 +133,7 @@ for each  items_info in line_info
 			{
 				item_data = invokeurl
 				[
-					url :"https://quickbooks.api.intuit.com/v3/company/9341452287993091/item/" + qb_item_id
+					url :"https://quickbooks.api.intuit.com/v3/company/0000/item/" + qb_item_id
 					type :GET
 					headers:{"Content-Type":"application/json","Accept":"application/json"}
 					connection:"qb"
@@ -203,12 +204,21 @@ for each  items_info in line_info
 			item_list.add(lineitem_map);
 		}
 	}
+	else
+	{
+		DetailType = items_info.getJSON("DetailType");
+		if(DetailType == "DiscountLineDetail")
+		{
+			discount = items_info.getJSON("Amount");
+		}
+	}
 }
 item_map = Map();
 item_map.put("customer_id",zbooks_contact_id);
 item_map.put("due_date",invoice_info.getJSON("DueDate"));
 item_map.put("date",invoice_info.getJSON("TxnDate"));
 item_map.put("line_items",item_list);
+item_map.put("adjustment","-" + discount);
 item_map.put("reference_number",invoice_info.getJSON("DocNumber"));
 item_map.put("notes",invoice_info.getJSON("CustomerMemo_value"));
 item_map.put("reason","Getting Request From QuickBook");
@@ -243,7 +253,7 @@ if(invoice_id == null)
 	{
 		payment_info = invokeurl
 		[
-			url :"https://quickbooks.api.intuit.com/v3/company/9341452287993091/payment/" + paymentid
+			url :"https://quickbooks.api.intuit.com/v3/company/000000/payment/" + paymentid
 			type :GET
 			headers:{"Content-Type":"application/json","Accept":"application/json"}
 			connection:"qb"
