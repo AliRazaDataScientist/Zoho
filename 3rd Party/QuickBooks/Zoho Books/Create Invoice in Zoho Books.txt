@@ -70,6 +70,7 @@ if(qb_customer_id != null && qb_customer_id != "")
 	}
 }
 item_list = List();
+discount = 0;
 line_info = invoice_info.getJSON("Line");
 for each  items_info in line_info
 {
@@ -160,12 +161,28 @@ for each  items_info in line_info
 		lineitem_map.put("description",desp);
 		item_list.add(lineitem_map);
 	}
+		else
+		{
+			lineitem_map = Map();
+			lineitem_map.put("description",qb_item_des);
+			lineitem_map.put("tax_exemption_id","6804581000000543726");
+			item_list.add(lineitem_map);
+		}
 }
+	else
+	{
+		DetailType = items_info.getJSON("DetailType");
+		if(DetailType == "DiscountLineDetail")
+		{
+			discount = items_info.getJSON("Amount");
+		}
+	}
 item_map = Map();
 item_map.put("customer_id",zbooks_contact_id);
 item_map.put("due_date",invoice_info.getJSON("DueDate"));
 item_map.put("date",invoice_info.getJSON("TxnDate"));
 item_map.put("line_items",item_list);
+item_map.put("adjustment","-" + discount);
 item_map.put("reference_number",invoice_info.getJSON("DocNumber"));
 item_map.put("notes",invoice_info.getJSON("CustomerMemo_value"));
 info item_map;
@@ -185,4 +202,5 @@ if(invoice.size() > 0)
 }
 
 }
+
 
