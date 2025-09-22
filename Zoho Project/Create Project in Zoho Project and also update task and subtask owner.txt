@@ -1,0 +1,105 @@
+void automation.Assign_Deal_Owner_to_Task_in_Zoho_Project(String id_deal)
+{
+////////////////////////Don't make any changes in my code thanks
+id_project = null;
+user_zpuid = null;
+deal = zoho.crm.getRecordById("Deals",id_deal);
+projectname = deal.getJSON("Deal_Name");
+dealowneremail = deal.get("Owner").get("email");
+templateid = "1966075000001401052";
+project = Map();
+project.put("name",projectname);
+project.put("template_id",templateid);
+createProject = invokeurl
+[
+	url :"https://projectsapi.zoho.com/restapi/portal/gatewaybusinessbrokers/projects/"
+	type :POST
+	parameters:project
+	connection:"projects"
+];
+if(createProject.get("projects").size() > 0)
+{
+	id_project = createProject.get("projects").getJSON("id");
+	deal_update_map = Map();
+	deal_update_map.put("Zoho_Project_ID",id_project);
+	info zoho.crm.updateRecord("Deals",id_deal,deal_update_map);
+	mpParameters = Map();
+	mpParameters.put("user_type","active");
+	users = invokeurl
+	[
+		url :"https://projectsapi.zoho.com/restapi/portal/gatewaybusinessbrokers/users/"
+		type :GET
+		parameters:mpParameters
+		connection:"projects"
+	];
+	for each  user in users.get("users")
+	{
+		if(user.get("email") == dealowneremail)
+		{
+			user_zpuid = user.get("zpuid");
+			break;
+		}
+	}
+}
+if(user_zpuid != null && id_project != null)
+{
+	getTasks = invokeurl
+	[
+		url :"https://projectsapi.zoho.com/restapi/portal/gatewaybusinessbrokers/projects/" + id_project + "/tasks/"
+		type :GET
+		connection:"projects"
+	];
+	alltasks = getTasks.get("tasks");
+	for each  task in alltasks
+	{
+		task_id = task.get("id");
+		getsubTasks = invokeurl
+		[
+			url :"https://projectsapi.zoho.com/restapi/portal/gatewaybusinessbrokers/projects/" + id_project + "/tasks/" + task_id + "/subtasks/"
+			type :GET
+			connection:"projects"
+		];
+		if(getsubTasks != "" && getsubTasks != null)
+		{
+			subtasks = getsubTasks.getJSON("tasks");
+			for each  sub_task in subtasks
+			{
+				sub_task_owner = sub_task.get("details").get("owners").get(0).get("name");
+				if(sub_task_owner == "Unassigned")
+				{
+					sub_task_id = sub_task.getJSON("id");
+					url = "https://projectsapi.zoho.com/restapi/portal/gatewaybusinessbrokers/projects/" + id_project + "/tasks/" + sub_task_id + "/";
+					params = Map();
+					params.put("person_responsible",user_zpuid);
+					response = invokeurl
+					[
+						url :url
+						type :POST
+						parameters:params
+						connection:"projects"
+					];
+					info response;
+				}
+			}
+		}
+		else
+		{
+			task_owner = task.get("details").get("owners").get(0).get("name");
+			if(task_owner == "Unassigned")
+			{
+				url = "https://projectsapi.zoho.com/restapi/portal/gatewaybusinessbrokers/projects/" + id_project + "/tasks/" + task_id + "/";
+				params = Map();
+				params.put("person_responsible",user_zpuid);
+				response = invokeurl
+				[
+					url :url
+					type :POST
+					parameters:params
+					connection:"projects"
+				];
+				info response;
+			}
+		}
+	}
+}
+}
