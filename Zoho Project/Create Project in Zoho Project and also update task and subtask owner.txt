@@ -1,15 +1,43 @@
 void automation.Assign_Deal_Owner_to_Task_in_Zoho_Project(String id_deal)
 {
-////////////////////////Don't make any changes in my code thanks
 id_project = null;
 user_zpuid = null;
 deal = zoho.crm.getRecordById("Deals",id_deal);
 projectname = deal.getJSON("Deal_Name");
 dealowneremail = deal.get("Owner").get("email");
+if(dealowneremail != null)
+{
+	mpParameters = Map();
+	mpParameters.put("user_type","active");
+	users = invokeurl
+	[
+		url :"https://projectsapi.zoho.com/restapi/portal/gatewaybusinessbrokers/users/"
+		type :GET
+		parameters:mpParameters
+		connection:"projects"
+	];
+	for each  user in users.get("users")
+	{
+		if(user.get("email") == dealowneremail)
+		{
+			user_zpuid = user.get("id");
+			break;
+		}
+	}
+}
+createfolder_in_WD = zoho.workdrive.createFolder(projectname,"vkmey9063a9f5bbc94de2b64cfea13418b011","workdrive_con");
+data = createfolder_in_WD.getJSON("data");
+if(data != null)
+{
+	folder_id = data.getJSON("id");
+}
 templateid = "1966075000001401052";
 project = Map();
 project.put("name",projectname);
 project.put("template_id",templateid);
+project.put("owner",user_zpuid);
+project.put("UDF_CHAR1","https://workdrive.zoho.com/31ii4293ee7d3552a4dad91c24e90b9ef1543/teams/31ii4293ee7d3552a4dad91c24e90b9ef1543/ws/vkmey9063a9f5bbc94de2b64cfea13418b011/folders/" + folder_id);
+project.put("UDF_CHAR2",folder_id);
 createProject = invokeurl
 [
 	url :"https://projectsapi.zoho.com/restapi/portal/gatewaybusinessbrokers/projects/"
@@ -102,4 +130,5 @@ if(user_zpuid != null && id_project != null)
 		}
 	}
 }
+
 }
