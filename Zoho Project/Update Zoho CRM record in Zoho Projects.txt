@@ -1,0 +1,52 @@
+task_info = zoho.projects.getRecordById("gatewaybusinessbrokers",projectid,"tasks",taskid,"project_con");
+des = task_info.getJSON("description");
+project_info = invokeurl
+[
+	url :"https://projectsapi.zoho.com/api/v3/portal/gatewaybusinessbrokers/projects/" + projectid
+	type :GET
+	connection:"project_con"
+];
+projectname = project_info.getJSON("name");
+search_deal = zoho.crm.searchRecords("Deals","(Deal_Name:equals:" + projectname + ")");
+deal_id = search_deal.getJSON("id");
+zcrm_task_id = null;
+all_activities = zoho.crm.getRelatedRecords("Tasks","Deals",deal_id);
+for each  task in all_activities
+{
+	task_subject = task.getJSON("Subject");
+	if(task_subject.contains("Coming Soon") == true && zp_subject.contains("Coming Soon") == true)
+	{
+		zcrm_task_id = task.getJSON("id");
+	}
+	else if(task_subject.contains("Target Database and Marketing Strategy") == true && zp_subject.contains("Marketing Strategy") == true)
+	{
+		zcrm_task_id = task.getJSON("id");
+	}
+	else if(task_subject.contains("Memorandum") == true && zp_subject.contains("Memorandum") == true)
+	{
+		zcrm_task_id = task.getJSON("id");
+	}
+	else if(task_subject.contains("Listing Video") == true && zp_subject.contains("Listing Video") == true)
+	{
+		zcrm_task_id = task.getJSON("id");
+	}
+	else if(task_subject.contains("Real Estate Sections") == true && zp_subject.contains("real estate information") == true)
+	{
+		zcrm_task_id = task.getJSON("id");
+	}
+	else if(task_subject.contains("Zoho Deal") == true && zp_subject.contains("listing with description") == true)
+	{
+		zcrm_task_id = task.getJSON("id");
+	}
+	else if(task_subject.contains("3rd Party Sites") == true && zp_subject.contains("3rd Party listing") == true)
+	{
+		zcrm_task_id = task.getJSON("id");
+	}
+}
+if(zcrm_task_id != null)
+{
+	task_map = Map();
+	task_map.put("Status","Completed");
+	info zoho.crm.updateRecord("Tasks",zcrm_task_id,task_map);
+}
+return "success";
