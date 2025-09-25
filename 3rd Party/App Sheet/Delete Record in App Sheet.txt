@@ -1,0 +1,68 @@
+void automation.Delete_Lead_Google_App_Sheet(Int id)
+{
+// Delete Lead from Appsheet via Zoho CRM
+rec = zoho.crm.getRecordById("Leads",id);
+headers = Map();
+headers.put("Content-Type","application/json");
+leadRow = Map();
+leadRow.put("Lead ID",id);
+rowsList = list();
+rowsList.add(leadRow);
+payload = Map();
+payload.put("action","Find");
+payload.put("rows",rowsList);
+payloadStr = payload.toString();
+// Send POST request with detailed=true to get redirect URL
+response = invokeurl
+[
+	url :apiUrl
+	type :POST
+	parameters:payloadStr
+	headers:headers
+	detailed:true
+];
+responseHeader = response.get("responseHeader");
+redirectUrl = responseHeader.get("location");
+if(redirectUrl != null)
+{
+	finalResponse = getUrl(redirectUrl,true);
+	info finalResponse;
+}
+else
+{
+	info "No redirect found: " + response;
+}
+// Edit Lead in Appsheet from Zoho CRM
+leadDetails = Map();
+leadDetails.put("Lead ID",id.tostring());
+rowsList = list();
+rowsList.add(leadDetails);
+payload = Map();
+payload.put("action","Delete");
+payload.put("rows",rowsList);
+payloadStr = payload.toString();
+/////header and url 
+apiUrl = "https://script.google.com/macros/s/AKfycbwb_CHNYvy0q0bCM2wFhEQnI-VjskIRGy-MEin/exec";
+headers = Map();
+headers.put("Content-Type","application/json");
+// Send POST request with detailed=true to get redirect URL
+response = invokeurl
+[
+	url :apiUrl
+	type :POST
+	parameters:payloadStr
+	headers:headers
+	detailed:true
+];
+responseHeader = response.get("responseHeader");
+redirectUrl = responseHeader.get("location");
+if(redirectUrl != null)
+{
+	finalResponse = getUrl(redirectUrl,true);
+	info finalResponse;
+}
+else
+{
+	info "No redirect found: " + response;
+}
+}
