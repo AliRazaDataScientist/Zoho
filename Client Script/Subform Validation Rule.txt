@@ -1,0 +1,46 @@
+try {
+    var alert_list = [];
+    var name_list = [];
+    var subform_info = ZDK.Page.getSubform('Add_Ons1').getValues();
+    for (var i = 0; i < subform_info.length; i++) {
+        var row = subform_info[i];
+        var addOnName = row.Add_Ons_Name.name; 
+        var addOnid = row.Add_Ons_Name.id; 
+        var price = row.Price_1;
+        /////////////////////// For the Price Validation
+        var restrictedNames = ["One-time Waiver", "Discount (Pro-rated)", "Discount (Flat-rated)"];
+        if (restrictedNames.includes(addOnName)) {
+            if (price >= 0) {
+                console.log('The Product name is ', addOnName, ' and the price is ', price);
+                if (addOnName == 'One-time Waiver') {
+                    ZDK.Client.showMessage('Since this is a waiver, please enter a negative value', { type: 'error' });
+                }
+                else {
+                    ZDK.Client.showMessage('Since this is a discount, please enter a negative value', { type: 'error' });
+                }
+                return false;
+            }
+        }
+        /////////////////////// For the Purchase and Rental Validation
+        var add_on_rec = ZDK.Apps.CRM.Add_Ons.fetchById(addOnid);
+        var addontype = add_on_rec.Type;
+        if (addontype == 'Purchase') {
+            alert_list.push('Purchase');
+        }
+        else if (addontype == 'Rental'){
+            alert_list.push('Rental');
+        }
+        name_list.push(addOnName);
+    }
+    if (alert_list.includes("Rental") && !name_list.includes("2-Way Delivery (Rental)")) {
+        ZDK.Client.showMessage("- be sure to add 2-Way Delivery (Rental)", { type: "error" });
+        return false;
+    }
+    else if (alert_list.includes("Purchase") && !name_list.includes("1-Way Delivery (Purchase)")) {
+        ZDK.Client.showMessage("- be sure to add 1-Way Delivery (Purchase)", { type: "error" });
+        return false;
+    }
+}
+catch (err) {
+    console.error("Error in script:", err);
+}
