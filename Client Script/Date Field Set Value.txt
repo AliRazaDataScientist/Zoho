@@ -1,0 +1,17 @@
+    try {
+        let start_date = null;
+        start_date = ZDK.Page.getField('Start_Date').getValue();
+        console.log(start_date);
+        if (start_date) {
+            let newDate = new Date(start_date);
+            newDate.setHours(14, 0, 0, 0);
+            let options = { year: 'numeric', month: 'short', day: 'numeric' };
+            let datePart = newDate.toLocaleDateString('en-US', options);
+            let timePart = newDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            let formatted = datePart + " " + timePart;
+            console.log("Updated DateTime:", formatted);
+            ZDK.Page.getField('Move_in_Date').setValue(formatted);
+        }
+    } catch (err) {
+        console.error("Error in script:", err);
+    }
