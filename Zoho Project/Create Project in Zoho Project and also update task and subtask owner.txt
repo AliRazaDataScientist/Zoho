@@ -51,6 +51,23 @@ if(createProject.get("projects").size() > 0)
 	deal_update_map = Map();
 	deal_update_map.put("Zoho_Project_ID",id_project);
 	info zoho.crm.updateRecord("Deals",id_deal,deal_update_map);
+	contdet = Map();
+	contdet.put("id",id_deal);
+	mp = Map();
+	mp.put("name",projectname);
+	mp.put("deals",contdet.toList());
+	datalist = List();
+	datalist.add(mp);
+	datamp = Map();
+	datamp.put("data",datalist);
+	resp = invokeurl
+	[
+		url :"https://www.zohoapis.com/crm/v7/Deals/" + id_deal + "/Zoho_Projects/" + id_project
+		type :POST
+		parameters:datamp.toString()
+		connection:"crm_con"
+	];
+	info resp;
 	mpParameters = Map();
 	mpParameters.put("user_type","active");
 	users = invokeurl
@@ -132,3 +149,4 @@ if(user_zpuid != null && id_project != null)
 }
 
 }
+
