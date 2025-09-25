@@ -62,7 +62,7 @@ payload.put("Action","Edit");
 payload.put("Rows",rowsList);
 payloadStr = payload.toString();
 // Define the API URL and headers
-apiUrl = "https://script.google.com/macros/s/AKfycbwtU3wmug2oMG19NAo4EeyvX2gmTXSIJf-mZkNsleD_FIFomqj36_rnWJMyPpMECQkI/exec";
+apiUrl = "https://script.google.com/macros/s/AKfycbwtU3wmug2oMG19NAo4EeyvX2gmTXSIJf/exec";
 headers = Map();
 headers.put("Content-Type","application/json");
 // Send POST request with detailed=true to capture redirect URL
@@ -86,4 +86,5 @@ else
 {
 	info "No redirect found. Original response: " + response;
 }
+
 }
