@@ -1,1 +1,96 @@
-fs
+void automation.Create_Lead_Google_App_Sheet(Int id)
+{
+standalone.update_everylead_status(id);
+rec = zoho.crm.getRecordById("Leads",id);
+Lead_ID = rec.get("Lead_ID");
+if(Lead_ID == null)
+{
+	update_rec = zoho.crm.updateRecord("Leads",id,{"Lead_ID":id.tostring()});
+}
+// Prepare the lead details map
+leadDetails = Map();
+leadDetails.put("Lead ID",id.tostring());
+leadDetails.put("First Name",ifnull(rec.get("First_Name"),""));
+leadDetails.put("Last Name",ifnull(rec.get("Last_Name"),""));
+leadDetails.put("Lead Email",ifnull(rec.get("Lead_Email"),""));
+leadDetails.put("Lead Phone",ifnull(rec.get("Lead_Phone"),""));
+leadDetails.put("No. of Occupants",ifnull(rec.get("No_of_Occupants"),""));
+leadDetails.put("Lead Category",ifnull(rec.get("Lead_Category"),""));
+leadDetails.put("Lead Status",ifnull(rec.get("Lead_Status"),""));
+leadDetails.put("Budget",ifnull(rec.get("Budget"),""));
+leadDetails.put("Estimated Move-in Date",ifnull(rec.get("Estimated_Move_in_Date"),""));
+leadDetails.put("Must Move By Date",ifnull(rec.get("Must_Move_By_Date"),""));
+leadDetails.put("Estimated Duration of Stay (months)",ifnull(rec.get("Estimated_Duration_of_Stay_months"),""));
+leadDetails.put("Valid Pass",ifnull(rec.get("Valid_Pass"),""));
+leadDetails.put("Gender",ifnull(rec.get("Gender"),""));
+leadDetails.put("Age Range",ifnull(rec.get("Age_Range"),""));
+leadDetails.put("Description",ifnull(rec.get("Description"),""));
+leadDetails.put("Nationality",ifnull(rec.get("Nationality"),""));
+leadDetails.put("LinkedIn URL",ifnull(rec.get("LinkedIn_URL"),""));
+leadDetails.put("Staff ID",ifnull(rec.get("Staff_ID"),""));
+leadDetails.put("Junk Status",ifnull(rec.get("Junk_Status"),""));
+leadDetails.put("Tags",ifnull(rec.get("Tags"),""));
+leadDetails.put("Notes",ifnull(rec.get("Notes_1"),""));
+leadDetails.put("Industry",ifnull(rec.get("Industry"),""));
+leadDetails.put("Lead Source (Primary)",ifnull(rec.get("Lead_Source_Primary"),""));
+leadDetails.put("Lead Source (Secondary)",ifnull(rec.get("Lead_Source_Secondary"),""));
+leadDetails.put("Lead Source (Tertiary)",ifnull(rec.get("Lead_Source_Tertiary"),""));
+leadDetails.put("Lead Source Description",ifnull(rec.get("Lead_Source_Description"),""));
+leadDetails.put("Email Opt Out",ifnull(rec.get("Email_Opt_Out"),""));
+leadDetails.put("Newsletter Opt In",ifnull(rec.get("Newsletter_Opt_In"),""));
+leadDetails.put("Re-marketing Opt Out",ifnull(rec.get("Re_marketing_Opt_Out"),""));
+// Optional arrays
+Viewing_Requests = rec.get("Viewing_Requests");
+if(Viewing_Requests != null)
+{
+	Viewing_Requests = Viewing_Requests.toString(", ");
+	leadDetails.put("Viewing Requests",Viewing_Requests);
+}
+// Proposed_Studios = rec.get("Proposed_Studios");
+// if(Proposed_Studios != null)
+// {
+// 	Proposed_Studios = Proposed_Studios.toString(", ");
+// 	leadDetails.put("Proposed Studios",Proposed_Studios);
+// }
+Preferred_Neighborhood = rec.get("Preferred_Neighborhood");
+if(Preferred_Neighborhood != null)
+{
+	Preferred_Neighborhood = Preferred_Neighborhood.toString(", ");
+	leadDetails.put("Preferred Neighborhood",Preferred_Neighborhood);
+}
+// leadDetails.put("Created ",rec.get("Created_Time").replaceAll("T"," ").getPrefix("+"));
+leadDetails.put("Created Time",rec.getJSON("Created_Time").replaceAll("T"," ").toString("MM/dd/yyyy HH:mm:ss"));
+leadDetails.put("Last Modified Time",rec.getJSON("Modified_Time").replaceAll("T"," ").toString("MM/dd/yyyy HH:mm:ss"));
+// Prepare payload
+rowsList = list();
+rowsList.add(leadDetails);
+payload = Map();
+payload.put("Action","Add");
+payload.put("Rows",rowsList);
+payloadStr = payload.toString();
+info payloadStr;
+// API details
+apiUrl = "https://script.google.com/macros/s/AKfycbwtU3wmug2oMG19NAo4EeyvX2gmTXSIJf/exec";
+headers = Map();
+headers.put("Content-Type","application/json");
+// Send POST with detailed=true to handle redirect
+response = invokeurl
+[
+	url :apiUrl
+	type :POST
+	parameters:payloadStr
+	headers:headers
+	detailed:true
+];
+responseHeader = response.get("responseHeader");
+redirectUrl = responseHeader.get("location");
+if(redirectUrl != null)
+{
+	finalResponse = getUrl(redirectUrl,true);
+	info "Final response after redirect: " + finalResponse;
+}
+else
+{
+	info "No redirect found. Original response: " + response;
+}
+}
