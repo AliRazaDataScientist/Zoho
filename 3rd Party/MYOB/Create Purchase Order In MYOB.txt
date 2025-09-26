@@ -28,13 +28,11 @@ invoiceurl = "https://api.myob.com/accountright/1d3ff999-95d9-41e1-8978-f2992e8f
 get_quote_rec = zoho.crm.getRecordById("Quotes",qid);
 //Get MYOB contact id if exist ifnot then create and get its id 
 Contact_RECORD = get_quote_rec.get("Vendor");
-info Contact_RECORD;
 if(Contact_RECORD != null)
 {
 	vendorid = Contact_RECORD.getJSON("id");
 	contactrecord = zoho.crm.getRecordById("Vendors",vendorid);
 	MYOB_ID = contactrecord.getJSON("MYOB_ID");
-	info "MYOB ID: " + MYOB_ID;
 	if(MYOB_ID == null)
 	{
 		url = "https://api.myob.com/accountright/1d3ff999-95d9-41e1-8978-f2992e8f8f18/Contact/Supplier";
@@ -68,8 +66,6 @@ if(Contact_RECORD != null)
 			parameters:bodyJSON
 			headers:headers
 		];
-		info "api hit";
-		info recordcreated;
 		if(recordcreated == "" || recordcreated == null)
 		{
 			update_contact = zoho.crm.updateRecord("Vendors",vendorid,{"MYOB_ID":DisplayID});
@@ -79,8 +75,8 @@ if(Contact_RECORD != null)
 	else
 	{
 		searchdisplayid = MYOB_ID;
-		info "searchdisplayid" + searchdisplayid;
 	}
+	info "searchdisplayid" + searchdisplayid;
 	urlString = "https://api.myob.com/accountright/1d3ff999-95d9-41e1-8978-f2992e8f8f18/Contact/Supplier?$filter=DisplayID eq '" + searchdisplayid + "'";
 	search_contact = invokeurl
 	[
@@ -88,16 +84,11 @@ if(Contact_RECORD != null)
 		type :GET
 		headers:headers
 	];
-	info "second api hit to api" + search_contact;
 	myob_contact_id = search_contact.getJSON("Items").getJSON("UID");
 }
 // Invoice Body (JSON)
 bodyMap = Map();
 bodyMap.put("Number",get_quote_rec.get("Quote_No"));
-bodyMap.put("Date",zoho.currenttime.toString("yyyy-MM-dd HH:mm:ss"));
-supplierMap = Map();
-supplierMap.put("UID",myob_contact_id);
-bodyMap.put("Supplier",supplierMap);
 Billing_Street = get_quote_rec.get("Billing_Street");
 Billing_City = get_quote_rec.get("Billing_City");
 Billing_State = get_quote_rec.get("Billing_State");
@@ -142,7 +133,6 @@ for each  row_reocrd in Product_Details
 	model = get_record_pro.get("Product_Code");
 	dimension = get_record_pro.get("Dimentions");
 	warranty = get_record_pro.get("Warranty_Details");
-	/*
 	pro_MYOB_ID = get_record_pro.getJSON("MYOB_ID");
 	if(pro_MYOB_ID == null)
 	{
@@ -151,9 +141,9 @@ for each  row_reocrd in Product_Details
 		randomNumber = randomNumber(100,1000000);
 		itemDisplayID = "PM" + randomNumber;
 		bodyMap.put("Number",itemDisplayID);
-		bodyMap.put("Name",get_record_pro.get("Product_Name"));
+		bodyMap.put("Name",get_record_pro.get("Product_Code"));
 		bodyMap.put("IsActive",get_record_pro.get("Product_Active"));
-		bodyMap.put("Description",get_record_pro.get("Description"));
+		bodyMap.put("Description",get_record_pro.get("Product_Name"));
 		bodyMap.put("IsBought",true);
 		ExpenseAccount = Map();
 		ExpenseAccount.put("UID","0578c9bd-3d10-45a9-9d31-d9123ace342f");
@@ -197,12 +187,11 @@ for each  row_reocrd in Product_Details
 		headers:headers
 	];
 	myob_item_id = search_item.getJSON("Items").getJSON("UID");
-	*/
 	enter_space = hextoText("0A");
 	itemMap = Map();
-	itemMap.put("UID","730d3678-7ecf-4d5b-b28d-3677b780b2be");
+	itemMap.put("UID",myob_item_id);
 	linemap = Map();
-	linemap.put("Account",itemMap);
+	linemap.put("Item",itemMap);
 	taxCodeMap = Map();
 	taxCodeMap.put("UID","2ab1cf79-bce8-4da0-986c-a3bbdd1d02bc");
 	linemap.put("TaxCode",taxCodeMap);
@@ -222,7 +211,10 @@ bodyMap.put("FreightTaxCode",freightTaxCodeMap);
 bodyMap.put("TotalTax",get_quote_rec.get("Grand_Total") - get_quote_rec.get("Sub_Total"));
 bodyMap.put("TotalAmount",get_quote_rec.get("Grand_Total"));
 bodyMap.put("Status","Open");
-// bodyMap.put("Name","test developer");
+bodyMap.put("Date",zoho.currenttime.toString("yyyy-MM-dd HH:mm:ss"));
+supplierMap = Map();
+supplierMap.put("UID",myob_contact_id);
+bodyMap.put("Supplier",supplierMap);
 info bodyMap;
 invoice_recordcreated = invokeurl
 [
@@ -231,7 +223,6 @@ invoice_recordcreated = invokeurl
 	parameters:bodyMap.toString()
 	headers:headers
 ];
-info "invoice created api" + invoice_recordcreated;
 if(invoice_recordcreated == "" || invoice_recordcreated == null)
 {
 	invoiceid = get_quote_rec.get("Quote_No");
