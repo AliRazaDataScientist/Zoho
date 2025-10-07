@@ -1,0 +1,94 @@
+headersMap = Map();
+headersMap.put("X-Shopify-Access-Token","*************");
+headersMap.put("Content-Type","application/json");
+customerID = customer.get("contact_id");
+companyName = customer.get("company_name");
+organizationID = organization.get("organization_id");
+date_time = zoho.currenttime;
+minutes = date_time.getMinutes();
+info minutes;
+if(minutes >= 5)
+{
+	contactrec = zoho.inventory.getRecordsByID("contacts",organizationID,customerID,"inventory_con");
+	contact = contactrec.getJSON("contact");
+	persons = contact.get("contact_persons");
+	if(persons != null && persons.size() > 0)
+	{
+		first_person = persons.get(0);
+		first_name = ifnull(first_person.get("first_name"),"");
+		last_name = ifnull(first_person.get("last_name"),"");
+		email = ifnull(first_person.get("email"),"");
+		phone = ifnull(first_person.get("phone"),"");
+	}
+	else
+	{
+		first_name = ifnull(contact.get("contact_name"),"");
+		last_name = "";
+		email = "";
+		phone = "";
+	}
+	bill_address = contact.get("billing_address");
+	address_map = Map();
+	if(bill_address != null)
+	{
+		address_map.put("address1",ifnull(bill_address.get("address"),""));
+		address_map.put("address2",ifnull(bill_address.get("street2"),""));
+		address_map.put("city",ifnull(bill_address.get("city"),""));
+		address_map.put("province",ifnull(bill_address.get("state"),""));
+		address_map.put("country",ifnull(bill_address.get("country"),""));
+		address_map.put("zip",ifnull(bill_address.get("zip"),""));
+		address_map.put("phone",ifnull(bill_address.get("phone"),""));
+	}
+	// Custom fields (optional)
+	shopify_id = "";
+	custom_fields = contact.get("custom_field_hash");
+	if(custom_fields != null)
+	{
+		shopify_id = custom_fields.getJSON("cf_shopify_customer_id");
+	}
+	customer_payload = Map();
+	customer_map = Map();
+	customer_map.put("first_name",first_name);
+	customer_map.put("last_name",last_name);
+	customer_map.put("email",email);
+	customer_map.put("phone",phone);
+	customer_map.put("verified_email",true);
+	add_list = List();
+	add_list.add(address_map);
+	customer_map.put("addresses",add_list);
+	customer_payload.put("customer",customer_map);
+	if(shopify_id == null || shopify_id == "")
+	{
+		create_s_c = invokeurl
+		[
+			url :"https://mdgqdt-5g.myshopify.com/admin/api/2025-01/customers.json"
+			type :POST
+			body:customer_payload.toString()
+			headers:headersMap
+		];
+		if(create_s_c.get("customer") != null)
+		{
+			created_shopify_id = create_s_c.get("customer").get("id");
+			info "✅ Customer created successfully in Shopify with ID: " + created_shopify_id;
+			custom_field_update_map = Map();
+			custom_field_update_map.put("label","Shopify Customer ID");
+			custom_field_update_map.put("value",created_shopify_id.toLong());
+			custom_fields_list = List();
+			custom_fields_list.add(custom_field_update_map);
+			update_map = Map();
+			update_map.put("custom_fields",custom_fields_list);
+			update_record = zoho.inventory.updateRecord("contacts",organizationID,customerID,update_map,"inventory_con");
+		}
+	}
+	else
+	{
+		update_s_c = invokeurl
+		[
+			url :"https://mdgqdt-5g.myshopify.com/admin/api/2025-01/customers/" + shopify_id + ".json"
+			type :PUT
+			body:customer_payload.toString()
+			headers:headersMap
+		];
+		info update_s_c;
+	}
+}
