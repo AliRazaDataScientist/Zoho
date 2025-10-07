@@ -1,1 +1,125 @@
-
+headersMap = Map();
+headersMap.put("X-Shopify-Access-Token","*********************");
+headersMap.put("Content-Type","application/json");
+itemID = item.get("item_id");
+organizationID = organization.get("organization_id");
+date_time = zoho.currenttime;
+minutes = date_time.getMinutes();
+info minutes;
+if(minutes >= 5)
+{
+	item_rec = zoho.inventory.getRecordsByID("items",organizationID,itemID,"inventory_con");
+	item_data = item_rec.getJSON("item");
+	product_map = Map();
+	product_data = Map();
+	product_data.put("title",item_data.get("name"));
+	product_data.put("body_html",ifnull(item_data.get("description"),""));
+	product_data.put("vendor",ifnull(item_data.get("vendor_name"),"Default Vendor"));
+	product_data.put("product_type","Goods");
+	product_data.put("status",if(item_data.get("status") == "active","active","draft"));
+	variant = Map();
+	variant.put("price",ifnull(item_data.get("rate"),0));
+	variant.put("weight",ifnull(item_data.getJSON("package_details").get("weight"),0));
+	variant.put("weight_unit",ifnull(item_data.getJSON("package_details").get("weight_unit"),"g"));
+	variants_list = List();
+	variants_list.add(variant);
+	product_data.put("variants",variants_list);
+	product_map.put("product",product_data);
+	product_map.put("inventory_management","shopify");
+	info product_map;
+	pro_shopify_id = "";
+	custom_fields = item_data.get("custom_field_hash");
+	if(custom_fields != null)
+	{
+		pro_shopify_id = custom_fields.getJSON("cf_shopify_product_id");
+	}
+	if(pro_shopify_id == null || pro_shopify_id == "")
+	{
+		info "yes in if";
+		create_s_p = invokeurl
+		[
+			url :"https://mdgqdt-5g.myshopify.com/admin/api/2025-01/products.json"
+			type :POST
+			body:product_map.toString()
+			headers:headersMap
+		];
+		if(create_s_p.get("product") != null)
+		{
+			product_shopify_id = create_s_p.get("product").get("id");
+			inventory_item_id = create_s_p.get("product").getJSON("variants").getJSON("inventory_item_id");
+			info "✅ Product created successfully in Shopify with ID: " + product_shopify_id;
+			custom_field_update_map = Map();
+			custom_field_update_map.put("label","Shopify Product ID");
+			custom_field_update_map.put("value",product_shopify_id.toLong());
+			custom_fields_list = List();
+			custom_fields_list.add(custom_field_update_map);
+			update_map = Map();
+			update_map.put("custom_fields",custom_fields_list);
+			update_record = zoho.inventory.updateRecord("items",organizationID,itemID,update_map,"inventory_con");
+			info update_record;
+		}
+	}
+	else
+	{
+		info "in else";
+		update_s_p = invokeurl
+		[
+			url :"https://mdgqdt-5g.myshopify.com/admin/api/2025-01/products/" + pro_shopify_id + ".json"
+			type :PUT
+			body:product_map.toString()
+			headers:headersMap
+		];
+		info update_s_p;
+		inventory_item_id = update_s_p.getJSON("product").getJSON("variants").getJSON("inventory_item_id");
+	}
+	locations = item_data.get("locations");
+	for each  loc in locations
+	{
+		initial_stock = loc.getJSON("initial_stock");
+		if(initial_stock > 0)
+		{
+			location_id = loc.getJSON("location_id");
+			if(location_id == "7136621000000099009")
+			{
+				warehouseid = "70923616329";
+			}
+			else if(location_id == "7136621000000099041")
+			{
+				warehouseid = "108099534921";
+			}
+			else if(location_id == "7136621000000099073")
+			{
+				warehouseid = "110696988745";
+			}
+			else if(location_id == "7136621000000099105")
+			{
+				warehouseid = "108099567689";
+			}
+			// Ensure connected
+			connect_map = Map();
+			connect_map.put("inventory_item_id",inventory_item_id.toLong());
+			connect_map.put("location_id",warehouseid.toLong());
+			connect_resp = invokeurl
+			[
+				url :"https://mdgqdt-5g.myshopify.com/admin/api/2025-01/inventory_levels/connect.json"
+				type :POST
+				body:connect_map.toString()
+				headers:headersMap
+			];
+			info "Connect Resp: " + connect_resp;
+			// Then update stock
+			inventory_map = Map();
+			inventory_map.put("inventory_item_id",inventory_item_id.toLong());
+			inventory_map.put("location_id",warehouseid.toLong());
+			inventory_map.put("available",initial_stock.toNumber());
+			update_resp = invokeurl
+			[
+				url :"https://mdgqdt-5g.myshopify.com/admin/api/2025-01/inventory_levels/set.json"
+				type :POST
+				body:inventory_map.toString()
+				headers:headersMap
+			];
+			info "Inventory Set Response: " + update_resp;
+		}
+	}
+}
