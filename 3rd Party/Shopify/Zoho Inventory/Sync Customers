@@ -1,0 +1,110 @@
+headersMap = Map();
+headersMap.put("X-Shopify-Access-Token","**************************");
+headersMap.put("Content-Type","application/json");
+organizationID = organization.get("organization_id");
+////////////////////////////////////////
+rec_list = List();
+oneHourAgo = zoho.currenttime.addHour(-1);
+iso = oneHourAgo.toString("yyyy-MM-dd'T'HH:mm:ssXXX");
+normalized = iso;
+if(iso.contains("+"))
+{
+	normalized = iso.replaceAll("\\+","%2B",true);
+}
+url = "https://mdgqdt-5g.myshopify.com/admin/api/2025-01/customers.json" + "?updated_at_min=" + normalized + "&limit=250";
+resp = invokeurl
+[
+	url :url
+	type :GET
+	headers:headersMap
+];
+products = resp.get("customers");
+for each  prod in products
+{
+	rec_list.add(prod.getJSON("id"));
+}
+url = "https://mdgqdt-5g.myshopify.com/admin/api/2025-01/customers.json" + "?created_at_min=" + normalized + "&limit=250";
+resp = invokeurl
+[
+	url :url
+	type :GET
+	headers:headersMap
+];
+products = resp.get("customers");
+for each  prod in products
+{
+	rec_list.add(prod.getJSON("id"));
+}
+info "customer from Shopify: " + rec_list;
+for each  s_c_id in rec_list
+{
+	response = invokeurl
+	[
+		url :"https://mdgqdt-5g.myshopify.com/admin/api/2025-01/customers/" + s_c_id + ".json"
+		type :GET
+		headers:headersMap
+	];
+	contact_info = response.get("customer");
+	contact_create_map1 = Map();
+	contact_create_map1.put("first_name",ifnull(contact_info.get("first_name"),""));
+	contact_create_map1.put("last_name",ifnull(contact_info.get("last_name"),""));
+	contact_create_map1.put("email",ifnull(contact_info.get("email"),""));
+	contact_create_map1.put("phone",ifnull(contact_info.get("phone"),""));
+	contact_create_list1 = List();
+	contact_create_list1.add(contact_create_map1);
+	contact_create_map = Map();
+	contact_create_map.put("contact_persons",contact_create_list1);
+	contact_create_map.put("contact_name",ifnull(contact_info.get("first_name"),"") + " " + ifnull(contact_info.get("last_name"),""));
+	contact_create_map.put("status","active");
+	contact_create_map.put("notes",contact_info.get("note"));
+	// Custom Field
+	custom_field_update_map = Map();
+	custom_field_update_map.put("label","Shopify Customer ID");
+	custom_field_update_map.put("value",s_c_id.toLong());
+	custom_field_update_map1 = Map();
+	custom_field_update_map1.put("label","Tags");
+	custom_field_update_map1.put("value",contact_info.get("tags"));
+	custome_field_list = List();
+	custome_field_list.add(custom_field_update_map);
+	custome_field_list.add(custom_field_update_map1);
+	contact_create_map.put("custom_fields",custome_field_list);
+	// Address handling
+	addresses = contact_info.get("default_address");
+	if(addresses != null && addresses.size() > 0)
+	{
+		address_map = Map();
+		address_map.put("address",ifnull(addresses.getJSON("address1"),""));
+		address_map.put("street2",ifnull(addresses.getJSON("address2"),""));
+		address_map.put("country",ifnull(addresses.getJSON("country"),""));
+		address_map.put("state",ifnull(addresses.getJSON("province"),""));
+		address_map.put("city",ifnull(addresses.getJSON("city"),""));
+		address_map.put("zip",ifnull(addresses.getJSON("zip"),""));
+		address_map.put("phone",ifnull(addresses.getJSON("phone"),""));
+		contact_create_map.put("billing_address",address_map);
+	}
+	info contact_create_map;
+	search_resp = invokeurl
+	[
+		url :"https://www.zohoapis.com/inventory/v1/contacts?organization_id=" + organizationID + "&cf_shopify_customer_id=" + s_c_id
+		type :GET
+		connection:"inventory_con"
+	];
+	contacts = search_resp.getJSON("contacts");
+	if(contacts.size() > 0)
+	{
+		contact_id = contacts.getJSON("contact_id");
+	}
+	if(contact_id == null)
+	{
+		contact_created = zoho.inventory.createRecord("contacts",organizationID,contact_create_map,"inventory_con");
+		contact_id = contact_created.getJSON("contact").getJSON("contact_id");
+		info "Created";
+	}
+	else
+	{
+		info "Updated";
+		updateRecord = zoho.inventory.updateRecord("contacts",organizationID,contact_id,contact_create_map,"inventory_con");
+		contact_id = updateRecord.getJSON("contact").getJSON("contact_id");
+	}
+	info contact_id;
+}
