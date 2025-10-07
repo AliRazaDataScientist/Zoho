@@ -1,0 +1,214 @@
+headersMap = Map();
+headersMap.put("X-Shopify-Access-Token","************************");
+headersMap.put("Content-Type","application/json");
+organizationID = organization.get("organization_id");
+////////////////////////////////////////
+rec_list = List();
+oneHourAgo = zoho.currenttime.addHour(-1);
+iso = oneHourAgo.toString("yyyy-MM-dd'T'HH:mm:ssXXX");
+normalized = iso;
+if(iso.contains("+"))
+{
+	normalized = iso.replaceAll("\\+","%2B",true);
+}
+url = "https://mdgqdt-5g.myshopify.com/admin/api/2025-01/products.json" + "?updated_at_min=" + normalized + "&limit=250";
+resp = invokeurl
+[
+	url :url
+	type :GET
+	headers:headersMap
+];
+products = resp.get("products");
+for each  prod in products
+{
+	rec_list.add(prod.getJSON("id"));
+}
+url = "https://mdgqdt-5g.myshopify.com/admin/api/2025-01/products.json" + "?created_at_min=" + normalized + "&limit=250";
+resp = invokeurl
+[
+	url :url
+	type :GET
+	headers:headersMap
+];
+products = resp.get("products");
+for each  prod in products
+{
+	rec_list.add(prod.getJSON("id"));
+}
+info "Products from Shopify: " + rec_list;
+for each  s_p_id in rec_list
+{
+	response = invokeurl
+	[
+		url :"https://mdgqdt-5g.myshopify.com/admin/api/2025-01/products/" + s_p_id + ".json"
+		type :GET
+		headers:headersMap
+	];
+	product = response.getJSON("product");
+	if(product != null)
+	{
+		item_map = Map();
+		variants = product.getJSON("variants");
+		itemtype = product.getJSON("product_type");
+		item_map.put("can_be_purchased",true);
+		item_map.put("can_be_sold",true);
+		item_map.put("track_inventory",true);
+		itemstatus = product.getJSON("status");
+		if(itemstatus == "active")
+		{
+			status = "active";
+		}
+		else if(itemstatus == "draft")
+		{
+			status = "inactive";
+		}
+		item_map.put("item_type","inventory");
+		item_map.put("product_type","goods");
+		item_map.put("status",status);
+		item_map.put("name",ifnull(product.getJSON("title"),""));
+		description = ifnull(product.getJSON("body_html"),"");
+		if(description != "")
+		{
+			description = description.replaceAll("<(.|\n)*?>","").replaceAll("&nbsp;"," ");
+			item_map.put("description",description);
+		}
+		item_map.put("rate",ifnull(variants.getJSON("price"),""));
+		item_map.put("purchase_rate",ifnull(variants.getJSON("price"),""));
+		item_map.put("unit",ifnull(variants.getJSON("weight_unit"),""));
+		////////////Custom Field
+		custom_field_update_map = Map();
+		custom_field_update_map.put("label","Shopify Product ID");
+		custom_field_update_map.put("value",s_p_id.toLong());
+		custome_field_list = List();
+		custome_field_list.add(custom_field_update_map);
+		item_map.put("custom_fields",custome_field_list);
+		vendorname = product.getJSON("vendor");
+		if(vendorname != null)
+		{
+			query_param = Map();
+			query_param.put("vendor_name",vendorname);
+			search_vend = zoho.inventory.getRecords("vendors",organizationID,query_param,"inventory_con");
+			contacts = search_vend.getJSON("contacts");
+			if(contacts.size() > 0)
+			{
+				vid = contacts.getJSON("contact_id");
+			}
+			else
+			{
+				v_map = Map();
+				v_map.put("contact_type","vendor");
+				v_map.put("contact_name",vendorname);
+				create_vendor = zoho.inventory.createRecord("contacts",organizationID,v_map,"inventory_con");
+				vid = create_vendor.getJSON("contact").getJSON("contact_id");
+			}
+			vendor_list = list();
+			vendor_map = Map();
+			vendor_map.put("vendor_id",vid.toLong());
+			vendor_list.add(vendor_map);
+			// 	item_map.put("preferred_vendors", vendor_list);
+		}
+		packdetails = Map();
+		// packdetails.put("length", ifnull(variants.getJSON("price"),""));
+		// packdetails.put("width", ifnull(variants.getJSON("price"),""));
+		// packdetails.put("height", ifnull(variants.getJSON("price"),""));
+		// packdetails.put("dimension_unit", ifnull(variants.getJSON("price"),""));
+		packdetails.put("weight",ifnull(variants.getJSON("weight"),""));
+		packdetails.put("weight_unit",ifnull(variants.getJSON("weight_unit"),""));
+		item_map.put("package_details",packdetails);
+		inventory_item_id = variants.getJSON("inventory_item_id");
+		inventory_resp = invokeurl
+		[
+			url :"https://mdgqdt-5g.myshopify.com/admin/api/2025-01/inventory_levels.json?inventory_item_ids=" + inventory_item_id
+			type :GET
+			headers:headersMap
+		];
+		inventory_levels = inventory_resp.getJSON("inventory_levels");
+		inventory_list = List();
+		for each  inventory in inventory_levels
+		{
+			inventory_map = Map();
+			available = inventory.getJSON("available");
+			price = variants.getJSON("price");
+			if(available != null && available > 0)
+			{
+				s_location_id = inventory.getJSON("location_id");
+				if(s_location_id == "70923616329")
+				{
+					//Abuja Warehouse 01 warehours
+					inventory_map.put("location_id","7136621000000099009");
+					inventory_map.put("initial_stock",available);
+					inventory_map.put("initial_stock_rate",available.tonumber() * price.toNumber());
+				}
+				else if(s_location_id == "108099534921")
+				{
+					//Kano warehouse
+					inventory_map.put("location_id","7136621000000099041");
+					inventory_map.put("initial_stock",available);
+					inventory_map.put("initial_stock_rate",available.tonumber() * price.toNumber());
+				}
+				else if(s_location_id == "110696988745")
+				{
+					//Lagos Ikija POS
+					inventory_map.put("location_id","7136621000000099073");
+					inventory_map.put("initial_stock",available);
+					inventory_map.put("initial_stock_rate",available.tonumber() * price.toNumber());
+				}
+				else if(s_location_id == "108099567689")
+				{
+					//Lagos VI POS
+					inventory_map.put("location_id","7136621000000099105");
+					inventory_map.put("initial_stock",available);
+					inventory_map.put("initial_stock_rate",available.tonumber() * price.toNumber());
+				}
+				inventory_list.add(inventory_map);
+			}
+		}
+		item_map.put("locations",inventory_list);
+		search_resp = invokeurl
+		[
+			url :"https://inventory.zoho.com/api/v1/items?organization_id=" + organizationID + "&cf_shopify_product_id=" + s_p_id
+			type :GET
+			connection:"inventory_con"
+		];
+		items = search_resp.getJSON("items");
+		if(items.size() > 0)
+		{
+			item_id = items.getJSON("item_id");
+		}
+		if(item_id == null)
+		{
+			item_created = zoho.inventory.createRecord("items",organizationID,item_map,"inventory_con");
+			itemid = item_created.getJSON("item").getJSON("item_id");
+			if(itemid != null)
+			{
+				////Image Upload
+				images = product.getJSON("images");
+				for each  img in images
+				{
+					if(img != null && img != "")
+					{
+						imageurl = img.getJSON("src");
+						imageFile = invokeurl
+						[
+							url :imageurl
+							type :GET
+						];
+						imageFile.setParamName("image");
+						uploadimage = invokeurl
+						[
+							url :"https://www.zohoapis.com/inventory/v1/items/" + itemid + "/images?organization_id=" + organizationID
+							type :POST
+							files:imageFile
+							connection:"inventory_con"
+						];
+						info uploadimage;
+					}
+				}
+			}
+		}
+		else
+		{
+			info zoho.inventory.updateRecord("items",organizationID,item_id,item_map,"inventory_con");
+		}
+	}
+}
