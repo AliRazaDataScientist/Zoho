@@ -11,6 +11,7 @@ if(minutes >= 5)
 {
 	invoice_rec = zoho.inventory.getRecordsByID("invoices",organizationID,invoiceID,"inventory_con");
 	invoice = invoice_rec.getJSON("invoice");
+	referencenumber = invoice.getJSON("reference_number");
 	zcustomer_id = invoice.getJSON("customer_id");
 	z_c_id = zoho.inventory.getRecordsByID("contacts",organizationID,zcustomer_id,"inventory_con");
 	z_c_rec = z_c_id.getJSON("contact");
@@ -214,15 +215,33 @@ if(minutes >= 5)
 	shopifyOrder.put("processed_at",invoice.get("date").toString("yyyy-MM-dd"));
 	// if(shipping_address.size() > 0) shopifyOrder.put("shipping_address", shipping_address);
 	// if(billing_address.size() > 0) shopifyOrder.put("billing_address", billing_address);
-	shopifyOrder.put("tags","Created from Zoho Invoice");
+	shopifyOrder.put("tags","Created from Zoho Inventory");
 	order_payload = Map();
 	order_payload.put("order",shopifyOrder);
-	create_order = invokeurl
-	[
-		url :"https://mdgqdt-5g.myshopify.com/admin/api/2025-01/orders.json"
-		type :POST
-		body:order_payload.toString()
-		headers:headersMap
-	];
-	info "Shopify create order response: " + create_order;
+	if(referencenumber == "")
+	{
+		create_order = invokeurl
+		[
+			url :"https://mdgqdt-5g.myshopify.com/admin/api/2025-01/orders.json"
+			type :POST
+			body:order_payload.toString()
+			headers:headersMap
+		];
+		info "Shopify create order response: " + create_order;
+	}
+	else
+	{
+		shopify_invoice_id = invoice.getJSON("custom_field_hash").getJSON("cf_shopify_invoice_id");
+		if(shopify_invoice_id != null)
+		{
+			response = invokeurl
+			[
+				url :"https://mdgqdt-5g.myshopify.com/admin/api/2025-01/orders/" + shopify_invoice_id + ".json"
+				type :PUT
+				body:order_payload.toString()
+				headers:headersMap
+			];
+			info response;
+		}
+	}
 }
