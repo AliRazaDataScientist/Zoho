@@ -8,7 +8,7 @@ get_account = zoho.crm.getRecordById("Accounts",account.toLong());
 		[
 			url :template_url
 			type :GET
-			connection:"emailtemplate"
+			connection:"emailtemplate" //ZohoCRM.templates.email.READ
 		];
 		email_content = response.getJSON("email_templates").getJSON("mail_content");
 		if(get_account.getJSON("Account_Name") != null)
@@ -27,3 +27,4 @@ sendmail
 		subject :subject
 		message :email_contentsrep
 	]
+
