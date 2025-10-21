@@ -1,0 +1,8 @@
+	sendmail
+	[
+	from: zoho.adminuserid
+	to: "tecnospark6go1234567890@gmail.com"
+	subject: "Daily Labour Report"
+	message: "Please find the PDF attached of Daily Labour Report"
+	attachments:view:All_Clients as CSV
+	]
