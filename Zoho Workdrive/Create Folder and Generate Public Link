@@ -1,0 +1,38 @@
+Deals = zoho.crm.getRecordById("Deals",id);
+Deal_name = Deals.get("Deal_Name");
+client_name = Deals.get("Client_Name").get("name");
+workdrive_name = Deal_name + "-" + client_name;
+// ////////////////// create folder in work drive ////////
+workdrive_folder_name = zoho.workdrive.createFolder(workdrive_name,"********","workdrive");
+///////////
+workdrive_folder_id = workdrive_folder_name.get("data").get("id");
+info workdrive_folder_id;
+////////// get external link for work drive folder //////////
+header = Map();
+header.put("Accept","application/vnd.api+json");
+data2 = Map();
+data_param12 = Map();
+att_param12 = Map();
+att_param12.put("resource_id",workdrive_folder_id);
+att_param12.put("shared_type","publish");
+att_param12.put("role_id",7);
+data_param12.put("attributes",att_param12);
+data_param12.put("type","permissions");
+data2.put("data",data_param12);
+external_link = invokeurl
+[
+	url :" https://www.zohoapis.com/workdrive/api/v1/permissions"
+	type :POST
+	parameters:data2.toString()
+	headers:header
+	connection:"workdrive"
+];
+info "link external " + external_link;
+link_external = external_link.get("data").get("attributes").get("permalink");
+info link_external;
+///////////////// update external link in crm ///////////
+update_externalk_link_crm_map = Map();
+update_externalk_link_crm_map.put("External_Link",link_external);
+info "update_externalk_link_crm_map >>" + update_externalk_link_crm_map;
+update_crm_data = zoho.crm.updateRecord("Deals",id,update_externalk_link_crm_map,{"trigger":{"workflow"}});
+info "update_crm_data >>" + update_crm_data;
