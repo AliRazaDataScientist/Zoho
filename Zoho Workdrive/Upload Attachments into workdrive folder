@@ -1,0 +1,20 @@
+recordID = 5984752000002419001;
+folderid = "*************";
+relatt = zoho.crm.getRelatedRecords("Attachments","Contacts",recordID);
+if(relatt.size() > 0)
+{
+	for each  rec in relatt
+	{
+		attachementId = rec.get("id");
+		filename = rec.get("File_Name");
+		fname = encodeurl(filename).toString();
+		downloadFile = invokeurl
+		[
+			url :"https://www.zohoapis.com/crm/v2/Contacts/" + recordID + "/Attachments/" + attachementId
+			type :GET
+			connection:"crm_con"
+		];
+		uploadfile = zoho.workdrive.uploadFile(downloadFile,folderid,fname,true,"workdrive");
+		info "upload : " + uploadfile;
+	}
+}
