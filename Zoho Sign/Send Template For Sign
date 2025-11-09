@@ -1,0 +1,49 @@
+string standalone.Send_Template_For_Signature()
+{
+	
+eachActionMap1 = Map();
+eachActionMap1.put("recipient_name","ZD Testing");
+eachActionMap1.put("recipient_email","alirazadatascientist@gmail.com");
+eachActionMap1.put("action_type","SIGN");
+eachActionMap1.put("action_id","466423000000056022");
+eachActionMap1.put("role","HR");
+eachActionMap1.put("verify_recipient","false");
+ 
+eachActionMap2 = Map();
+eachActionMap2.put("recipient_name","Test Signer");
+eachActionMap2.put("recipient_email","t3y8014wq5@mkzaso.com");
+eachActionMap2.put("action_type","SIGN");
+eachActionMap2.put("action_id","466423000000056024");
+eachActionMap2.put("role","Candidate");
+eachActionMap2.put("verify_recipient","false");
+ 
+actions_list = List();
+actions_list.add(eachActionMap1);
+actions_list.add(eachActionMap2);
+
+template_id = "466423000000056019";
+url = "https://sign.zoho.com/api/v1/templates/" + template_id + "/createdocument";
+// Create inner JSON structure
+field_data = Map();
+field_data.put("field_text_data", Map());
+field_data.put("field_boolean_data", Map());
+field_data.put("field_date_data", Map());
+template_data = Map();
+template_data.put("request_name", "Partnership agreement");
+template_data.put("field_data", field_data);
+template_data.put("actions", actions_list);
+template_data.put("notes", "");
+templates_map = Map();
+templates_map.put("templates", template_data);
+data_param = {"data": templates_map.toString(), "is_quicksend": "true"};
+response = invokeurl
+[
+    url : url
+    type : POST
+    parameters : data_param
+    connection : "sign_con"
+];
+info response;
+
+return "";
+}
