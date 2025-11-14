@@ -1,0 +1,19 @@
+token = "**********************";
+visitor_message = "I want to schedule a meeting on Nov 23, 2025.";
+api_url = "https://api.openai.com/v1/chat/completions";
+headers = map();
+headers.put("Authorization", "Bearer "+token);
+headers.put("Content-Type", "application/json");
+system_instruction = "You are an AI assistant. Extract the date from the user's message and convert it to this exact format: YYYY-MM-DD. " +
+                     "The user message will always contain a date, which could be in any format (e.g., 23/11/2025, Nov 23, 2025, 23 Nov 2025, 23-11-2025, etc.). " +
+                     "Only return the date in the format YYYY-MM-DD. Do not add any extra text.";
+payload = map();
+payload.put("model", "gpt-5-mini");
+messages = list();
+messages.add({"role":"system","content":system_instruction});
+messages.add({"role":"user","content":visitor_message});
+payload.put("messages", messages);
+response = postUrl(api_url, payload.toString(), headers);
+ai_response_map = response.toMap();
+ai_content = ai_response_map.get("choices").get(0).get("message").get("content");
+info ai_content;
