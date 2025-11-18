@@ -1,0 +1,27 @@
+name = "Visitor";
+recordID = "1100894000001068130";
+GetFiles = session.get("pics").get("files");
+		for each  file in GetFiles
+		{
+			file_upload_Arture = file;
+			params = Map();
+			params.put(file_upload_Arture.getFileName(),file_upload_Arture);
+			info params;
+			file_upload_Arture.setParamName("file");
+			attachAPI = invokeurl
+			[
+				url :"https://desk.zoho.com/api/v1/tickets/" + recordID + "/attachments"
+				type :POST
+				parameters:params
+				connection:"desk_conn"
+			];
+			info attachAPI;
+		}
+if(session.containsKey("name"))
+{
+	name = session.get("name").get("value");
+}
+greetingMessage = "Hello " + name + "!";
+response = Map();
+response.put("greeting",greetingMessage);
+return response;
