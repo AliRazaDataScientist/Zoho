@@ -1,0 +1,69 @@
+if(session.containsKey("name"))
+{
+	name = session.get("name").get("value");
+}
+if(session.containsKey("email"))
+{
+	email = session.get("email").get("value");
+}
+if(session.containsKey("phone"))
+{
+	phone = session.get("phone").get("value");
+}
+if(session.containsKey("description"))
+{
+	description = session.get("description").get("value");
+}
+if(session.containsKey("requestoption"))
+{
+	requestoption = session.get("requestoption").get("value");
+}
+ticket_map = Map();
+ticket_map.put("subject",name + " has requested: to " + requestoption);
+ticket_map.put("email",email);
+ticket_map.put("phone",phone);
+ticket_map.put("classification","Problem");
+ticket_map.put("priority","High");
+ticket_map.put("channel","WhatsApp");
+ticket_map.put("departmentId","1100894000000006907");
+ticket_map.put("description",description);
+cf_map = Map();
+cf_map.put("cf_issue","Maintenance");
+// cf_map.put("cf_leasing_options",requestoption);
+ticket_map.put("cf",cf_map);
+searchValue = {"mobile":phone};
+seach_contact = zoho.desk.searchRecords(892242402,"contacts",searchValue,0,100,"desk_conn");
+contact_data = seach_contact.getJSON("data");
+contactId = contact_data.getJSON("id");
+ticket_map.put("contactId",contactId);
+info ticket_map;
+recordID = null;
+create_ticket = zoho.desk.create(892242402,"Tickets",ticket_map,"desk_conn");
+recordID = create_ticket.getJSON("id");
+if(session.containsKey("pics"))
+{
+	pics = session.get("pics").containKey("files");
+	if(pics == true && recordID != null)
+	{
+		GetFiles = session.get("pics").get("files");
+		for each  file in GetFiles
+		{
+			file_upload_Arture = file;
+			params = Map();
+			params.put(file_upload_Arture.getFileName(),file_upload_Arture);
+			file_upload_Arture.setParamName("file");
+			attachAPI = invokeurl
+			[
+				url :"https://desk.zoho.com/api/v1/tickets/" + recordID + "/attachments"
+				type :POST
+				parameters:params
+				connection:"desk_conn"
+			];
+			info attachAPI;
+		}
+	}
+}
+greetingMessage = "Hello name is" + name + " my email is" + email + " my phone is" + phone + "my description is" + description + " and the request options are " + requestoption + " the output is ";
+response = Map();
+response.put("greeting",greetingMessage);
+return response;
