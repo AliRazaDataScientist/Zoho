@@ -1,0 +1,23 @@
+if(session.containsKey("phonenumber"))
+{
+	phonenumber = session.get("phonenumber").get("value");
+}
+if(session.containsKey("email"))
+{
+	email = session.get("email").get("value");
+}
+searchResp = zoho.crm.searchRecords("Contacts","((Contact_Email:equals:" + email + ") or (Phone:equals:" + phonenumber + "))");
+if(searchResp.size() > 0)
+{
+	firstName = searchResp.getJSON("Full_Name");
+	status = "Exist";
+}
+else
+{
+	firstName = "";
+	status = "Empty";
+}
+response = Map();
+response.put("firstName",firstName);
+response.put("status",status);
+return response;
