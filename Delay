@@ -1,0 +1,10 @@
+currentTime= now;
+futureTime= currentTime.addSeconds(59);
+iterations = "".leftpad(100000).toList("");
+for each  iteration in iterations
+{
+	if(now.getSeconds()==futureTime.getSeconds()){
+		break;
+	}
+}
+info "ok" ;
