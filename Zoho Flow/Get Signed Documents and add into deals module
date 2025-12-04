@@ -1,0 +1,51 @@
+void signed_document_into_deals(string request_id, string email, string request_name)
+{
+document = invokeurl
+[
+	url :"https://sign.zoho.com/api/v1/requests/" + request_id + "/pdf"
+	type :GET
+	connection:"sign_con"
+];
+search_email = zoho.crm.searchRecords("Contacts","(Email:equals:" + email + ")");
+contactid = search_email.getJSON("id");
+deals = zoho.crm.getRelatedRecords("Deals","Contacts",contactid);
+deal_id = deals.getJSON("id");
+response1 = zoho.crm.attachFile("Deals",deal_id,document);
+info response1;
+response2 = zoho.crm.attachFile("Contacts",contactid,document);
+info response2;
+if(request_name == "Offer Letter")
+{
+	blueprint1 = Map();
+	blueprint1.put("transition_id","5984752000003395190");
+	blueprintList = List();
+	blueprintList.add(blueprint1);
+	param = Map();
+	param.put("blueprint",blueprintList);
+	response = invokeurl
+	[
+		url :"https://www.zohoapis.com/crm/v8/Deals/" + deal_id + "/actions/blueprint"
+		type :PUT
+		parameters:param.toString()
+		connection:"crm_con"
+	];
+	info response;
+}
+datalist = List();
+mp = Map();
+mp.put("Zoho_Sign_Signed",true);
+datalist.add(mp);
+triglist = List();
+triglist.add("workflow");
+datamap = Map();
+datamap.put("data",datalist);
+datamap.put("trigger",triglist);
+response3 = invokeurl
+[
+	url :"https://www.zohoapis.com/crm/v2/Deals/" + deal_id
+	type :PUT
+	parameters:datamap.toString()
+	connection:"crm_con"
+];
+info response3;
+}
