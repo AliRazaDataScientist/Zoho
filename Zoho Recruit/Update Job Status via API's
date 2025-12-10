@@ -1,0 +1,24 @@
+if(Stage == "Qualification")
+	{
+		recruit_stage = "Qualified";
+	}
+	else if(Stage == "Job Approved")
+	{
+		recruit_stage = "Approved";
+	}
+	data_map = Map();
+	data_map.put("ids",{recruit_job_id});
+	data_map.put("Job_Opening_Status",recruit_stage);
+	data_map.put("comments","Status updated to " + recruit_stage);
+	data_list = List();
+	data_list.add(data_map);
+	param_map = Map();
+	param_map.put("data",data_list);
+	response = invokeurl
+	[
+		url :"https://recruit.zoho.com/recruit/v2/Job_Openings/status"
+		type :PUT
+		parameters:param_map.toString()
+		connection:"recruit_con"
+	];
+	info response;
