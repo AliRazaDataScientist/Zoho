@@ -1,0 +1,11 @@
+deal_rec = zoho.crm.getRecordById("Deals",dealid);
+url = deal_rec.getJSON("External_Link");
+jobid = deal_rec.getJSON("Job_ID");
+if(deal_rec.getJSON("Contact_Name") != null)
+{
+	contactid = deal_rec.getJSON("Contact_Name").getJSON("id");
+	contact_details = zoho.crm.getRecordById("Contacts",contactid);
+	job_recruit_id = contact_details.getJSON("Recruit_ID");
+	info zoho.recruit.updateRecord("Candidates",job_recruit_id,{"Zoho Workdrive Link":url},false,"recruit_con");
+}
+info zoho.recruit.updateRecord("JobOpenings",jobid,{"Zoho Workdrive Link":url},false,"recruit_con");
