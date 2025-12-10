@@ -1,0 +1,27 @@
+deal_rec = zoho.crm.getRecordById("Deals",dealid);
+jobid = deal_rec.getJSON("Job_ID");
+contact_id = deal_rec.getJSON("Contact_Name").getJSON("id");
+contact_rec = zoho.crm.getRecordById("Contacts",contact_id);
+candidate_id = contact_rec.getJSON("Recruit_ID");
+info jobid;
+info candidate_id;
+jobids_list = List();
+jobids_list.add(jobid);
+ids_list = List();
+ids_list.add(candidate_id);
+data_map = Map();
+data_map.put("jobids",jobids_list);
+data_map.put("ids",ids_list);
+data_map.put("comments","Record successfully associated");
+data_list = List();
+data_list.add(data_map);
+param_map = Map();
+param_map.put("data",data_list);
+associated_candidate = invokeurl
+[
+	url :"https://recruit.zoho.com/recruit/v2/Candidates/actions/associate"
+	type :PUT
+	parameters:param_map.tostring()
+	connection:"recruit_con"
+];
+info associated_candidate;
