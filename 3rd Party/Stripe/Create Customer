@@ -1,0 +1,26 @@
+void create_Stripe_Customer(map payload)
+{
+dataMap = Map();
+dataMap.put("email",payload.get("email"));
+dataMap.put("name",payload.get("name"));
+dataMap.put("phone",payload.get("phone"));
+dataMap.put("address[line1]",payload.get("address__line1__"));
+dataMap.put("address[city]",payload.get("address__city__"));
+dataMap.put("address[state]",payload.get("address__state__"));
+dataMap.put("address[postal_code]",payload.get("address__postal_code__"));
+dataMap.put("address[country]",payload.get("address__country__"));
+// Call Stripe API to create customer
+Customer = invokeurl
+[
+	url :"https://api.stripe.com/v1/customers"
+	type :POST
+	parameters:dataMap
+	connection:"stripe_connection_live"
+];
+Customer_id = Customer.get("id");
+info "Customer Created: " + Customer_id;
+creatorUpdate_Record = Map();
+creatorUpdate_Record.put("Stripe_Customer_Id",Customer_id);
+res = zoho.creator.updateRecord("ncasel_staycqusa","staycqusa","Client_Report",payload.get("id").toLong(),creatorUpdate_Record,Map(),"flow_to_creator");
+info res;
+}
