@@ -1,0 +1,21 @@
+    ids_list = List();
+		ids_list.add(candidateid);
+		jobids_list = List();
+		jobids_list.add(jobid);
+		data_map = Map();
+		data_map.put("ids",ids_list);
+		data_map.put("jobids",jobids_list);
+		data_map.put("Candidate_Status",crm_stage);
+		data_map.put("comments","Status updated to " + crm_stage);
+		data_list = List();
+		data_list.add(data_map);
+		param_map = Map();
+		param_map.put("data",data_list);
+		response = invokeurl
+		[
+			url :"https://recruit.zoho.com/recruit/v2/Candidates/status"
+			type :PUT
+			parameters:param_map.tostring()
+			connection:"recruit_con"
+		];
+		info response;
