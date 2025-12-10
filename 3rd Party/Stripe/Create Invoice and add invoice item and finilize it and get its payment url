@@ -1,0 +1,98 @@
+void create_Stripe_Invoice(map payload)
+{
+Customer_id = payload.get("Customer_Stripe_ID");
+info "This is actual customer id " + Customer_id;
+// Customer_id = "cus_TIP3ZXtfQXjw6h";
+GetProducts = invokeurl
+[
+	url :"https://api.stripe.com/v1/products"
+	type :GET
+	connection:"stripe_connection_live"
+];
+product_id = GetProducts.get("data").get(0).get("id");
+info "The product id is " + product_id;
+// // // <--------------------- CREATE PRICES ---------------------->
+ProductAmount = payload.get("Total_Amount").toLong() * 100;
+info "The product amount is " + ProductAmount + " but json amount is " + payload.get("Total_Amount");
+// ProductAmount = payload.get("Total_Amount");
+params = Map();
+params.put("unit_amount",ProductAmount);
+params.put("currency","usd");
+params.put("product",product_id);
+CreatePrice = invokeurl
+[
+	url :"https://api.stripe.com/v1/prices"
+	type :POST
+	parameters:params
+	connection:"stripe_connection_live"
+];
+price_ID = CreatePrice.get("id");
+info "price" + CreatePrice;
+info "The price id is " + price_ID;
+// // <----------------------- CREATE PAYMENT LINK --------------------->
+params = Map();
+params.put("line_items[0][price]",price_ID);
+// remainder!! need to get Quantity 
+params.put("line_items[0][quantity]","1");
+payment_link = invokeurl
+[
+	url :"https://api.stripe.com/v1/payment_links"
+	type :POST
+	parameters:params
+	connection:"stripe_connection_live"
+];
+payment_ID = payment_link.get("id");
+info "payemnt" + payment_link;
+info "The payemnt id is " + payment_ID;
+// // // <---------------------------- CReate Invoice ---------------------------->
+invData = Map();
+invData.put("customer",Customer_id);
+// same customer
+invoiceResponse = invokeurl
+[
+	url :"https://api.stripe.com/v1/invoices"
+	type :POST
+	parameters:invData
+	connection:"stripe_connection_live"
+];
+info invoiceResponse;
+invoiceID = invoiceResponse.get("id");
+// invoiceID = "in_1SDlr3IrBnwjJwzqw0n9S3ZU";
+// // <---------------------------- Create Invoice Item ---------------------------->
+itemData = Map();
+itemData.put("customer",Customer_id);
+itemData.put("price",price_ID);
+itemData.put("invoice",invoiceID);
+// 👈 attach to existing invoice
+// itemData.put("tax_rates[0]",taxId);
+itemResp = invokeurl
+[
+	url :"https://api.stripe.com/v1/invoiceitems"
+	type :POST
+	parameters:itemData
+	connection:"stripe_connection_live"
+];
+invoiceId = itemResp.get("invoice");
+info "itemRep invoice" + itemResp;
+// // <---------------------------- Finalize Invoice ---------------------------->
+finalizeResp = invokeurl
+[
+	url :"https://api.stripe.com/v1/invoices/" + invoiceId + "/finalize"
+	type :POST
+	parameters:Map()
+	connection:"stripe_connection_live"
+];
+info finalizeResp;
+info "Hosted Invoice URL: " + finalizeResp.get("hosted_invoice_url");
+info "Invoice PDF: " + finalizeResp.get("invoice_pdf");
+creatorUpdate_Record = Map();
+// info ;
+creatorUpdate_Record.put("Stripe_Invoice_ID",finalizeResp.get("id"));
+creatorUpdate_Record.put("Hosted_Invoice_URl",finalizeResp.get("hosted_invoice_url"));
+submap = Map();
+submap.put("url",finalizeResp.get("invoice_pdf"));
+submap.put("Link_Name","subaasa");
+creatorUpdate_Record.put("PDF_Invoice_URL",submap);
+res = zoho.creator.updateRecord("ncasel_staycqusa","staycqusa","Invoice_Report",payload.get("id").toLong(),creatorUpdate_Record,Map(),"flow_to_creator");
+info res;
+}
