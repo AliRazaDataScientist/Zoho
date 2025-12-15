@@ -13,13 +13,13 @@ if(nd_Customer.size() > 0)
 	info "/////" + nd_Stay_Start_Date.isNull();
 	if(nd_Stay_Start_Date.isNull() == true)
 	{
-		response.put("status","error");
-		response.put("message","2nd Stay Start Date field is empty");
+		response.put('status','error');
+      	response.put('message', 'Invalid Reference Number');
 	}
 	else if(nd_Stay_End_Date.isNull() == true && Serving_Notice == true)
 	{
-		response.put("status","error");
-		response.put("message","2nd Stay End Date field is empty");
+		response.put('status','error');
+      	response.put('message', 'Invalid Reference Number');
 	}
 	else
 	{
@@ -31,4 +31,5 @@ else
 	response.put('status','success');
 }
 return response;
+
 }
