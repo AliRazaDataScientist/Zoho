@@ -1,0 +1,73 @@
+void Fetch_Payment_Checkout_Details(string type, map data)
+{
+if(type == "checkout.session.completed")
+{
+	stripe_customer_id = data.getJSON("object").getJSON("customer");
+	setupIntentId = data.getJSON("object").getJSON("setup_intent");
+	info "setupIntentId " + setupIntentId;
+	setupIntentResp = invokeurl
+	[
+		url :"https://api.stripe.com/v1/setup_intents/" + setupIntentId
+		type :GET
+		connection:"stripe_connection_live"
+	];
+	pm_id = setupIntentResp.get("payment_method");
+	info "Payment Method ID: " + pm_id;
+	client_map = Map();
+	otherParams = Map();
+	pmResp = invokeurl
+	[
+		url :"https://api.stripe.com/v1/payment_methods/" + pm_id
+		type :GET
+		connection:"stripe_connection_live"
+	];
+	card_details_map = Map();
+	billing_details = pmResp.get("billing_details");
+	if(billing_details != null && billing_details != "")
+	{
+		cardholder_name = billing_details.get("name");
+		address_details = billing_details.get("address");
+		Zip_Code = address_details.getJSON("postal_code");
+		name = Map();
+		if(cardholder_name.contains(" ") == true)
+		{
+			firstname = cardholder_name.getPrefixIgnoreCase(" ");
+			lastname = cardholder_name.getSuffixIgnoreCase(" ");
+			name.put("first_name",firstname);
+			name.put("last_name",lastname);
+		}
+		else
+		{
+			name.put("last_name",lastname);
+		}
+		card_details_map.put("cardholder_name",name);
+		card_details_map.put("Zip_Code",Zip_Code);
+	}
+	card = pmResp.get("card");
+	if(card != null && card != "")
+	{
+		card_number = pmResp.get("card").get("last4");
+		brand = pmResp.get("card").get("brand");
+		Expiry_Date = card.getJSON("exp_month") + "/" + card.getJSON("exp_year");
+		info "Card Last 4: " + card_number + " Brand: " + brand + "the expiry date is" + Expiry_Date;
+		card_details_map.put("card_number",card_number);
+		card_details_map.put("Brand",brand);
+		card_details_map.put("Expiry_Date",Expiry_Date);
+	}
+	//////////////////////////////////////////////////////////////////////////////////////
+	//////////// Search Customer and update pmid in zoho creator record
+	criteria = "Stripe_Customer_Id == \"" + stripe_customer_id + "\"";
+	search_client = zoho.creator.getRecords("ncasel_staycqusa","staycqusa","Client_Report",criteria,1,200,"creator_con");
+	code = search_client.getJSON("code");
+	if(code == 3000)
+	{
+		creator_client_id = search_client.getJSON("data").getJSON("ID");
+		card_details_map.put("Client_Name",creator_client_id);
+		create_card_info = zoho.creator.createRecord("ncasel_staycqusa","staycqusa","Client_Card_Information",card_details_map,otherParams,"creator_con");
+		info "Card Information is Created: " + create_card_info;
+		client_map.put("pmid",pm_id);
+		rec_updated = zoho.creator.updateRecord("ncasel_staycqusa","staycqusa","Client_Report",creator_client_id,client_map,otherParams,"creator_con");
+		info "client updated";
+	}
+}
+}
