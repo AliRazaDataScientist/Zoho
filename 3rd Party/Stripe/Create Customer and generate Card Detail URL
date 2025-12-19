@@ -1,6 +1,8 @@
 void create_Stripe_Customer(map payload)
 {
 dataMap = Map();
+email = payload.get("email");
+name = payload.get("name");
 dataMap.put("email",payload.get("email"));
 dataMap.put("name",payload.get("name"));
 dataMap.put("phone",payload.get("phone"));
@@ -23,7 +25,7 @@ creatorUpdate_Record = Map();
 creatorUpdate_Record.put("Stripe_Customer_Id",customerId);
 res = zoho.creator.updateRecord("ncasel_staycqusa","staycqusa","Client_Report",payload.get("id").toLong(),creatorUpdate_Record,Map(),"flow_to_creator");
 info res;
-/////////////////////////////////////////////////// Send Checkout URL to Client for card details
+///////////////////////////////////////////////////
 setupResp = invokeurl
 [
 	url :"https://api.stripe.com/v1/setup_intents"
@@ -51,4 +53,15 @@ checkoutResp = invokeurl
 ];
 checkoutUrl = checkoutResp.get("url");
 info checkoutUrl;
+if(email != "" && email != null)
+{
+	msg = "Dear " + name + ",<br><br>You can complete your payment by visiting the following checkout link: <a href=" + checkoutUrl + ">Checkout URL</a>.<br>Please enter your card details on the page to finalize the payment.<br><br>Thank you for your prompt action.<br><br>Best regards,<br>STAY CQUSA";
+	sendmail
+	[
+		from :zoho.loginuserid
+		to :email
+		subject :"Enter Your Card Details"
+		message :msg
+	]
+}
 }
