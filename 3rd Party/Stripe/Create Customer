@@ -17,10 +17,38 @@ Customer = invokeurl
 	parameters:dataMap
 	connection:"stripe_connection_live"
 ];
-Customer_id = Customer.get("id");
-info "Customer Created: " + Customer_id;
+customerId = Customer.get("id");
+info "Customer Created: " + customerId;
 creatorUpdate_Record = Map();
-creatorUpdate_Record.put("Stripe_Customer_Id",Customer_id);
+creatorUpdate_Record.put("Stripe_Customer_Id",customerId);
 res = zoho.creator.updateRecord("ncasel_staycqusa","staycqusa","Client_Report",payload.get("id").toLong(),creatorUpdate_Record,Map(),"flow_to_creator");
 info res;
+/////////////////////////////////////////////////// Send Checkout URL to Client for card details
+setupResp = invokeurl
+[
+	url :"https://api.stripe.com/v1/setup_intents"
+	type :POST
+	parameters:{"customer":customerId,"payment_method_types[]":"card"}
+	connection:"stripe_connection_live"
+];
+client_secret = setupResp.get("client_secret");
+setup_intent_id = setupResp.get("id");
+checkoutParams = Map();
+checkoutParams.put("mode","setup");
+checkoutParams.put("customer",customerId);
+checkoutParams.put("currency","USD");
+checkoutParams.put("payment_method_types[0]","card");
+checkoutParams.put("success_url","https://stripe.com");
+checkoutParams.put("cancel_url","https://stripe.com");
+checkoutParams.put("setup_intent_data[description]","Save card for future payments");
+// Call Stripe API
+checkoutResp = invokeurl
+[
+	url :"https://api.stripe.com/v1/checkout/sessions"
+	type :POST
+	parameters:checkoutParams
+	connection:"stripe_connection_live"
+];
+checkoutUrl = checkoutResp.get("url");
+info checkoutUrl;
 }
