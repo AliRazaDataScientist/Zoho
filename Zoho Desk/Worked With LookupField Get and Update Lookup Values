@@ -1,0 +1,45 @@
+vendor_messaging_id = 1100894000005144226;
+orgid = "892242402";
+headersMap = map();
+headersMap.put("Content-Type", "application/json");
+headersMap.put("featureFlags", "lookUp");
+rec = invokeurl
+[
+	url :"https://desk.zoho.com/api/v1/cm_vendor_messaging/" + vendor_messaging_id
+	type :GET
+	headers : headersMap
+	connection:"desk_conn"
+];
+all_fields = rec.getJSON("cf");
+phonenumber = all_fields.getJSON("cf_contact_number");
+searchValue = {"mobile":phonenumber};
+seach_contact = zoho.desk.searchRecords(892242402,"contacts",searchValue,0,10,"desk_conn");
+contact_data = seach_contact.getJSON("data");
+if(contact_data.size() > 0)
+{
+	contactId = contact_data.getJSON("id");
+}
+else
+{
+	contact_map = Map();
+	contact_map.put("lastName",all_fields.getJSON("cf_first_name"));
+	contact_map.put("mobile",phonenumber);
+	create_vendor = zoho.desk.create(892242402,"contacts",contact_map,"desk_conn");
+	contactId = create_vendor.getJSON("id");
+}
+cf = Map();
+dataMap = Map();
+id_map = Map();
+id_map.put("id",contactId.toLong());
+dataMap.put("cf_associated_contact",id_map);
+cf.put("cf",dataMap);
+update_lookup = invokeurl
+[
+	url :"https://desk.zoho.com/api/v1/cm_vendor_messaging/" + vendor_messaging_id
+	type :PATCH
+	parameters:cf.toString()
+	headers:{"orgId":orgid,"featureFlags":"lookUp"}
+	connection:"desk_conn"
+];
+info update_lookup;
+/**/
