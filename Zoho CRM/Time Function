@@ -1,0 +1,9 @@
+// lead_record
+//get lead and its response 
+//get created time 
+// add 5 mint in that time
+lead_record = zoho.crm.getRecordById("Leads", "5035053000009557001");
+time = lead_record.get("Created_Time").replaceAll("T"," ");
+info time;
+time2 = time.addMinutes(5);
+info time2;
