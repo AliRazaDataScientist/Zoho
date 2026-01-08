@@ -3,7 +3,7 @@ Deal_name = Deals.get("Deal_Name");
 client_name = Deals.get("Client_Name").get("name");
 workdrive_name = Deal_name + "-" + client_name;
 // ////////////////// create folder in work drive ////////
-workdrive_folder_name = zoho.workdrive.createFolder(workdrive_name,"********","workdrive");
+workdrive_folder_name = zoho.workdrive.createFolder(workdrive_name,"********","workdrive");////WorkDrive.files.CREATE
 ///////////
 workdrive_folder_id = workdrive_folder_name.get("data").get("id");
 info workdrive_folder_id;
@@ -25,7 +25,7 @@ external_link = invokeurl
 	type :POST
 	parameters:data2.toString()
 	headers:header
-	connection:"workdrive"
+	connection:"workdrive"////
 ];
 info "link external " + external_link;
 link_external = external_link.get("data").get("attributes").get("permalink");
