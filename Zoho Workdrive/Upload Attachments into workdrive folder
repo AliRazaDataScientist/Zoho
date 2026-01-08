@@ -14,7 +14,7 @@ if(relatt.size() > 0)
 			type :GET
 			connection:"crm_con"
 		];
-		uploadfile = zoho.workdrive.uploadFile(downloadFile,folderid,fname,true,"workdrive");
+		uploadfile = zoho.workdrive.uploadFile(downloadFile,folderid,fname,true,"workdrive");////WorkDrive.files.CREATE
 		info "upload : " + uploadfile;
 	}
 }
