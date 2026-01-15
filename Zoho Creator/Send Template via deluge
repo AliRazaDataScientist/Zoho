@@ -1,0 +1,9 @@
+sendmail
+[
+	from :zoho.loginuserid
+	to :"tecnospark6go1234567890@gmail.com"
+	subject :"Test Template"
+	message :"Only for test purpose."
+	Attachments :template:template1:Invoice input.ID as PDF
+]
+// 		attachments:template: <record_template_name>: <form_link_name> <record_id_variable2> as <attachment_format>
