@@ -1,0 +1,98 @@
+void ImportClients_Payment_Checkout(int customerId)
+{
+info customerId;
+client_rec = zoho.creator.getRecordById("staycqusa","staycqusa","Client_Report",customerId,"creator_con");
+clientdata = client_rec.getJSON("data");
+stripe_customer_id = clientdata.getJSON("Stripe_Customer_Id");
+if(stripe_customer_id == "")
+{
+	email = clientdata.getJSON("Email");
+	custResp = invokeurl
+	[
+		url :"https://api.stripe.com/v1/customers/search?query=email:\"" + email + "\""
+		type :GET
+		connection:"stripe_connection_live"
+	];
+	data = custResp.getJSON("data");
+	if(data.size() > 0)
+	{
+		stripe_customer_id = data.getJSON("id");
+	}
+	else
+	{
+		dataMap = Map();
+		dataMap.put("email",clientdata.get("Email"));
+		dataMap.put("name",clientdata.get("Name").get("display_value"));
+		dataMap.put("phone",clientdata.get("Phone_Number"));
+		address = clientdata.get("Address");
+		dataMap.put("address[line1]",ifnull(address.getJSON("address_line_1"),""));
+		dataMap.put("address[city]",ifnull(address.getJSON("district_city"),""));
+		dataMap.put("address[state]",ifnull(address.getJSON("state_province"),""));
+		dataMap.put("address[postal_code]",ifnull(address.getJSON("postal_code"),""));
+		dataMap.put("address[country]",ifnull(address.getJSON("country"),""));
+		Customer = invokeurl
+		[
+			url :"https://api.stripe.com/v1/customers"
+			type :POST
+			parameters:dataMap
+			connection:"stripe_connection_live"
+		];
+		stripe_customer_id = Customer.get("id");
+	}
+}
+info stripe_customer_id;
+creatorUpdate_Record = Map();
+if(stripe_customer_id != "")
+{
+	creatorUpdate_Record.put("Stripe_Customer_Id",stripe_customer_id);
+	carddetails = invokeurl
+	[
+		url :"https://api.stripe.com/v1/payment_methods?customer=" + stripe_customer_id + "&type=card"
+		type :GET
+		connection:"stripe_connection_live"
+	];
+	paymentdata = carddetails.getJSON("data");
+	if(paymentdata.size() > 0)
+	{
+		pmid = paymentdata.getJSON("id");
+		creatorUpdate_Record.put("pmid",pmid);
+		creatorUpdate_Record.put("URL_Sent",true);
+	}
+	else
+	{
+		setupResp = invokeurl
+		[
+			url :"https://api.stripe.com/v1/setup_intents"
+			type :POST
+			parameters:{"customer":stripe_customer_id,"payment_method_types[]":"card"}
+			connection:"stripe_connection_live"
+		];
+		client_secret = setupResp.get("client_secret");
+		setup_intent_id = setupResp.get("id");
+		checkoutParams = Map();
+		checkoutParams.put("mode","setup");
+		checkoutParams.put("customer",stripe_customer_id);
+		checkoutParams.put("currency","USD");
+		checkoutParams.put("payment_method_types[0]","card");
+		checkoutParams.put("success_url","https://stripe.com");
+		checkoutParams.put("cancel_url","https://stripe.com");
+		checkoutParams.put("setup_intent_data[description]","Save card for future payments");
+		// Call Stripe API
+		checkoutResp = invokeurl
+		[
+			url :"https://api.stripe.com/v1/checkout/sessions"
+			type :POST
+			parameters:checkoutParams
+			connection:"stripe_connection_live"
+		];
+		checkoutUrl = checkoutResp.get("url");
+		//////////////////////////Update Zoho Creator Client Record
+		URL = Map();
+		URL.put("url",checkoutUrl);
+		URL.put("title","Stripe Payment Checkout Link");
+		creatorUpdate_Record.put("Stripe_Checkout_Url",URL);
+	}
+	res = zoho.creator.updateRecord("staycqusa","staycqusa","Client_Report",customerId,creatorUpdate_Record,Map(),"flow_to_creator");
+	info res;
+}
+}
