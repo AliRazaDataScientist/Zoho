@@ -1,0 +1,13 @@
+${webhookTrigger.payload.id}
+
+dataMap = Map();
+			dataMap.put("pmid",pmid);
+			dataMap.put("stripeinvoiceid",stripeinvoiceid);
+			dataMap.put("creator_invoice_id",input.ID);
+			flowTriggered = invokeurl
+			[
+				url :"https://flow.zoho.com/892858173/flow/webhook/incoming?zapikey=1001.7d0c3436621e954b82d2d3c1847ca26d.dsds&isdebug=false"
+				type :POST
+				parameters:dataMap
+			];
+			info flowTriggered;
