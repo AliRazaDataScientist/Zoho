@@ -1,0 +1,54 @@
+pic = invokeurl
+[
+	url :"https://www.zohoapis.com/crm/v8/Leads/7095804000001405002"
+	type :GET
+	connection:"zoho_oauth"
+];
+// info pic;
+data = pic.get("data");
+// info data ;
+fieldname = data.getJSON("Image_Upload");
+filename = data.getJSON("Image_Upload").get(0).get("File_Name__s");
+fileId = data.getJSON("Image_Upload").get(0).get("File_Id__s");
+// info fileId ;
+
+file = invokeurl
+    [
+
+        url :"https://www.zohoapis.com/crm/v8/files?id=" + fileId
+        type :GET
+        connection:"zoho_oauth"
+    ];
+// info file ;
+
+file.setparamname("file");
+upload_zfs = invokeurl
+	[
+		url :" https://www.zohoapis.com/crm/v2/files"
+		type :POST
+		files:file
+		connection:"zoho_oauth"
+	];
+// 		info upload_zfs ;
+	fileid = upload_zfs.get("data").get(0).get("details").get("id");
+    fmp = Map();  
+	fmp.put("File_Id__s",fileid); 
+	fileList = List();
+	fileList.add(fmp);
+	updateMap = Map();
+    updateMap.put("Image_Upload", fileList);
+	updateMap.put("id","7095804000000909002");
+	dlist =  List();
+ dlist.add(updateMap);
+ dmp  = map();
+ dmp.put("data",dlist);
+	info dmp ;
+
+response = invokeurl
+	[
+		url: "https://www.zohoapis.com/crm/v8/Accounts"
+		type: PUT
+		parameters: dmp.toString()
+		connection: "zoho_oauth"
+	];
+	info response;
