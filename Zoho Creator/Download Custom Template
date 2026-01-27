@@ -1,0 +1,1 @@
+openurl("https://creatorapp.zoho.com/staycqusa/staycq/record-pdf/Invoice_Report/" + input.ID + "/STAYCQUSA_Invoice","new window");
