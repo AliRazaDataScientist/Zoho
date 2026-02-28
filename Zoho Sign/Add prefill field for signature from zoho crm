@@ -1,0 +1,74 @@
+void automation.Sending_Zoho_Sign_from_Deals(Int id)
+{
+Response = invokeurl
+[
+	url :"https://www.zohoapis.com/crm/v8/Deals/" + id
+	type :GET
+	connection:"crmconnection"
+];
+deal_record = Response.get("data");
+if(deal_record.getJSON("Contact_Name") == null)
+{
+	info "No Contact linked with this Deal";
+	return;
+}
+contact_id = deal_record.getJSON("Contact_Name").get("id");
+contact_record = zoho.crm.getRecordById("Contacts",contact_id);
+actions_list = List();
+eachActionMap1 = Map();
+eachActionMap1.put("recipient_email","naxorar775@creteanu.com");
+eachActionMap1.put("recipient_name","Ali Raza");
+eachActionMap1.put("action_type","SIGN");
+eachActionMap1.put("action_id","521325000000099828");
+eachActionMap1.put("role","User");
+eachActionMap1.put("verify_recipient","false");
+actions_list.add(eachActionMap1);
+eachActionMap2 = Map();
+eachActionMap2.put("recipient_name",contact_record.getJSON("Full_Name"));
+eachActionMap2.put("recipient_email",contact_record.getJSON("Email"));
+eachActionMap2.put("action_type","SIGN");
+eachActionMap2.put("action_id","521325000000114322");
+eachActionMap2.put("role","Customer");
+eachActionMap2.put("verify_recipient","false");
+actions_list.add(eachActionMap2);
+text_data = Map();
+text_data.put("Address",ifnull(deal_record.getJSON("Address"),""));
+text_data.put("Email",ifnull(deal_record.getJSON("Email"),""));
+text_data.put("Total",ifnull(deal_record.getJSON("Amount"),""));
+text_data.put("Customer Name",contact_record.getJSON("Full_Name"));
+image = deal_record.getJSON("Sketch");
+fileId = image.getJSON("File_Id__s");
+file = invokeurl
+[
+	url :"https://www.zohoapis.com/crm/v8/files?id=" + fileId
+	type :GET
+	connection:"crmconnection"
+];
+info "My image is " + file;
+text_data.put("Image - 1",file);
+radio_data = Map();
+radio_data.put("Remove Access Wall","Yes");
+field_data = Map();
+field_data.put("field_text_data",text_data);
+field_data.put("field_radio_data",radio_data);
+template_data = Map();
+template_data.put("request_name","Partnership agreement");
+template_data.put("field_data",field_data);
+template_data.put("actions",actions_list);
+template_data.put("notes","");
+templates_map = Map();
+templates_map.put("templates",template_data);
+data_param = Map();
+data_param.put("data",templates_map);
+data_param.put("is_quicksend","true");
+template_id = "521325000000099717";
+url = "https://sign.zoho.com/api/v1/templates/" + template_id + "/createdocument";
+response = invokeurl
+[
+	url :url
+	type :POST
+	parameters:data_param
+	connection:"sign_con"
+];
+info response;
+}
