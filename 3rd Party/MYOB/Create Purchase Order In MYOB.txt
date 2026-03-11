@@ -18,7 +18,7 @@ access_token = respMap.get("access_token");
 info "Access Token: " + access_token;
 //header map
 headers = Map();
-headers.put("x-myobapi-key","*******************");
+headers.put("x-myobapi-key","9f93a577-b7c3-49a2-ae5a-c934f53a3737");
 headers.put("x-myobapi-version","v2");
 headers.put("Accept-Encoding","gzip,deflate");
 headers.put("Content-Type","application/json");
@@ -200,6 +200,13 @@ for each  row_reocrd in Product_Details
 	linemap.put("UnitCount",row_reocrd.getJSON("quantity"));
 	linemap.put("Total",row_reocrd.getJSON("net_total"));
 	linemap.put("UnitPrice",row_reocrd.getJSON("net_total") / row_reocrd.getJSON("quantity"));
+	// --- Job and Account Mapping ---
+	jobMap = Map();
+	jobMap.put("UID","0fbfb800-75ff-443d-be78-83f4665f6a8a");
+	linemap.put("Job",jobMap);
+	accountMap = Map();
+	accountMap.put("UID","730d3678-7ecf-4d5b-b28d-3677b780b2be");
+	linemap.put("Account",accountMap);
 	linesList.add(linemap);
 }
 bodyMap.put("Lines",linesList);
@@ -215,7 +222,6 @@ bodyMap.put("Date",zoho.currenttime.toString("yyyy-MM-dd HH:mm:ss"));
 supplierMap = Map();
 supplierMap.put("UID",myob_contact_id);
 bodyMap.put("Supplier",supplierMap);
-info bodyMap;
 invoice_recordcreated = invokeurl
 [
 	url :invoiceurl
