@@ -15,120 +15,73 @@ response = invokeurl
 ];
 respMap = response.toMap();
 access_token = respMap.get("access_token");
-info "Access Token: " + access_token;
-//header map
+// Headers
 headers = Map();
-headers.put("x-myobapi-key","9f93a577-b7c3-49a2-ae5a-c934f53a3737");
+headers.put("x-myobapi-key",client_id);
 headers.put("x-myobapi-version","v2");
 headers.put("Accept-Encoding","gzip,deflate");
 headers.put("Content-Type","application/json");
 headers.put("Authorization","Bearer " + access_token);
-// Prepare body
-invoiceurl = "https://api.myob.com/accountright/1d3ff999-95d9-41e1-8978-f2992e8f8f18/Purchase/Order/Item";
+////////////////////////////
 get_quote_rec = zoho.crm.getRecordById("Quotes",qid);
-//Get MYOB contact id if exist ifnot then create and get its id 
-Contact_RECORD = get_quote_rec.get("Vendor");
-if(Contact_RECORD != null)
+Product_Details = get_quote_rec.get("Product_Details");
+vendorGroupMap_list = List();
+all_vendor_list = List();
+for each  row_record in Product_Details
 {
-	vendorid = Contact_RECORD.getJSON("id");
-	contactrecord = zoho.crm.getRecordById("Vendors",vendorid);
-	MYOB_ID = contactrecord.getJSON("MYOB_ID");
-	if(MYOB_ID == null)
+	productid = row_record.getJSON("product").getJSON("id");
+	get_record_pro = zoho.crm.getRecordById("Products",productid);
+	Contact_RECORD = get_record_pro.get("Vendor_Name");
+	if(Contact_RECORD != null)
 	{
-		url = "https://api.myob.com/accountright/1d3ff999-95d9-41e1-8978-f2992e8f8f18/Contact/Supplier";
-		bodyMap = Map();
-		bodyMap.put("CompanyName",contactrecord.get("Vendor_Name"));
-		bodyMap.put("IsIndividual","false");
-		// 		Account_Name = contactrecord.get("Account_Name");
-		// 		if(Account_Name != null)
-		// 		{
-		// 			companyname = Account_Name.getJSON("name");
-		// 			bodyMap.put("CompanyName",companyname);
-		// 			bodyMap.put("IsIndividual","false");
-		// 		}
-		randomNumber = randomNumber(100,1000000);
-		DisplayID = "PM" + randomNumber;
-		bodyMap.put("DisplayID",DisplayID);
-		bodyMap.put("IsActive",true);
-		taxCodeMap = Map();
-		taxCodeMap.put("UID","2ab1cf79-bce8-4da0-986c-a3bbdd1d02bc");
-		freightTaxCodeMap = Map();
-		freightTaxCodeMap.put("UID","2ab1cf79-bce8-4da0-986c-a3bbdd1d02bc");
-		sellingDetailsMap = Map();
-		sellingDetailsMap.put("TaxCode",taxCodeMap);
-		sellingDetailsMap.put("FreightTaxCode",freightTaxCodeMap);
-		bodyMap.put("BuyingDetails",sellingDetailsMap);
-		bodyJSON = bodyMap.toString();
-		recordcreated = invokeurl
+		vendorid = Contact_RECORD.getJSON("id");
+		contactrecord = zoho.crm.getRecordById("Vendors",vendorid);
+		MYOB_ID = contactrecord.getJSON("MYOB_ID");
+		if(MYOB_ID == null)
+		{
+			url = "https://api.myob.com/accountright/1d3ff999-95d9-41e1-8978-f2992e8f8f18/Contact/Supplier";
+			bodyMap = Map();
+			bodyMap.put("CompanyName",contactrecord.get("Vendor_Name"));
+			bodyMap.put("IsIndividual","false");
+			randomNumber = randomNumber(100,1000000);
+			DisplayID = "PM" + randomNumber;
+			bodyMap.put("DisplayID",DisplayID);
+			bodyMap.put("IsActive",true);
+			taxCodeMap = Map();
+			taxCodeMap.put("UID","2ab1cf79-bce8-4da0-986c-a3bbdd1d02bc");
+			freightTaxCodeMap = Map();
+			freightTaxCodeMap.put("UID","2ab1cf79-bce8-4da0-986c-a3bbdd1d02bc");
+			sellingDetailsMap = Map();
+			sellingDetailsMap.put("TaxCode",taxCodeMap);
+			sellingDetailsMap.put("FreightTaxCode",freightTaxCodeMap);
+			bodyMap.put("BuyingDetails",sellingDetailsMap);
+			bodyJSON = bodyMap.toString();
+			recordcreated = invokeurl
+			[
+				url :url
+				type :POST
+				parameters:bodyJSON
+				headers:headers
+			];
+			if(recordcreated == "" || recordcreated == null)
+			{
+				update_contact = zoho.crm.updateRecord("Vendors",vendorid,{"MYOB_ID":DisplayID});
+				searchdisplayid = DisplayID;
+			}
+		}
+		else
+		{
+			searchdisplayid = MYOB_ID;
+		}
+		urlString = "https://api.myob.com/accountright/1d3ff999-95d9-41e1-8978-f2992e8f8f18/Contact/Supplier?$filter=DisplayID eq '" + searchdisplayid + "'";
+		search_contact = invokeurl
 		[
-			url :url
-			type :POST
-			parameters:bodyJSON
+			url :urlString
+			type :GET
 			headers:headers
 		];
-		if(recordcreated == "" || recordcreated == null)
-		{
-			update_contact = zoho.crm.updateRecord("Vendors",vendorid,{"MYOB_ID":DisplayID});
-			searchdisplayid = DisplayID;
-		}
+		myob_contact_id = search_contact.getJSON("Items").getJSON("UID");
 	}
-	else
-	{
-		searchdisplayid = MYOB_ID;
-	}
-	info "searchdisplayid" + searchdisplayid;
-	urlString = "https://api.myob.com/accountright/1d3ff999-95d9-41e1-8978-f2992e8f8f18/Contact/Supplier?$filter=DisplayID eq '" + searchdisplayid + "'";
-	search_contact = invokeurl
-	[
-		url :urlString
-		type :GET
-		headers:headers
-	];
-	myob_contact_id = search_contact.getJSON("Items").getJSON("UID");
-}
-// Invoice Body (JSON)
-bodyMap = Map();
-bodyMap.put("Number",get_quote_rec.get("Quote_No"));
-Billing_Street = get_quote_rec.get("Billing_Street");
-Billing_City = get_quote_rec.get("Billing_City");
-Billing_State = get_quote_rec.get("Billing_State");
-Billing_Code = get_quote_rec.get("Billing_Code");
-address = "";
-if(Billing_Street != null)
-{
-	address = Billing_Street;
-}
-if(Billing_City != null)
-{
-	address = address + " " + Billing_City;
-}
-if(Billing_State != null)
-{
-	address = address + " " + Billing_State;
-}
-if(Billing_Code != null)
-{
-	address = address + " " + Billing_Code;
-}
-bodyMap.put("ShipToAddress",address);
-termsMap = Map();
-termsMap.put("PaymentIsDue","DayOfMonthAfterEOM");
-termsMap.put("DiscountDate",1);
-termsMap.put("BalanceDueDate",30);
-termsMap.put("DiscountForEarlyPayment",0);
-termsMap.put("MonthlyChargeForLatePayment",0);
-// termsMap.put("DiscountExpiryDate","2018-09-21T00:00:00");
-termsMap.put("Discount",0);
-termsMap.put("DueDate",get_quote_rec.get("Valid_Till").toString("yyyy-MM-dd HH:mm:ss"));
-bodyMap.put("Terms",termsMap);
-bodyMap.put("IsTaxInclusive",false);
-bodyMap.put("IsReportable",false);
-linesList = List();
-Product_Details = get_quote_rec.get("Product_Details");
-for each  row_reocrd in Product_Details
-{
-	productid = row_reocrd.getJSON("product").getJSON("id");
-	get_record_pro = zoho.crm.getRecordById("Products",productid);
 	name = get_record_pro.get("Product_Name");
 	model = get_record_pro.get("Product_Code");
 	dimension = get_record_pro.get("Dimentions");
@@ -197,9 +150,9 @@ for each  row_reocrd in Product_Details
 	linemap.put("TaxCode",taxCodeMap);
 	product_des = name + enter_space + "Model:" + model + enter_space + "Serial# " + enter_space + "Dimensions: " + dimension + enter_space + "Warranty: " + warranty;
 	linemap.put("Description",product_des);
-	linemap.put("UnitCount",row_reocrd.getJSON("quantity"));
-	linemap.put("Total",row_reocrd.getJSON("net_total"));
-	linemap.put("UnitPrice",row_reocrd.getJSON("net_total") / row_reocrd.getJSON("quantity"));
+	linemap.put("UnitCount",row_record.getJSON("quantity"));
+	linemap.put("Total",row_record.getJSON("net_total"));
+	linemap.put("UnitPrice",row_record.getJSON("net_total") / row_record.getJSON("quantity"));
 	// --- Job and Account Mapping ---
 	jobMap = Map();
 	jobMap.put("UID","0fbfb800-75ff-443d-be78-83f4665f6a8a");
@@ -207,9 +160,69 @@ for each  row_reocrd in Product_Details
 	accountMap = Map();
 	accountMap.put("UID","730d3678-7ecf-4d5b-b28d-3677b780b2be");
 	linemap.put("Account",accountMap);
-	linesList.add(linemap);
+	vendorGroupMap = Map();
+	vendorGroupMap.put("myob_contact_id",myob_contact_id);
+	vendorGroupMap.put("linemap",linemap);
+	vendorGroupMap_list.add(vendorGroupMap);
+	all_vendor_list.add(myob_contact_id);
 }
-bodyMap.put("Lines",linesList);
+resultMap = Map();
+for each  rec in vendorGroupMap_list
+{
+	contactId = rec.getJSON("myob_contact_id");
+	lineMap = rec.getJSON("linemap");
+	if(resultMap.containsKey(contactId))
+	{
+		tempList = resultMap.get(contactId);
+		tempList.add(lineMap);
+		resultMap.put(contactId,tempList);
+	}
+	else
+	{
+		newList = List();
+		newList.add(lineMap);
+		resultMap.put(contactId,newList);
+	}
+}
+// info resultMap;
+// Invoice Body (JSON)
+invoiceurl = "https://api.myob.com/accountright/1d3ff999-95d9-41e1-8978-f2992e8f8f18/Purchase/Order/Item";
+bodyMap = Map();
+bodyMap.put("Number",get_quote_rec.get("Quote_No"));
+Billing_Street = get_quote_rec.get("Billing_Street");
+Billing_City = get_quote_rec.get("Billing_City");
+Billing_State = get_quote_rec.get("Billing_State");
+Billing_Code = get_quote_rec.get("Billing_Code");
+address = "";
+if(Billing_Street != null)
+{
+	address = Billing_Street;
+}
+if(Billing_City != null)
+{
+	address = address + " " + Billing_City;
+}
+if(Billing_State != null)
+{
+	address = address + " " + Billing_State;
+}
+if(Billing_Code != null)
+{
+	address = address + " " + Billing_Code;
+}
+bodyMap.put("ShipToAddress",address);
+termsMap = Map();
+termsMap.put("PaymentIsDue","DayOfMonthAfterEOM");
+termsMap.put("DiscountDate",1);
+termsMap.put("BalanceDueDate",30);
+termsMap.put("DiscountForEarlyPayment",0);
+termsMap.put("MonthlyChargeForLatePayment",0);
+// termsMap.put("DiscountExpiryDate","2018-09-21T00:00:00");
+termsMap.put("Discount",0);
+termsMap.put("DueDate",get_quote_rec.get("Valid_Till").toString("yyyy-MM-dd HH:mm:ss"));
+bodyMap.put("Terms",termsMap);
+bodyMap.put("IsTaxInclusive",false);
+bodyMap.put("IsReportable",false);
 bodyMap.put("Subtotal",get_quote_rec.get("Sub_Total"));
 bodyMap.put("Freight",0);
 freightTaxCodeMap = Map();
@@ -219,35 +232,33 @@ bodyMap.put("TotalTax",get_quote_rec.get("Grand_Total") - get_quote_rec.get("Sub
 bodyMap.put("TotalAmount",get_quote_rec.get("Grand_Total"));
 bodyMap.put("Status","Open");
 bodyMap.put("Date",zoho.currenttime.toString("yyyy-MM-dd HH:mm:ss"));
-supplierMap = Map();
-supplierMap.put("UID",myob_contact_id);
-bodyMap.put("Supplier",supplierMap);
-invoice_recordcreated = invokeurl
-[
-	url :invoiceurl
-	type :POST
-	parameters:bodyMap.toString()
-	headers:headers
-];
-if(invoice_recordcreated == "" || invoice_recordcreated == null)
+for each  vendorId in resultMap.keys()
 {
-	invoiceid = get_quote_rec.get("Quote_No");
-	prourlString = "https://api.myob.com/accountright/1d3ff999-95d9-41e1-8978-f2992e8f8f18/Purchase/Order/Item?$filter=Number eq '" + invoiceid + "'";
-	search_invoice = invokeurl
+	lineItemList = resultMap.get(vendorId);
+	//     info "Vendor ID: " + vendorId;
+	//     info "Number of Line Items: " + lineItemList;
+	supplierMap = Map();
+	supplierMap.put("UID",vendorId);
+	bodyMap.put("Supplier",supplierMap);
+	bodyMap.put("Lines",lineItemList);
+	// 	info bodyMap;
+	invoice_recordcreated = invokeurl
 	[
-		url :prourlString
-		type :GET
+		url :invoiceurl
+		type :POST
+		parameters:bodyMap.toString()
 		headers:headers
+		detailed:true
 	];
-	invoices = search_invoice.getJSON("Items");
-	if(invoices.size() > 0)
+	status_code = invoice_recordcreated.get("responseCode");
+	response_text = invoice_recordcreated.get("responseText");
+	if(status_code == 201 || status_code == 200)
 	{
-		resp = "Purchase Order Created Successfully";
-		info invoices;
+		resp = "Success! NEW Invoice Created in MYOB. Status: " + status_code;
 	}
-}
-else
-{
-	resp = "Something Went Wrong";
+	else
+	{
+		resp = "Failed! MYOB ne Invoice Reject kar di. Status: " + status_code + " | Error: " + response_text;
+	}
 }
 return resp;
