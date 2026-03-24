@@ -1,0 +1,54 @@
+recid = 7241435000001873591;
+rec = zoho.crm.getRecordById("Deliveries",recid);
+project = Map();
+project.put("name",ifnull(rec.getJSON("Name"),""));
+createProject = invokeurl
+[
+	url :"https://projectsapi.zoho.com/restapi/portal/softwaresolutioninternational/projects/"
+	type :POST
+	parameters:project
+	connection:"projects_con"
+];
+if(createProject.get("projects").size() > 0)
+{
+	projectId = createProject.get("projects").getJSON("id");
+	info projectId;
+	update_project = Map();
+	startDate = rec.getJSON("Start_Date");
+	if(startDate != null)
+	{
+		startDate = startDate.toString("yyyy-MM-dd");
+		update_project.put("start_date",startDate);
+	}
+	endDate = rec.getJSON("End_Date");
+	if(endDate != null)
+	{
+		endDate = endDate.toString("yyyy-MM-dd");
+		update_project.put("end_date",endDate);
+	}
+	update_project.put("serial_no",ifnull(rec.getJSON("Serial_No"),""));
+	update_project.put("agents",ifnull(rec.getJSON("Agent"),""));
+	update_project.put("attorne",ifnull(rec.getJSON("Attorney"),""));
+	update_project.put("fi",ifnull(rec.getJSON("Filing_Type"),""));
+	update_project.put("tm",ifnull(rec.getJSON("TM_Type"),""));
+	clientname = rec.getJSON("Clients");
+	if(clientname != null)
+	{
+		search_rec = zoho.crm.searchRecords("Accounts","(Account_Name:equals:" + clientname + ")");
+		if(search_rec.size() > 0)
+		{
+			clientid = search_rec.getJSON("id");
+			update_project.put("client_name",clientid);
+		}
+	}
+	info update_project;
+	updateProject = invokeurl
+	[
+		url :"https://projectsapi.zoho.com/api/v3/portal/softwaresolutioninternational/projects/" + projectId
+		type :PATCH
+		parameters:update_project.toString()
+		connection:"projects_con"
+	];
+	info "Project updated: " + updateProject;
+	info zoho.crm.updateRecord("Deliveries",recid,{"Checkbox":true});
+}
