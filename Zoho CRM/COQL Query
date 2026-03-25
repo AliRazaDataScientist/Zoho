@@ -1,0 +1,11 @@
+queryMap = Map();
+queryMap.put("select_query","select id,Full_Name, Gender, Ashkenaz_or_Sephardi, Male_Age, Height, Engaged, What_Looking_For from Contacts where ((((Gender = 'Male') and (Ashkenaz_or_Sephardi = '" + Ashkenaz_or_Sephardi + "')) and (Male_Age >= " + Age + " and Male_Age <= " + req_age + ")) and (Engaged = 'false')) order by id asc limit 0, 2000");
+all_male_contacts = invokeurl
+[
+	url :"https://www.zohoapis.com/crm/v8/coql"
+	type :POST
+	parameters:queryMap.toString()
+	connection:"crm_con" //ZohoCRM.modules.ALL,ZohoCRM.coql.READ,ZohoCRM.modules.All
+];
+total = all_male_contacts.getJSON("info").getJSON("count");
+male_contacts = all_male_contacts.getJSON("data");
