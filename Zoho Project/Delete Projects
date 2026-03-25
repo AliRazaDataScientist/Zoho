@@ -1,0 +1,21 @@
+void automation.delete()
+{
+  getprojects = invokeurl
+  [
+  	url :"https://projectsapi.zoho.com/api/v3/portal/softwaresolutioninternational/projects?page=1&per_page=200"
+  	type :GET
+  	connection:"projects_con"
+  ];
+  for each project in getprojects
+  {
+  	projectid = project.getJSON("id") ;
+  	info projectid ;
+  deleteResp = invokeurl
+  [
+  	url :"https://projectsapi.zoho.com/restapi/portal/913901323/projects/" + projectid + "/"
+  	type :DELETE
+  	connection:"projects_con"
+  ];
+  info deleteResp;
+  }
+}
