@@ -1,0 +1,20 @@
+id = 246374000000124076;
+
+pageUrl = "https://creatorapp.zohopublic.eu/export/frances_promotionalcerami/zqas/pdf/Quote_PDF_Template/PUBLIC_KEY/?isc5page=true&IDD=" + id;
+
+pdfFile = invokeurl
+[
+    url : pageUrl
+    type : GET
+];
+
+pdfFile.setFileName("Quote.pdf");
+
+sendmail
+[
+    from : zoho.loginuserid
+    to : "eng.aliisiddiqui@gmail.com"
+    subject : "Test Template"
+    message : "Only for test purpose."
+    attachments : pdfFile
+];
