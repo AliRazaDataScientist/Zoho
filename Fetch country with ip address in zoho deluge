@@ -1,0 +1,20 @@
+ip = "175.107.235.223";
+
+// API 1
+res1 = invokeurl
+[
+	url :"https://ipinfo.io/" + ip + "/json"
+	type :GET
+];
+
+// API 2
+res2 = invokeurl
+[
+	url :"http://ip-api.com/json/" + ip
+	type :GET
+];
+
+info "IPINFO Country: " + res1.get("country");
+info "IP-API Country: " + res2.get("country");
+// info zoho.ipaddress;
+zoho.
