@@ -27,4 +27,15 @@ sendmail
 		subject :subject
 		message :email_contentsrep
 	]
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+for multiple placeholders
+temp = "https://www.zohoapis.com.au/crm/v7/settings/email_templates/80155000002371";
+	Template = invokeurl
+	[
+		url :temp
+		type :GET
+		connection:"crm_oauth_connection"
+	];
+	contentDetail = Template.get("email_templates").get(0).get("content");
+	email_contant = contentDetail.replaceAll("https://www.google.com",url,true);
+	email_contant = email_contant.replaceAll("${!Deals.Contact_Name.First_Name}",name,true);
