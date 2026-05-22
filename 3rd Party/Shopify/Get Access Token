@@ -1,0 +1,5 @@
+Get Code shopify:
+https://{Shop name from url}.myshopify.com/admin/oauth/authorize?client_id=************&redirect_uri=https://www.google.com
+ 
+Get Access token:
+https://{Shop name from url}.myshopify.com/admin/oauth/access_token?client_id=************&client_secret=*************&code={Get it from Above Url}
