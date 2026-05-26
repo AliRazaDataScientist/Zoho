@@ -1,0 +1,319 @@
+The first part is to create product variants below code help you how to update variants in products
+void create_product(int productid)
+{
+organizationID = "";
+get_product = invokeurl
+[
+	url :"https://aaaaaa-bq.myshopify.com/admin/api/2026-04/products/" + productid + ".json"
+	type :GET
+	connection:"shopify_con"
+];
+// info get_product;
+product = get_product.get("product");
+item_map = Map();
+variants = product.getJSON("variants");
+if(variants.size() > 1)
+{
+	attribute_name1 = product.getJSON("options").getJSON("name");
+	item_map.put("can_be_purchased",true);
+	item_map.put("can_be_sold",true);
+	item_map.put("track_inventory",true);
+	itemstatus = product.getJSON("status");
+	item_map.put("item_type","inventory");
+	item_map.put("product_type","goods");
+	item_map.put("status","active");
+	item_map.put("group_name",ifnull(product.getJSON("title"),""));
+	item_map.put("unit",ifnull(variants.getJSON("weight_unit"),""));
+	item_map.put("attribute_name1",attribute_name1);
+	description = ifnull(product.getJSON("body_html"),"");
+	if(description != "")
+	{
+		description = description.replaceAll("<(.|\n)*?>","").replaceAll("&nbsp;"," ");
+		item_map.put("description",description);
+	}
+	var_list = List();
+	ids_list = List();
+	for each  var in variants
+	{
+		var_map = Map();
+		var_map.put("can_be_purchased",true);
+		var_map.put("can_be_sold",true);
+		var_map.put("track_inventory",true);
+		var_map.put("item_type","inventory");
+		var_map.put("product_type","goods");
+		var_map.put("status","active");
+		var_map.put("name",ifnull(var.getJSON("title"),""));
+		var_map.put("unit",ifnull(var.getJSON("weight_unit"),""));
+		var_map.put("rate",ifnull(var.getJSON("price"),"0"));
+		var_map.put("purchase_rate",ifnull(var.getJSON("price"),"0"));
+		var_map.put("attribute_option_name1",ifnull(var.getJSON("option1"),"0"));
+		custom_field_update_map = Map();
+		custom_field_update_map.put("customfield_id","8924607000000348059");
+		custom_field_update_map.put("label","Shopify Product ID");
+		custom_field_update_map.put("value",var.getJSON("product_id").toLong());
+		custom_field_update_map1 = Map();
+		custom_field_update_map1.put("customfield_id","8924607000000358050");
+		custom_field_update_map1.put("label","Variant ID");
+		custom_field_update_map1.put("value",var.getJSON("id").toLong());
+		custome_field_list = List();
+		custome_field_list.add(custom_field_update_map);
+		custome_field_list.add(custom_field_update_map1);
+		ids = Map();
+		ids.put("names",var.getJSON("title"));
+		ids.put("ids",custome_field_list);
+		ids_list.add(ids);
+		qty = var.getJSON("inventory_quantity");
+		if(qty <= 0)
+		{
+			qty = 0;
+		}
+		available = ifnull(qty,0);
+		price = ifnull(var.getJSON("price"),0);
+		inventory_map = Map();
+		inventory_map.put("location_id","8924607000000093121");
+		inventory_map.put("initial_stock",available);
+		inventory_map.put("initial_stock_rate",available.tonumber() * price.toNumber());
+		var_map.put("locations",{inventory_map});
+		var_list.add(var_map);
+	}
+	item_map.put("items",var_list);
+	item_created = zoho.inventory.createRecord("itemgroups",organizationID,item_map,"inventory_con");
+	item_group = item_created.getJSON("item_group");
+	if(item_group.size() > 0)
+	{
+		items = item_group.getJSON("items");
+		for each  item in items
+		{
+			name = item.getJSON("name");
+			for each  idlist in ids_list
+			{
+				idsname = idlist.getJSON("names");
+				ids = idlist.getJSON("ids");
+				if(idsname == name)
+				{
+					itemid = item.getJSON("item_id");
+					updateMAP = Map();
+					updateMAP.put("custom_fields",ids);
+					update_book = zoho.inventory.updateRecord("items",organizationID,itemid,updateMAP,"inventory_con");
+					info "update_book" + update_book;
+				}
+			}
+		}
+	}
+	info item_created;
+}
+else
+{
+	item_map = Map();
+	variants = product.getJSON("variants");
+	item_map.put("can_be_purchased",true);
+	item_map.put("can_be_sold",true);
+	item_map.put("track_inventory",true);
+	item_map.put("item_type","inventory");
+	item_map.put("product_type","goods");
+	item_map.put("status","active");
+	item_map.put("name",ifnull(product.getJSON("title"),""));
+	description = ifnull(product.getJSON("body_html"),"");
+	if(description != "")
+	{
+		description = description.replaceAll("<(.|\n)*?>","").replaceAll("&nbsp;"," ");
+		item_map.put("description",description);
+	}
+	item_map.put("rate",ifnull(variants.getJSON("price"),""));
+	item_map.put("purchase_rate",ifnull(variants.getJSON("price"),""));
+	item_map.put("unit",ifnull(variants.getJSON("weight_unit"),""));
+	////////////Custom Field
+	custom_field_update_map = Map();
+	custom_field_update_map.put("customfield_id","8924607000000348059");
+	custom_field_update_map.put("label","Shopify Product ID");
+	custom_field_update_map.put("value",variants.getJSON("product_id").toLong());
+	custom_field_update_map1 = Map();
+	custom_field_update_map1.put("customfield_id","8924607000000358050");
+	custom_field_update_map1.put("label","Variant ID");
+	custom_field_update_map1.put("value",variants.getJSON("id").toLong());
+	custome_field_list = List();
+	custome_field_list.add(custom_field_update_map);
+	custome_field_list.add(custom_field_update_map1);
+	item_map.put("custom_fields",custome_field_list);
+	qty = variants.getJSON("inventory_quantity");
+	if(qty <= 0)
+	{
+		qty = 0;
+	}
+	available = ifnull(qty,0);
+	price = ifnull(variants.getJSON("price"),0);
+	inventory_map = Map();
+	inventory_map.put("location_id","8924607000000093121");
+	inventory_map.put("initial_stock",available);
+	inventory_map.put("initial_stock_rate",available.tonumber() * price.toNumber());
+	item_map.put("locations",{inventory_map});
+	item_created = zoho.inventory.createRecord("items",organizationID,item_map,"inventory_con");
+	itemid = item_created.getJSON("item").getJSON("item_id");
+	info itemid;
+}
+}
+
+
+
+
+
+
+
+
+
+////////////////////////////////////////////////////
+void update_product(int productid)
+{
+organizationID = "";
+get_product = invokeurl
+[
+	url :"https://aaaaaa-bq.myshopify.com/admin/api/2026-04/products/" + productid + ".json"
+	type :GET
+	connection:"shopify_con"
+];
+// info get_product;
+product = get_product.get("product");
+item_map = Map();
+variants = product.getJSON("variants");
+if(variants.size() > 1)
+{
+	attribute_name1 = product.getJSON("options").getJSON("name");
+	item_map.put("can_be_purchased",true);
+	item_map.put("can_be_sold",true);
+	item_map.put("track_inventory",true);
+	item_map.put("item_type","inventory");
+	item_map.put("product_type","goods");
+	item_map.put("status","active");
+	item_map.put("group_name",ifnull(product.getJSON("title"),""));
+	item_map.put("unit",ifnull(variants.getJSON("weight_unit"),""));
+	item_map.put("attribute_name1",attribute_name1);
+	description = ifnull(product.getJSON("body_html"),"");
+	if(description != "")
+	{
+		description = description.replaceAll("<(.|\n)*?>","").replaceAll("&nbsp;"," ");
+		item_map.put("description",description);
+	}
+	search_resp = invokeurl
+	[
+		url :"https://inventory.zoho.com/api/v1/itemgroups?organization_id=" + organizationID + "&group_name=" + product.getJSON("title")
+		type :GET
+		connection:"inventory_con"
+	];
+	itemgroups = search_resp.getJSON("itemgroups");
+	if(itemgroups.size() > 0)
+	{
+		group_id = itemgroups.getJSON("group_id");
+		// 			update_group = zoho.inventory.updateRecord("itemgroups",organizationID,group_id,item_map,"inventory_con");
+		// 			info update_group;
+	}
+	for each  var in variants
+	{
+		var_map = Map();
+		var_map.put("can_be_purchased",true);
+		var_map.put("can_be_sold",true);
+		var_map.put("track_inventory",true);
+		var_map.put("item_type","inventory");
+		var_map.put("product_type","goods");
+		var_map.put("status","active");
+		var_map.put("name",ifnull(var.getJSON("title"),""));
+		var_map.put("unit",ifnull(var.getJSON("weight_unit"),""));
+		var_map.put("rate",ifnull(var.getJSON("price"),"0"));
+		var_map.put("purchase_rate",ifnull(var.getJSON("price"),"0"));
+		var_map.put("attribute_option_name1",ifnull(var.getJSON("option1"),"0"));
+		custom_field_update_map = Map();
+		custom_field_update_map.put("customfield_id","8924607000000348059");
+		custom_field_update_map.put("label","Shopify Product ID");
+		s_p_id = var.getJSON("product_id");
+		custom_field_update_map.put("value",s_p_id.toLong());
+		custom_field_update_map1 = Map();
+		custom_field_update_map1.put("customfield_id","8924607000000358050");
+		custom_field_update_map1.put("label","Variant ID");
+		v_id = var.getJSON("id");
+		custom_field_update_map1.put("value",v_id.toLong());
+		custome_field_list = List();
+		custome_field_list.add(custom_field_update_map);
+		custome_field_list.add(custom_field_update_map1);
+		var_map.put("custom_fields",custome_field_list);
+		///////////////////////
+		available = ifnull(var.getJSON("inventory_quantity"),0);
+		price = ifnull(var.getJSON("price"),0);
+		inventory_map = Map();
+		inventory_map.put("location_id","8924607000000093121");
+		inventory_map.put("initial_stock",available);
+		inventory_map.put("initial_stock_rate",available.tonumber() * price.toNumber());
+		var_map.put("locations",{inventory_map});
+		search_resp = invokeurl
+		[
+			url :"https://inventory.zoho.com/api/v1/items?organization_id=" + organizationID + "&cf_shopify_product_id=" + s_p_id + "&cf_variant_id=" + v_id
+			type :GET
+			connection:"inventory_con"
+		];
+		items = search_resp.getJSON("items");
+		if(items.size() > 0)
+		{
+			item_id = items.getJSON("item_id");
+			info zoho.inventory.updateRecord("items",organizationID,item_id,var_map,"inventory_con");
+		}
+		else
+		{
+			var_map.put("group_id",group_id);
+			item_created = zoho.inventory.createRecord("items",organizationID,var_map,"inventory_con");
+			itemid = item_created.getJSON("item").getJSON("item_id");
+			info item_created;
+		}
+	}
+}
+else
+{
+	item_map = Map();
+	variants = product.getJSON("variants");
+	item_map.put("can_be_purchased",true);
+	item_map.put("can_be_sold",true);
+	item_map.put("track_inventory",true);
+	item_map.put("item_type","inventory");
+	item_map.put("product_type","goods");
+	item_map.put("status","active");
+	item_map.put("name",ifnull(product.getJSON("title"),""));
+	description = ifnull(product.getJSON("body_html"),"");
+	if(description != "")
+	{
+		description = description.replaceAll("<(.|\n)*?>","").replaceAll("&nbsp;"," ");
+		item_map.put("description",description);
+	}
+	item_map.put("rate",ifnull(variants.getJSON("price"),""));
+	item_map.put("purchase_rate",ifnull(variants.getJSON("price"),""));
+	item_map.put("unit",ifnull(variants.getJSON("weight_unit"),""));
+	////////////Custom Field
+	custom_field_update_map = Map();
+	custom_field_update_map.put("customfield_id","8924607000000348059");
+	custom_field_update_map.put("label","Shopify Product ID");
+	custom_field_update_map.put("value",variants.getJSON("product_id").toLong());
+	custom_field_update_map1 = Map();
+	custom_field_update_map1.put("customfield_id","8924607000000358050");
+	custom_field_update_map1.put("label","Variant ID");
+	custom_field_update_map1.put("value",variants.getJSON("id").toLong());
+	custome_field_list = List();
+	custome_field_list.add(custom_field_update_map);
+	custome_field_list.add(custom_field_update_map1);
+	item_map.put("custom_fields",custome_field_list);
+	available = ifnull(variants.getJSON("inventory_quantity"),0);
+	price = ifnull(variants.getJSON("price"),0);
+	inventory_map = Map();
+	inventory_map.put("location_id","8924607000000093121");
+	inventory_map.put("initial_stock",available);
+	inventory_map.put("initial_stock_rate",available.tonumber() * price.toNumber());
+	item_map.put("locations",{inventory_map});
+	search_resp = invokeurl
+	[
+		url :"https://inventory.zoho.com/api/v1/items?organization_id=" + organizationID + "&cf_shopify_product_id=" + productid
+		type :GET
+		connection:"inventory_con"
+	];
+	items = search_resp.getJSON("items");
+	if(items.size() > 0)
+	{
+		item_id = items.getJSON("item_id");
+		info zoho.inventory.updateRecord("items",organizationID,item_id,item_map,"inventory_con");
+	}
+}
+}
