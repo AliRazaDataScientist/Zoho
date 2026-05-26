@@ -1,0 +1,13 @@
+s_last_modified_time = resp.getJSON("product").getJSON("updated_at");//shopify modified time
+z_last_modified_time = item_record.getJSON("last_modified_time");//zoho modified time
+/////////////////////
+dt1 = z_last_modified_time.replaceAll("T", " ").toDateTime();
+dt2 = s_last_modified_time.replaceAll("T", " ").toDateTime();
+diffMillis = dt1.toLong() - dt2.toLong();
+diffMillis = abs(diffMillis);
+totalMinutes = diffMillis / (1000 * 60);
+hours = floor(totalMinutes / 60);
+minutes = totalMinutes % 60;
+info hours + " hours difference";
+info minutes + " minutes difference";
+info zoho.currenttime ;
