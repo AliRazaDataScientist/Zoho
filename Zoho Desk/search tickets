@@ -1,0 +1,15 @@
+yesterday = zoho.currentdate.addDay(-1);
+
+startDate = yesterday.toString("yyyy-MM-dd") + "T00:00:00.000Z";
+endDate = yesterday.toString("yyyy-MM-dd") + "T23:59:59.999Z";
+
+tickets = invokeurl
+[
+	url :"https://desk.zoho.com.au/api/v1/tickets/search?createdTimeRange=" + startDate + "," + endDate
+	type :GET
+	headers:{"orgId":orgId}
+	connection:"desk_con"
+];
+
+info tickets;
+info tickets.get("data").size();
