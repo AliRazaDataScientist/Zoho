@@ -1,11 +1,15 @@
-yesterday = zoho.currentdate.addDay(-1);
-
-startDate = yesterday.toString("yyyy-MM-dd") + "T00:00:00.000Z";
-endDate = yesterday.toString("yyyy-MM-dd") + "T23:59:59.999Z";
+ast_week_start = zoho.currentdate.addDay(-7);
+last_week_end = zoho.currentdate.addDay(-1);
+prior_week_start = zoho.currentdate.addDay(-14);
+prior_week_end = zoho.currentdate.addDay(-8);
+last_week_start_str = last_week_start.toString("yyyy-MM-dd") + "T00:00:00.000Z";
+last_week_end_str = last_week_end.toString("yyyy-MM-dd") + "T23:59:59.999Z";
+prior_week_start_str = prior_week_start.toString("yyyy-MM-dd") + "T00:00:00.000Z";
+prior_week_end_str = prior_week_end.toString("yyyy-MM-dd") + "T23:59:59.999Z";
 
 tickets = invokeurl
 [
-	url :"https://desk.zoho.com.au/api/v1/tickets/search?createdTimeRange=" + startDate + "," + endDate
+	url :"https://desk.zoho.com.au/api/v1/tickets/search?createdTimeRange=" + last_week_start_str + "," + last_week_end_str
 	type :GET
 	headers:{"orgId":orgId}
 	connection:"desk_con"
@@ -13,3 +17,19 @@ tickets = invokeurl
 
 info tickets;
 info tickets.get("data").size();
+
+
+search from custom field
+search_map_ticket = Map();
+search_map_other.put("customField1","category:General / Other");// if find specific value
+search_map_ticket.put("customField1","cf_inbound_channel:${notempty}");//if field is not null 
+channelTickets = invokeurl
+[
+	url :"https://desk.zoho.com.au/api/v1/tickets/search?createdTimeRange=" + prior_week_start_str + "," + prior_week_end_str
+	type :GET
+	parameters:search_map_ticket
+	headers:{"orgId":orgId}
+	connection:"desk_con"
+];
+total_channel_tickets = channelTickets.get("count");
+info total_channel_tickets;
