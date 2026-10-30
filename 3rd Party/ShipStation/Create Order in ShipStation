@@ -1,0 +1,73 @@
+	// 	id = 4874393000000034003;
+	rec = Warranty_Claim[ID == id];
+	// STEP 2: SHIPPING ADDRESS
+	shipTo = Map();
+	shipTo.put("name",rec.Customer_Name);
+	shipTo.put("phone",rec.Phone_Number);
+	shipTo.put("address_line1",rec.Address.address_line_1);
+	shipTo.put("city_locality",rec.Address.district_city);
+	shipTo.put("state_province",rec.Address.state_province);
+	shipTo.put("postal_code",rec.Address.postal_Code);
+	shipTo.put("country_code",rec.Address.country);
+	shipTo.put("email",rec.Email);
+	// STEP 3: SENDER ADDRESS
+	shipFrom = Map();
+	shipFrom.put("name","AEON LASER USA");
+	shipFrom.put("phone","(321) 260-2325");
+	shipFrom.put("address_line1","205 Coastal Ln");
+	shipFrom.put("city_locality","Melbourne");
+	shipFrom.put("state_province","FL");
+	shipFrom.put("postal_code","32904");
+	shipFrom.put("country_code","US");
+	shipFrom.put("email","Lek@Aeonlaser.us");
+	shipFrom.put("company_name","AEON LASER USA");
+	shipFrom.put("address_residential_indicator","no");
+	// STEP 4: PACKAGE WEIGHT
+	weight = Map();
+	// REQUIRED when defining package weight
+	weight.put("value",23);
+	weight.put("unit","pound");
+	// STEP 7: PACKAGE DETAILS
+	packageData = Map();
+	// REQUIRED: Package weight for this example
+	// 	packageData.put("weight",weight);
+	// REQUIRED: Non-empty packages array
+	packages = List();
+	packages.add(packageData);
+	// STEP 9: CREATE SHIPMENT OBJECT
+	shipment = Map();
+	shipment.put("external_shipment_id",rec.Ticket_Number);
+	shipment.put("shipment_number",rec.Ticket_Number);
+	shipment.put("create_sales_order",true);
+	shipment.put("shipment_status","pending");
+	shipment.put("notes_from_buyer","Please handle carefully");
+	shipment.put("notes_to_buyer","Thank you for your order");
+	shipment.put("internal_notes","Created from Zoho Creator");
+	shipment.put("ship_to",shipTo);
+	shipment.put("warehouse_id","se-2130705");
+	// Order items
+	items = List();
+	for each  lineitem in rec.SubForm
+	{
+		linemap = Map();
+		linemap.put("sku",lineitem.SKU);
+		linemap.put("quantity",lineitem.Quantity);
+		items.add(linemap);
+	}
+	shipment.put("items",items);
+	shipment.put("packages",packages);
+	shipments = List();
+	shipments.add(shipment);
+	requestBody = Map();
+	requestBody.put("shipments",shipments);
+	headers = Map();
+	headers.put("API-Key","************");
+	headers.put("Content-Type","application/json");
+	response = invokeurl
+	[
+		url :"https://api.shipstation.com/v2/shipments"
+		type :POST
+		body:requestBody.toString()
+		headers:headers
+	];
+	info response;
