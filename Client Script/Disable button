@@ -1,0 +1,7 @@
+console.clear();
+var sendMailButton = ZDK.Page.getButtons().find(
+    btn => btn.getLabel() === "Send Email"
+);
+if (sendMailButton) {
+    sendMailButton.disable();
+}
