@@ -1,0 +1,115 @@
+
+/*
+ ShipStation V1 - Create Order
+ Zoho CRM Deluge
+*/
+
+// STEP 1: Authentication
+apiKey = "YOUR_V1_API_KEY";
+apiSecret = "YOUR_V1_API_SECRET";
+
+credentials = apiKey + ":" + apiSecret;
+encodedCredentials = zoho.encryption.base64Encode(credentials);
+
+headers = Map();
+headers.put("Authorization", "Basic " + encodedCredentials);
+headers.put("Content-Type", "application/json");
+
+// STEP 2: Billing Address
+billTo = Map();
+billTo.put("name", "John Doe");
+billTo.put("company", "Test Company");
+billTo.put("street1", "1600 Pennsylvania Ave");
+billTo.put("city", "Washington");
+billTo.put("state", "DC");
+billTo.put("postalCode", "20500");
+billTo.put("country", "US");
+billTo.put("phone", "5555555555");
+
+// STEP 3: Shipping Address
+shipTo = Map();
+shipTo.put("name", "John Doe");
+shipTo.put("company", "Test Company");
+shipTo.put("street1", "1600 Pennsylvania Ave");
+shipTo.put("city", "Washington");
+shipTo.put("state", "DC");
+shipTo.put("postalCode", "20500");
+shipTo.put("country", "US");
+shipTo.put("phone", "5555555555");
+shipTo.put("residential", true);
+
+// STEP 4: Product Weight
+itemWeight = Map();
+itemWeight.put("value", 24);
+itemWeight.put("units", "ounces");
+
+// STEP 5: Product
+item = Map();
+item.put("sku", "ABC123");
+item.put("name", "Test Product");
+item.put("quantity", 2);
+item.put("unitPrice", 99.99);
+item.put("weight", itemWeight);
+
+items = List();
+items.add(item);
+
+// STEP 6: Order Weight
+orderWeight = Map();
+orderWeight.put("value", 48);
+orderWeight.put("units", "ounces");
+
+// STEP 7: Package Dimensions
+dimensions = Map();
+dimensions.put("units", "inches");
+dimensions.put("length", 7);
+dimensions.put("width", 5);
+dimensions.put("height", 6);
+
+// STEP 8: Advanced Options
+advancedOptions = Map();
+advancedOptions.put("nonMachinable", false);
+advancedOptions.put("saturdayDelivery", false);
+advancedOptions.put("containsAlcohol", false);
+advancedOptions.put("mergedOrSplit", false);
+advancedOptions.put("customField1", "Created from Zoho CRM");
+advancedOptions.put("source", "Zoho CRM");
+
+// STEP 9: Order Data
+orderData = Map();
+
+orderData.put("orderNumber", "ZOHO-TEST-1001");
+orderData.put("orderDate", "2026-10-26T10:00:00Z");
+orderData.put("orderStatus", "awaiting_shipment");
+
+orderData.put("customerUsername", "john@example.com");
+orderData.put("customerEmail", "john@example.com");
+
+orderData.put("billTo", billTo);
+orderData.put("shipTo", shipTo);
+orderData.put("items", items);
+
+orderData.put("amountPaid", 0);
+orderData.put("taxAmount", 0);
+orderData.put("shippingAmount", 10);
+
+orderData.put("customerNotes", "Please ship carefully");
+orderData.put("internalNotes", "Created using Zoho CRM");
+
+orderData.put("gift", false);
+orderData.put("requestedShippingService", "Ground");
+
+orderData.put("weight", orderWeight);
+orderData.put("dimensions", dimensions);
+orderData.put("advancedOptions", advancedOptions);
+
+// STEP 10: Create Order
+response = invokeurl
+[
+    url :"https://ssapi.shipstation.com/orders/createorder"
+    type :POST
+    body:orderData.toString()
+    headers:headers
+];
+
+info response;
