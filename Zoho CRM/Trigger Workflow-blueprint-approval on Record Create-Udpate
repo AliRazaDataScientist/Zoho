@@ -26,3 +26,6 @@ update_externalk_link_crm_map.put("External_Link",link_external);
 info "update_externalk_link_crm_map >>" + update_externalk_link_crm_map;
 update_crm_data = zoho.crm.updateRecord("Deals",id,update_externalk_link_crm_map,{"trigger":{"workflow"}});
 info "update_crm_data >>" + update_crm_data;
+
+///////////////////////////
+resvp = zoho.crm.createRecord("Deals",dealMap,{"trigger":["workflow","blueprint","approval"]});
