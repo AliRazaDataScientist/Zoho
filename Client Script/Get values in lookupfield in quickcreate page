@@ -1,0 +1,83 @@
+
+console.clear();
+
+try {
+    // 1. Get Deal details
+    var dealNameField = $Client.rootContext.getField("Deal_Name");
+    var dealName = dealNameField ? dealNameField.getValue() : null;
+    var dealId = $Client.rootContext.record_id;
+
+    // 2. Populate Associated Deal
+    var associatedDeal = ZDK.Page.getField("Associated_Deal");
+
+    if (associatedDeal && dealId && dealName) {
+        associatedDeal.setValue({
+            id: String(dealId),
+            name: dealName
+        });
+    }
+
+    // 3. Set Status
+    var statusField = ZDK.Page.getField("Status");
+
+    if (statusField) {
+        statusField.setValue("In-Stock");
+    }
+
+    // 4. Generate MPO number and check Machines
+    var nameField = ZDK.Page.getField("Name");
+    var uniqueFound = false;
+    var maxAttempts = 20;
+
+    for (var attempt = 1; attempt <= maxAttempts; attempt++) {
+
+        // Generate MPO + 8 digits
+        var randomNumber = Math.floor(
+            10000000 + Math.random() * 90000000
+        );
+
+        var mpoName = "MPO" + randomNumber;
+
+        log("Attempt " + attempt + ": " + mpoName);
+
+        // Search the correct module: Machines
+        var results = ZDK.Apps.CRM.Machines.searchByCriteria(
+            "(Name:equals:" + mpoName + ")"
+        );
+
+        // Check for an exact match
+        var duplicateFound = false;
+
+        if (results && results.length > 0) {
+            for (var i = 0; i < results.length; i++) {
+                if (results[i].Name === mpoName) {
+                    duplicateFound = true;
+                    break;
+                }
+            }
+        }
+
+        if (!duplicateFound) {
+            uniqueFound = true;
+
+            if (nameField) {
+                nameField.setValue(mpoName);
+            }
+
+            log("Unique MPO assigned: " + mpoName);
+            break;
+        }
+
+        log("Duplicate found. Generating another...");
+    }
+
+    if (!uniqueFound) {
+        log("Could not find an unused MPO number.");
+        ZDK.Client.showAlert(
+            "Unable to generate a unique MPO number."
+        );
+    }
+
+} catch (error) {
+    log("Quick Create Error: " + error);
+}
